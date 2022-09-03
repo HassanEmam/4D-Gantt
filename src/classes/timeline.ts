@@ -135,16 +135,16 @@ export class TimeLine {
         this.ctx,
         minScale + this.options.padding + 15,
         15,
-        minScale + this.options.padding,
-        this.canvas.height - this.options.padding + 15,
+        minScale + this.options.padding + 15,
+        this.canvas.height - this.options.padding,
         "black"
       );
       drawLine(
         this.ctx,
         maxScale + this.options.padding + 15,
         15,
-        maxScale + this.options.padding,
-        this.canvas.height - this.options.padding + 15,
+        maxScale + this.options.padding + 15,
+        this.canvas.height - this.options.padding,
         "black"
       );
     }
