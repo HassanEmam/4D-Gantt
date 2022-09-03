@@ -1,5 +1,14 @@
-import { Context } from "vm";
+import { data } from "./../types/data";
 
+/**
+ *
+ * @param ctx the canvas context
+ * @param startX the starting point of the line on the x axis
+ * @param startY the starting point of the line on the y axis
+ * @param endX the ending point of the line on the x axis
+ * @param endY the ending point of the line on the y axis
+ * @param color the color of the line
+ */
 export function drawLine(
   ctx: CanvasRenderingContext2D,
   startX: number,
@@ -11,7 +20,6 @@ export function drawLine(
   ctx.save();
   ctx.strokeStyle = color;
   ctx.beginPath();
-  // ctx.lineWidth = 10;
   ctx.moveTo(startX, startY);
   ctx.lineTo(endX, endY);
   ctx.stroke();
@@ -30,4 +38,18 @@ export function drawBar(
   ctx.fillStyle = color;
   ctx.fillRect(upperLeftCornerX, upperLeftCornerY, width, height);
   ctx.restore();
+}
+
+export function minmax(data: data[]) {
+  let max = new Date(0);
+  let min = data[0].start;
+  data.forEach((element) => {
+    if (element.end > max) {
+      max = element.end;
+    }
+    if (element.start < min) {
+      min = element.start;
+    }
+  });
+  return [min, max];
 }

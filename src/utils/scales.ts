@@ -25,6 +25,14 @@ export function scaleY() {
   // TODO
 }
 
+/**
+ *
+ * @param x the x coordinate of the point
+ * @param minStart
+ * @param overallDuration
+ * @param canvasWidth
+ * @returns the date corresponding to the x coordinate
+ */
 export function scaleDate(
   x: number,
   minStart: Date,

@@ -1,39 +1,9 @@
-import { Task } from "./rectangle";
-import { drawLine, drawBar } from "../utils/helper";
+import { DateLine } from "./dateLine";
+import { options } from "./options";
+import { data } from "./data";
+import { Task } from "./task";
+import { drawLine, drawBar, minmax } from "../utils/helper";
 import { scaleX } from "../utils/scales";
-
-export interface data {
-  name: string;
-  id: number;
-  start: Date;
-  end: Date;
-  parent?: number;
-  progress?: number;
-}
-
-export interface options {
-  canvas: HTMLCanvasElement;
-  padding: number;
-  gridScale: number;
-  gridColor: string;
-  data: data[];
-  titleOptions: string;
-  colors: string[];
-}
-
-function maxDate(data: data[]): Date[] {
-  let max = new Date(0);
-  let min = data[0].start;
-  data.forEach((element) => {
-    if (element.end > max) {
-      max = element.end;
-    }
-    if (element.start < min) {
-      min = element.start;
-    }
-  });
-  return [min, max];
-}
 
 export class GanttChart {
   options: options;
@@ -46,18 +16,27 @@ export class GanttChart {
   minDate: Date;
   maxDate: Date;
   tasks: Task[];
+  dateLine: DateLine;
 
   constructor(options: options) {
     this.options = options;
     this.canvas = options.canvas;
+    this.canvas.height =
+      2 * this.options.padding + 50 * this.options.data.length;
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.colors = options.colors;
     this.titleOptions = options.titleOptions;
-    let maxmin = maxDate(this.options.data);
+    let maxmin = minmax(this.options.data);
     this.maxValue = maxmin[1].getTime();
     this.minValue = maxmin[0].getTime();
     this.minDate = maxmin[0];
     this.maxDate = maxmin[1];
+    this.dateLine = new DateLine(
+      this.ctx,
+      this.canvas,
+      this.options,
+      this.minDate
+    );
     this.tasks = [];
     console.log(new Date(this.maxValue));
     let currentDate = new Date(2020, 1, 15);
@@ -74,6 +53,7 @@ export class GanttChart {
       for (let task of this.tasks) {
         task.collision(e.clientX, e.clientY);
       }
+      this.dateLine.collision(e.clientX, e.clientY);
     });
   }
 
@@ -198,8 +178,19 @@ export class GanttChart {
     // }
   }
 
+  drawDateLine() {
+    this.dateLine = new DateLine(
+      this.ctx,
+      this.canvas,
+      this.options,
+      new Date(2020, 1, 15)
+    );
+    this.dateLine.draw();
+  }
+
   draw() {
     this.drawGridLines();
     this.drawBars();
+    this.drawDateLine();
   }
 }

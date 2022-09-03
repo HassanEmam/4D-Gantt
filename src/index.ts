@@ -1,35 +1,16 @@
+import { scheduleData } from "./data";
+import { options } from "./types/options";
 import { scaleX, scaleDate } from "./utils/scales";
-import { GanttChart, options, data } from "./types/ganttChart";
+import { GanttChart } from "./types/ganttChart";
+import { data } from "./types/data";
 
-let data: data[] = [
-  {
-    id: 1,
-    name: "Task 1",
-    start: new Date(2020, 0, 1),
-    end: new Date(2020, 0, 30),
-    parent: 0,
-  },
-  {
-    id: 2,
-    name: "Task 2",
-    start: new Date(2020, 0, 12),
-    end: new Date(2020, 1, 28),
-    parent: 0,
-  },
-  {
-    id: 3,
-    name: "Task 3",
-    start: new Date(2020, 2, 1),
-    end: new Date(2020, 2, 30),
-    parent: 0,
-  },
-];
+let data = scheduleData;
 
 function drawGantt() {
   let chartCanvas = document.getElementById("chartCanvas") as HTMLCanvasElement;
   chartCanvas.width = chartCanvas.parentElement.clientWidth;
   chartCanvas.height = 500;
-  let options = {
+  let options: options = {
     canvas: chartCanvas,
     padding: 100,
     gridScale: 5,
