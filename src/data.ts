@@ -1,11 +1,11 @@
-import { data } from "./types/data";
+import { data } from "./classes/data";
 
 export const scheduleData: data[] = [
   {
     id: 1,
     name: "Task 1",
-    start: new Date(2022, 0, 1),
-    end: new Date(2022, 0, 30),
+    start: new Date(2020, 3, 1),
+    end: new Date(2020, 3, 30),
     parent: 0,
   },
   {

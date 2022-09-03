@@ -2,8 +2,9 @@ import { DateLine } from "./dateLine";
 import { options } from "./options";
 import { data } from "./data";
 import { Task } from "./task";
-import { drawLine, drawBar, minmax } from "../utils/helper";
+import { drawLine, drawBar, minmax, dayDiff } from "../utils/helper";
 import { scaleX } from "../utils/scales";
+import { TimeLine } from "./timeline";
 
 export class GanttChart {
   options: options;
@@ -17,6 +18,7 @@ export class GanttChart {
   maxDate: Date;
   tasks: Task[];
   dateLine: DateLine;
+  timeLine: TimeLine;
 
   constructor(options: options) {
     this.options = options;
@@ -31,29 +33,29 @@ export class GanttChart {
     this.minValue = maxmin[0].getTime();
     this.minDate = maxmin[0];
     this.maxDate = maxmin[1];
+    let duration = dayDiff(this.minDate, this.maxDate);
+    console.log(duration);
+    this.canvas.width = 30 * duration;
     this.dateLine = new DateLine(
       this.ctx,
       this.canvas,
       this.options,
       this.minDate
     );
+    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options);
     this.tasks = [];
-    console.log(new Date(this.maxValue));
     let currentDate = new Date(2020, 1, 15);
-    console.log(
-      "maxValue",
-      scaleX(currentDate, this.minDate, this.maxDate, this.canvas.width),
-      "\nCurrent Date " + currentDate.toLocaleDateString("en-GB"),
-      "\nMin Date " + this.minDate.toLocaleDateString("en-GB"),
-      "\nMax Date " + this.maxDate.toLocaleDateString("en-GB"),
-      "\nWidth " + this.canvas.width
-    );
 
     this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
+      let parent = (e.target as HTMLElement).parentElement;
+
       for (let task of this.tasks) {
-        task.collision(e.clientX, e.clientY);
+        task.collision(e.pageX - parent.offsetLeft, e.pageY - parent.offsetTop);
       }
-      this.dateLine.collision(e.clientX, e.clientY);
+      this.dateLine.collision(
+        e.pageX - parent.offsetLeft,
+        e.pageY - parent.offsetTop
+      );
     });
   }
 
@@ -66,7 +68,6 @@ export class GanttChart {
     var gridY =
       canvasActualWidth * (1 - gridValue / this.maxValue) +
       this.options.padding;
-    console.log("gridY", gridY);
     drawLine(
       this.ctx,
       this.options.padding,
@@ -85,7 +86,6 @@ export class GanttChart {
         this.options.padding + rowHeight * (parseInt(i) + 1),
         "lightgray"
       );
-      //   console.log(this.options.data[i]);
     }
 
     //   drawLine(
@@ -117,7 +117,6 @@ export class GanttChart {
     for (let idx in this.options.data) {
       let taskData = this.options.data[idx];
       let yOffset = this.options.padding + 50 * parseInt(idx) + 10;
-      console.log("Canvas Width", this.canvas.width, canvasActualWidth);
       let xStart = scaleX(
         taskData.start,
         this.minDate,
@@ -131,7 +130,6 @@ export class GanttChart {
         canvasActualWidth
       );
       let barWidth = xEnd - xStart;
-      console.log("Bar Width", xStart, xEnd, barWidth);
       let bar = new Task(
         xStart + this.options.padding,
         yOffset,
@@ -158,12 +156,10 @@ export class GanttChart {
       //   );
       this.ctx.restore();
       // this.colors[barIndex % this.colors.length];
-      console.log(taskData, yOffset);
     }
 
     // for (let val of values) {
     //   var barHeight = Math.round((canvasActualHeight * val) / this.maxValue);
-    //   console.log(barHeight);
 
     //   drawBar(
     //     this.ctx,
@@ -188,9 +184,15 @@ export class GanttChart {
     this.dateLine.draw();
   }
 
+  drawTimeLine() {
+    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options);
+    this.timeLine.draw();
+  }
+
   draw() {
     this.drawGridLines();
     this.drawBars();
     this.drawDateLine();
+    this.drawTimeLine();
   }
 }

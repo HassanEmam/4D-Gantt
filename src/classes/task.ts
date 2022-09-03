@@ -73,7 +73,6 @@ export class Task {
       y >= this.y &&
       y <= this.y + this.height
     ) {
-      console.log("collision", this.name);
       this.color = this.hoverColor;
       this.draw();
       return true;
