@@ -1,4 +1,3 @@
-import { Recatangle } from "./types/rectangle";
 import { scaleX, scaleDate } from "./utils/scales";
 import { GanttChart, options, data } from "./types/ganttChart";
 
@@ -32,7 +31,7 @@ function drawGantt() {
   chartCanvas.height = 500;
   let options = {
     canvas: chartCanvas,
-    padding: 20,
+    padding: 100,
     gridScale: 5,
     gridColor: "black",
     data: data,

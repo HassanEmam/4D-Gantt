@@ -1,3 +1,4 @@
+import { Task } from "./rectangle";
 import { drawLine, drawBar } from "../utils/helper";
 import { scaleX } from "../utils/scales";
 
@@ -44,6 +45,7 @@ export class GanttChart {
   minValue: number;
   minDate: Date;
   maxDate: Date;
+  tasks: Task[];
 
   constructor(options: options) {
     this.options = options;
@@ -56,6 +58,7 @@ export class GanttChart {
     this.minValue = maxmin[0].getTime();
     this.minDate = maxmin[0];
     this.maxDate = maxmin[1];
+    this.tasks = [];
     console.log(new Date(this.maxValue));
     let currentDate = new Date(2020, 1, 15);
     console.log(
@@ -66,6 +69,12 @@ export class GanttChart {
       "\nMax Date " + this.maxDate.toLocaleDateString("en-GB"),
       "\nWidth " + this.canvas.width
     );
+
+    this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
+      for (let task of this.tasks) {
+        task.collision(e.clientX, e.clientY);
+      }
+    });
   }
 
   drawGridLines() {
@@ -82,7 +91,7 @@ export class GanttChart {
       this.ctx,
       this.options.padding,
       this.options.padding,
-      canvasActualWidth,
+      this.options.padding + canvasActualWidth,
       this.options.padding,
       "black"
     );
@@ -92,7 +101,7 @@ export class GanttChart {
         this.ctx,
         this.options.padding,
         this.options.padding + rowHeight * (parseInt(i) + 1),
-        canvasActualWidth,
+        this.options.padding + canvasActualWidth,
         this.options.padding + rowHeight * (parseInt(i) + 1),
         "lightgray"
       );
@@ -124,28 +133,50 @@ export class GanttChart {
     var canvasActualHeight = this.canvas.height - this.options.padding * 2;
     var canvasActualWidth = this.canvas.width - this.options.padding * 2;
 
-    var barIndex = 0;
-    var numberOfBars = Object.keys(this.options.data).length;
-    var barSize = (canvasActualWidth - numberOfBars * 40) / numberOfBars;
-
     var values = Object.values(this.options.data);
     for (let idx in this.options.data) {
       let taskData = this.options.data[idx];
       let yOffset = this.options.padding + 50 * parseInt(idx) + 10;
+      console.log("Canvas Width", this.canvas.width, canvasActualWidth);
       let xStart = scaleX(
         taskData.start,
         this.minDate,
         this.maxDate,
-        this.canvas.width
+        canvasActualWidth
       );
       let xEnd = scaleX(
         taskData.end,
         this.minDate,
         this.maxDate,
-        this.canvas.width
+        canvasActualWidth
       );
       let barWidth = xEnd - xStart;
-      drawBar(this.ctx, xStart, yOffset, barWidth, 30, "blue");
+      console.log("Bar Width", xStart, xEnd, barWidth);
+      let bar = new Task(
+        xStart + this.options.padding,
+        yOffset,
+        barWidth,
+        30,
+        this.ctx,
+        "blue",
+        "white",
+        taskData.name
+      );
+      this.tasks.push(bar);
+      bar.draw();
+      // draw text to the right of the bar
+
+      //   this.ctx.textAlign = "center";
+      //   this.ctx.textBaseline = "middle";
+      //   let fontSize = Math.min(barWidth / 1.5, 20);
+      //   this.ctx.font = `${fontSize}px Arial`;
+      //   this.ctx.fillStyle = "black";
+      //   this.ctx.fillText(
+      //     taskData.name,
+      //     xEnd + this.options.padding + 3 * fontSize,
+      //     yOffset + 15
+      //   );
+      this.ctx.restore();
       // this.colors[barIndex % this.colors.length];
       console.log(taskData, yOffset);
     }
