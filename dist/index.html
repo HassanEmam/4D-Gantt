@@ -3,9 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <title>Webpack App</title>
+    <link rel="stylesheet" href="style.css" />
   <script defer src="bundle.js"></script></head>
   <body>
     <div class="gantt-chart"></div>
-    <script src="bundle.js" type="module"></script>
+    <div class="container">
+      <!-- <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>Hassan</th>
+            </tr>
+          </thead>
+        </table>
+      </div> -->
+      <div class="Chart">
+        <canvas id="chartCanvas"></canvas>
+      </div>
+    </div>
+    <script src="./dist/bundle.js" type="module"></script>
   </body>
 </html>

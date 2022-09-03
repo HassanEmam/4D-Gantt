@@ -1,52 +1,66 @@
-import { TaskDuration } from "./ganttChart/classes/taskDuration";
-import GanttChart from "./ganttChart/ganttChart";
+import { Recatangle } from "./types/rectangle";
+import { scaleX, scaleDate } from "./utils/scales";
+import { GanttChart, options, data } from "./types/ganttChart";
 
-// can have multiple instances of Gantt chart
-document.addEventListener("DOMContentLoaded", () => {
-  // get data - could get from server
-  const tasks = [
-    { id: 1, name: "Task 1" },
-    { id: 2, name: "Task 2" },
-    { id: 3, name: "Task 3" },
-    { id: 4, name: "Task 4" },
-    { id: 5, name: "Task 5" },
-    { id: 6, name: "Task 6" },
-    { id: 7, name: "Task 7" },
-    { id: 8, name: "Task 8" },
-  ];
+let data: data[] = [
+  {
+    id: 1,
+    name: "Task 1",
+    start: new Date(2020, 0, 1),
+    end: new Date(2020, 0, 30),
+    parent: 0,
+  },
+  {
+    id: 2,
+    name: "Task 2",
+    start: new Date(2020, 0, 12),
+    end: new Date(2020, 1, 28),
+    parent: 0,
+  },
+  {
+    id: 3,
+    name: "Task 3",
+    start: new Date(2020, 2, 1),
+    end: new Date(2020, 2, 30),
+    parent: 0,
+  },
+];
 
-  /// modified data should be
-  // const tasks = [
-  //   { id: 1, name: "Task 1", start: new Date("2022/1/10"), end: new Date("2022/1/15"), parent:null },
-  //   { id: 2, name: "Task 2", start: new Date("2022/1/10"), end: new Date("2022/1/15"), parent: 1 },
-  //   { id: 3, name: "Task 3" },
-  //   { id: 4, name: "Task 4" , start: new Date("2022/1/11"), end: new Date("2022/1/18"), parent: 3},
-  // ];
+function drawGantt() {
+  let chartCanvas = document.getElementById("chartCanvas") as HTMLCanvasElement;
+  chartCanvas.width = chartCanvas.parentElement.clientWidth;
+  chartCanvas.height = 500;
+  let options = {
+    canvas: chartCanvas,
+    padding: 20,
+    gridScale: 5,
+    gridColor: "black",
+    data: data,
+    titleOptions: "Music",
+    colors: ["#a55ca5", "#67b6c7", "#bccd7a", "#eb9743"],
+  };
+  console.log("Creating Gantt Chart");
+  let gantt = new GanttChart(options);
+  gantt.draw();
+  console.log("Drawing Gantt Chart");
+}
 
-  const taskDurations: TaskDuration[] = [
-    {
-      id: "1",
-      start: new Date("2022/1/2"),
-      end: new Date("2022/1/8"),
-      task: 1,
-    },
-    {
-      id: "2",
-      start: new Date("2022/1/10"),
-      end: new Date("2022/1/15"),
-      task: 2,
-    },
-    {
-      id: "3",
-      start: new Date("2022/1/11"),
-      end: new Date("2022/1/18"),
-      task: 4,
-    },
-  ];
+drawGantt();
 
-  const ganttCharts = document.querySelectorAll(".gantt-chart");
-  ganttCharts.forEach((ganttChart) => {
-    ganttChart.innerHTML = "";
-    new GanttChart(ganttChart as HTMLElement, tasks, taskDurations);
-  });
-});
+console.log(
+  scaleX(
+    new Date("2022/12/31"),
+    new Date("2022/01/01"),
+    new Date("2022/12/31"),
+    100
+  )
+);
+
+console.log(
+  scaleDate(
+    499,
+    new Date("2022/01/01"),
+    new Date("2022/12/31").getTime() - new Date("2022/01/01").getTime(),
+    1000
+  )
+);
