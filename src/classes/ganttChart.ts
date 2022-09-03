@@ -70,9 +70,9 @@ export class GanttChart {
       this.options.padding;
     drawLine(
       this.ctx,
+      this.options.padding - 15,
       this.options.padding,
-      this.options.padding,
-      this.options.padding + canvasActualWidth,
+      this.options.padding + canvasActualWidth + 15,
       this.options.padding,
       "black"
     );

@@ -89,17 +89,17 @@ export class TimeLine {
 
     drawLine(
       this.ctx,
-      this.options.padding,
+      this.options.padding - 15,
       40,
-      this.canvas.width - this.options.padding,
+      this.canvas.width - this.options.padding + 15,
       40,
       "black"
     );
     drawLine(
       this.ctx,
-      this.options.padding,
+      this.options.padding - 15,
       70,
-      this.canvas.width - this.options.padding,
+      this.canvas.width - this.options.padding + 15,
       70,
       "black"
     );
@@ -139,14 +139,14 @@ export class TimeLine {
         this.canvas.height - this.options.padding,
         "black"
       );
-      drawLine(
-        this.ctx,
-        maxScale + this.options.padding + 15,
-        15,
-        maxScale + this.options.padding + 15,
-        this.canvas.height - this.options.padding,
-        "black"
-      );
+      //   drawLine(
+      //     this.ctx,
+      //     maxScale + this.options.padding + 15,
+      //     15,
+      //     maxScale + this.options.padding + 15,
+      //     this.canvas.height - this.options.padding,
+      //     "black"
+      //   );
     }
 
     //topline above month names
@@ -154,7 +154,7 @@ export class TimeLine {
       this.ctx,
       this.options.padding - 15,
       15,
-      this.canvas.width - this.options.padding,
+      this.canvas.width - this.options.padding + 15,
       15,
       "black"
     );
