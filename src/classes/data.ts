@@ -5,4 +5,5 @@ export interface data {
   end: Date;
   parent?: number;
   progress?: number;
+  level?: number;
 }

@@ -1,3 +1,5 @@
+import { options } from "../classes/options";
+
 export class Task {
   width: number;
   height: number;
@@ -8,6 +10,7 @@ export class Task {
   name: string;
   context: CanvasRenderingContext2D;
   hoverColor: string;
+  options: options;
 
   constructor(
     x: number,
@@ -17,7 +20,8 @@ export class Task {
     context: CanvasRenderingContext2D,
     color?: string,
     fontColor?: string,
-    name?: string
+    name?: string,
+    options?: options
   ) {
     this.width = width;
     this.height = height;
@@ -27,7 +31,9 @@ export class Task {
     this.fontColor = fontColor;
     this.name = name;
     this.context = context;
-    this.hoverColor = "red";
+    this.options = options;
+    this.color = this.options.barColor;
+    this.hoverColor = this.options.barColorHover;
   }
 
   draw(color?: string, fontColor?: string, name?: string) {
@@ -35,7 +41,7 @@ export class Task {
       ? (this.color = color)
       : this.color
       ? this.color
-      : (this.color = "blue");
+      : (this.color = "lightgreen");
     fontColor
       ? (this.fontColor = fontColor)
       : this.fontColor
@@ -43,6 +49,7 @@ export class Task {
       : (this.fontColor = "white");
     name ? (this.name = name) : this.name ? this.name : (this.name = "Task");
     if (this.name) {
+      this.context.globalCompositeOperation = "source-over";
       this.context.textAlign = "center";
       this.context.textBaseline = "middle";
       let fontSize = Math.min(this.width / 1.5, this.height / 1.5);
@@ -68,16 +75,16 @@ export class Task {
 
   collision(x: number, y: number) {
     if (
-      x >= this.x &&
-      x <= this.x + this.width &&
+      x >= this.x - this.options.timeLineColumnWidth / 2 &&
+      x <= this.x + this.width - this.options.timeLineColumnWidth / 2 &&
       y >= this.y &&
       y <= this.y + this.height
     ) {
-      this.color = this.hoverColor;
+      this.color = this.options.barColorHover;
       this.draw();
       return true;
     } else {
-      this.color = "blue";
+      this.color = this.options.barColor;
       this.draw();
       return false;
     }

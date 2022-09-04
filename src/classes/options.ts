@@ -7,5 +7,12 @@ export interface options {
   gridColor: string;
   data: data[];
   titleOptions: string;
-  colors: string[];
+  rowHeight?: number;
+  timeLineColumnWidth?: number;
+  timeLineBackgroundColor?: string;
+  timeLineHeight?: number;
+  tableWidth?: number;
+  barColor?: string;
+  barColorHover?: string;
+  colors?: string[];
 }

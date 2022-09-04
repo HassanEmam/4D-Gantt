@@ -1,3 +1,4 @@
+import { createVerify } from "crypto";
 import { data } from "../classes/data";
 
 /**
@@ -17,6 +18,7 @@ export function drawLine(
   endY: number,
   color: string
 ) {
+  // ctx.globalCompositeOperation = "destination-over";
   ctx.save();
   ctx.strokeStyle = color;
   ctx.lineWidth = 1;
@@ -33,11 +35,26 @@ export function drawBar(
   upperLeftCornerY: number,
   width: number,
   height: number,
-  color: string
+  color: string,
+  text?: string
 ) {
   ctx.save();
   ctx.fillStyle = color;
   ctx.fillRect(upperLeftCornerX, upperLeftCornerY, width, height);
+  if (text) {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    let fontSize = Math.min(12);
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = "black";
+    ctx.fillText(
+      text,
+      upperLeftCornerX + width / 2,
+      upperLeftCornerY + height / 2,
+      width
+    );
+  }
   ctx.restore();
 }
 
@@ -176,3 +193,45 @@ export const months = [
   "Nov",
   "Dec",
 ];
+
+/**
+ * this function solve the issue of scrolling within a div and getting correction for mouse events
+ * @param aobj the elemeent hosting the event
+ * @returns
+ */
+export function recursive_offset(aobj: any) {
+  var currOffset = {
+    x: 0,
+    y: 0,
+  };
+  var newOffset = {
+    x: 0,
+    y: 0,
+  };
+
+  if (aobj !== null) {
+    if (aobj.scrollLeft) {
+      currOffset.x = aobj.scrollLeft;
+    }
+
+    if (aobj.scrollTop) {
+      currOffset.y = aobj.scrollTop;
+    }
+
+    if (aobj.offsetLeft) {
+      currOffset.x -= aobj.offsetLeft;
+    }
+
+    if (aobj.offsetTop) {
+      currOffset.y -= aobj.offsetTop;
+    }
+
+    if (aobj.parentNode !== undefined) {
+      newOffset = recursive_offset(aobj.parentNode);
+    }
+
+    currOffset.x = currOffset.x + newOffset.x;
+    currOffset.y = currOffset.y + newOffset.y;
+  }
+  return currOffset;
+}

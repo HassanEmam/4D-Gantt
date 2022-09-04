@@ -1,583 +1,156 @@
-(() => {
-  "use strict";
-  const t = [
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 3, 1),
-      end: new Date(2020, 3, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 0, 1),
-      end: new Date(2020, 0, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 0, 1),
-      end: new Date(2020, 0, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 0, 1),
-      end: new Date(2020, 0, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 0, 1),
-      end: new Date(2020, 0, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 0, 1),
-      end: new Date(2020, 0, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 0, 1),
-      end: new Date(2020, 0, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-    {
-      id: 1,
-      name: "Task 1",
-      start: new Date(2020, 0, 1),
-      end: new Date(2020, 0, 30),
-      parent: 0,
-    },
-    {
-      id: 2,
-      name: "Task 2",
-      start: new Date(2020, 0, 12),
-      end: new Date(2020, 1, 28),
-      parent: 0,
-    },
-    {
-      id: 3,
-      name: "Task 3",
-      start: new Date(2020, 2, 1),
-      end: new Date(2020, 2, 30),
-      parent: 0,
-    },
-  ];
-  function i(t, i, e, s, a, n) {
-    t.save(),
-      (t.strokeStyle = n),
-      (t.lineWidth = 1),
-      t.beginPath(),
-      t.moveTo(i, e),
-      t.lineTo(s, a),
-      t.stroke(),
-      t.restore();
-  }
-  function e(t) {
-    let i = new Date(0),
-      e = t[0].start;
-    return (
-      t.forEach((t) => {
-        t.end > i && (i = t.end), t.start < e && (e = t.start);
-      }),
-      [e, i]
-    );
-  }
-  function s(t, i) {
-    const e = i.getTime() - t.getTime();
-    return Math.ceil(e / 864e5) + 1;
-  }
-  function a(t, i, e) {
-    return ["M", "T", "W", "T", "F", "S", "S"][new Date(t, i, e).getDay()];
-  }
-  function n(t, i) {
-    var e = new Date(t);
-    return e.setDate(e.getDate() + i), e;
-  }
-  const h = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  function o(t, i, e, s) {
-    const a = i.getTime(),
-      n = e.getTime() - a,
-      h = t.getTime();
-    return Math.ceil((s / n) * (h - a));
-  }
-  class d {
-    constructor(t, i, s, a) {
-      (this.options = s),
-        (this.dateLine = a),
-        (this.canvas = i),
-        (this.ctx = t);
-      let n = e(this.options.data);
-      (this.minDate = n[0]),
-        (this.maxDate = n[1]),
-        (this.maxValue = n[1].getTime()),
-        (this.minValue = n[0].getTime()),
-        (this.xpos = o(
-          this.dateLine,
-          this.minDate,
-          this.maxDate,
-          this.canvas.width - 2 * this.options.padding
-        ));
-    }
-    draw() {
-      this.ctx.beginPath(),
-        (this.ctx.strokeStyle = "red"),
-        (this.ctx.lineWidth = 3),
-        this.ctx.moveTo(this.xpos + this.options.padding, this.options.padding),
-        this.ctx.lineTo(
-          this.xpos + this.options.padding,
-          this.canvas.height - this.options.padding
-        ),
-        this.ctx.stroke();
-    }
-    update(t) {
-      (this.dateLine = t),
-        (this.xpos = o(
-          this.dateLine,
-          this.minDate,
-          this.maxDate,
-          this.canvas.width - 2 * this.options.padding
-        )),
-        this.draw();
-    }
-    collision(t, i) {
-      this.xpos + this.options.padding - 5 <= t &&
-      this.xpos + this.options.padding + 5 >= t
-        ? (this.ctx.beginPath(),
-          (this.ctx.strokeStyle = "red"),
-          (this.ctx.lineWidth = 3),
-          this.ctx.moveTo(
-            this.xpos + this.options.padding,
-            this.options.padding
-          ),
-          this.ctx.lineTo(
-            this.xpos + this.options.padding,
-            this.canvas.height - this.options.padding
-          ),
-          this.ctx.stroke())
-        : (this.ctx.beginPath(),
-          (this.ctx.strokeStyle = "blue"),
-          (this.ctx.lineWidth = 3),
-          this.ctx.moveTo(
-            this.xpos + this.options.padding,
-            this.options.padding
-          ),
-          this.ctx.lineTo(
-            this.xpos + this.options.padding,
-            this.canvas.height - this.options.padding
-          ),
-          this.ctx.stroke());
-    }
-  }
-  class r {
-    constructor(t, i, e, s, a, n, h, o) {
-      (this.width = e),
-        (this.height = s),
-        (this.x = t),
-        (this.y = i),
-        (this.color = n),
-        (this.fontColor = h),
-        (this.name = o),
-        (this.context = a),
-        (this.hoverColor = "red");
-    }
-    draw(t, i, e) {
-      if (
-        (t ? (this.color = t) : this.color ? this.color : (this.color = "blue"),
-        i
-          ? (this.fontColor = i)
-          : this.fontColor
-          ? this.fontColor
-          : (this.fontColor = "white"),
-        e ? (this.name = e) : this.name ? this.name : (this.name = "Task"),
-        this.name)
-      ) {
-        (this.context.textAlign = "center"),
-          (this.context.textBaseline = "middle");
-        let t = Math.min(this.width / 1.5, this.height / 1.5);
-        (this.context.font = `${t}px Arial`),
-          (this.context.fillStyle = this.color),
-          this.context.fillRect(this.x, this.y, this.width, this.height),
-          (this.context.fillStyle = this.fontColor),
-          this.context.fillText(
-            this.name,
-            this.x + this.width / 2,
-            this.y + this.height / 2
-          );
-      }
-    }
-    update(t, i) {
-      this.draw(), (this.x = t), (this.y = i);
-    }
-    collision(t, i) {
-      return t >= this.x &&
-        t <= this.x + this.width &&
-        i >= this.y &&
-        i <= this.y + this.height
-        ? ((this.color = this.hoverColor), this.draw(), !0)
-        : ((this.color = "blue"), this.draw(), !1);
-    }
-  }
-  class p {
-    constructor(t, i, s) {
-      (this.options = s), (this.canvas = i), (this.ctx = t);
-      let a = e(this.options.data);
-      (this.minDate = a[0]),
-        (this.maxDate = a[1]),
-        (this.maxValue = a[1].getTime()),
-        (this.minValue = a[0].getTime());
-    }
-    draw() {
-      let t = this.maxDate.getFullYear() - this.minDate.getFullYear(),
-        e = (function (t, i) {
-          let e;
-          return (
-            (e = 12 * (i.getFullYear() - t.getFullYear())),
-            (e -= t.getMonth()),
-            (e += i.getMonth()),
-            e <= 0 ? 0 : e
-          );
-        })(this.minDate, this.maxDate),
-        d = s(this.minDate, this.maxDate);
-      console.log(t, e, d, this.canvas.width);
-      for (let t = 0; t < d; t++) {
-        let e = o(
-            n(this.minDate, t),
-            this.minDate,
-            this.maxDate,
-            this.canvas.width - 2 * this.options.padding
-          ),
-          s = n(this.minDate, t),
-          h = a(s.getFullYear(), s.getMonth(), s.getDate() - 1);
-        console.log(
-          a(s.getFullYear(), s.getMonth(), s.getDate() - 1),
-          s,
-          s.getDate(),
-          s.getMonth(),
-          s.getFullYear(),
-          "\n Date Entered " + new Date(2022, 0, 30).getDay(),
-          a(2022, 0, 30)
-        ),
-          (this.ctx.textAlign = "center"),
-          (this.ctx.textBaseline = "middle");
-        let d = Math.min(12);
-        (this.ctx.font = `${d}px Arial`),
-          (this.ctx.fillStyle = "black"),
-          this.ctx.fillText(
-            s.getDate().toString(),
-            e + this.options.padding,
-            50
-          ),
-          this.ctx.fillText(h, e + this.options.padding, 85),
-          i(
-            this.ctx,
-            e + this.options.padding + 15,
-            40,
-            e + this.options.padding + 15,
-            this.canvas.height - this.options.padding,
-            "lightgray"
-          );
-      }
-      i(
-        this.ctx,
-        this.options.padding - 15,
-        40,
-        this.canvas.width - this.options.padding + 15,
-        40,
-        "black"
-      ),
-        i(
-          this.ctx,
-          this.options.padding - 15,
-          70,
-          this.canvas.width - this.options.padding + 15,
-          70,
-          "black"
-        );
-      let r = this.minDate;
-      for (; r <= this.maxDate; ) {
-        let t = r.getMonth(),
-          e = r.getFullYear(),
-          s = r.getDate(),
-          a = h[t],
-          n = o(
-            new Date(e, t, 0),
-            this.minDate,
-            this.maxDate,
-            this.canvas.width - 2 * this.options.padding
-          ),
-          d =
-            (n +
-              o(
-                new Date(e, t + 1, 0),
-                this.minDate,
-                this.maxDate,
-                this.canvas.width - 2 * this.options.padding
-              )) /
-            2;
-        (this.ctx.textAlign = "center"), (this.ctx.textBaseline = "middle");
-        let p = Math.min(18);
-        (this.ctx.font = `${p}px Arial`),
-          (this.ctx.fillStyle = "black"),
-          this.ctx.fillText(a, d + this.options.padding, 30),
-          (t += 1),
-          console.log(a),
-          (r = new Date(e, t, s)),
-          i(
-            this.ctx,
-            n + this.options.padding + 15,
-            15,
-            n + this.options.padding + 15,
-            this.canvas.height - this.options.padding,
-            "black"
-          );
-      }
-      i(
-        this.ctx,
-        this.options.padding - 15,
-        15,
-        this.canvas.width - this.options.padding + 15,
-        15,
-        "black"
-      );
-    }
-    update(t) {}
-  }
-  class l {
-    constructor(t) {
-      (this.options = t),
-        (this.canvas = t.canvas),
-        (this.canvas.height =
-          2 * this.options.padding + 50 * this.options.data.length),
-        (this.ctx = this.canvas.getContext("2d")),
-        (this.colors = t.colors),
-        (this.titleOptions = t.titleOptions);
-      let i = e(this.options.data);
-      (this.maxValue = i[1].getTime()),
-        (this.minValue = i[0].getTime()),
-        (this.minDate = i[0]),
-        (this.maxDate = i[1]);
-      let a = s(this.minDate, this.maxDate);
-      console.log(a),
-        (this.canvas.width = 30 * a),
-        (this.dateLine = new d(
-          this.ctx,
-          this.canvas,
-          this.options,
-          this.minDate
-        )),
-        (this.timeLine = new p(this.ctx, this.canvas, this.options)),
-        (this.tasks = []),
-        new Date(2020, 1, 15),
-        this.canvas.addEventListener("mousemove", (t) => {
-          let i = t.target.parentElement;
-          for (let e of this.tasks)
-            e.collision(t.pageX - i.offsetLeft, t.pageY - i.offsetTop);
-          this.dateLine.collision(
-            t.pageX - i.offsetLeft,
-            t.pageY - i.offsetTop
-          );
-        });
-    }
-    drawGridLines() {
-      this.canvas.height, this.options.padding;
-      var t = this.canvas.width - 2 * this.options.padding;
-      this.maxValue,
-        this.options.padding,
-        i(
-          this.ctx,
-          this.options.padding - 15,
-          this.options.padding,
-          this.options.padding + t + 15,
-          this.options.padding,
-          "black"
-        );
-      for (let e in this.options.data)
-        i(
-          this.ctx,
-          this.options.padding,
-          this.options.padding + 50 * (parseInt(e) + 1),
-          this.options.padding + t,
-          this.options.padding + 50 * (parseInt(e) + 1),
-          "lightgray"
-        );
-      this.options.gridScale;
-    }
-    drawBars() {
-      this.canvas.height, this.options.padding;
-      var t = this.canvas.width - 2 * this.options.padding;
-      Object.values(this.options.data);
-      for (let i in this.options.data) {
-        let e = this.options.data[i],
-          s = this.options.padding + 50 * parseInt(i) + 10,
-          a = o(e.start, this.minDate, this.maxDate, t),
-          n = o(e.end, this.minDate, this.maxDate, t) - a,
-          h = new r(
-            a + this.options.padding,
-            s,
-            n,
-            30,
-            this.ctx,
-            "blue",
-            "white",
-            e.name
-          );
-        this.tasks.push(h), h.draw(), this.ctx.restore();
-      }
-    }
-    drawDateLine() {
-      (this.dateLine = new d(
-        this.ctx,
-        this.canvas,
-        this.options,
-        new Date(2020, 1, 15)
-      )),
-        this.dateLine.draw();
-    }
-    drawTimeLine() {
-      (this.timeLine = new p(this.ctx, this.canvas, this.options)),
-        this.timeLine.draw();
-    }
-    draw() {
-      this.drawGridLines(),
-        this.drawBars(),
-        this.drawDateLine(),
-        this.drawTimeLine();
-    }
-  }
-  let c = t;
-  !(function () {
-    let t = document.getElementById("chartCanvas");
-    (t.width = t.parentElement.clientWidth),
-      (t.height = 500),
-      new l({
-        canvas: t,
-        padding: 100,
-        gridScale: 5,
-        gridColor: "black",
-        data: c,
-        titleOptions: "Music",
-        colors: ["#a55ca5", "#67b6c7", "#bccd7a", "#eb9743"],
-      }).draw();
-  })();
-})();
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/classes/dateLine.ts":
+/*!*********************************!*\
+  !*** ./src/classes/dateLine.ts ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"DateLine\": () => (/* binding */ DateLine)\n/* harmony export */ });\n/* harmony import */ var _utils_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/helper */ \"./src/utils/helper.ts\");\n/* harmony import */ var _utils_scales__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/scales */ \"./src/utils/scales.ts\");\n\n\nclass DateLine {\n    constructor(ctx, canvas, options, date) {\n        this.options = options;\n        this.dateLine = date;\n        this.canvas = canvas;\n        this.ctx = ctx;\n        let maxmin = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.minmax)(this.options.data);\n        this.minDate = maxmin[0];\n        this.maxDate = maxmin[1];\n        this.maxValue = maxmin[1].getTime();\n        this.minValue = maxmin[0].getTime();\n        this.xpos = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_1__.scaleX)(this.dateLine, this.minDate, this.maxDate, this.canvas.width - 2 * this.options.padding - this.options.tableWidth);\n    }\n    draw() {\n        this.ctx.beginPath();\n        this.ctx.strokeStyle = \"red\";\n        this.ctx.lineWidth = 3;\n        this.ctx.moveTo(this.xpos +\n            this.options.padding +\n            this.options.tableWidth +\n            this.options.timeLineColumnWidth / 2, this.options.padding + this.options.timeLineHeight);\n        this.ctx.lineTo(this.xpos +\n            this.options.padding +\n            this.options.tableWidth +\n            this.options.timeLineColumnWidth / 2, this.canvas.height - this.options.padding + this.options.timeLineHeight);\n        this.ctx.stroke();\n    }\n    update(date) {\n        this.dateLine = date;\n        this.xpos = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_1__.scaleX)(this.dateLine, this.minDate, this.maxDate, this.canvas.width - this.options.tableWidth - 2 * this.options.padding);\n        this.draw();\n    }\n    collision(x, y) {\n        if (this.xpos + this.options.padding + this.options.tableWidth - 5 <= x &&\n            this.xpos + this.options.padding + this.options.tableWidth + 5 >= x) {\n            this.ctx.beginPath();\n            this.ctx.strokeStyle = \"red\";\n            this.ctx.lineWidth = 3;\n            this.ctx.moveTo(this.xpos +\n                this.options.padding +\n                this.options.tableWidth +\n                this.options.timeLineColumnWidth / 2, this.options.padding + this.options.timeLineHeight);\n            this.ctx.lineTo(this.xpos +\n                this.options.padding +\n                this.options.tableWidth +\n                this.options.timeLineColumnWidth / 2, this.canvas.height - this.options.padding + this.options.timeLineHeight);\n            this.ctx.stroke();\n        }\n        else {\n            this.ctx.beginPath();\n            this.ctx.strokeStyle = \"blue\";\n            this.ctx.lineWidth = 3;\n            this.ctx.moveTo(this.xpos +\n                this.options.padding +\n                this.options.tableWidth +\n                this.options.timeLineColumnWidth / 2, this.options.padding + this.options.timeLineHeight);\n            this.ctx.lineTo(this.xpos +\n                this.options.padding +\n                this.options.tableWidth +\n                this.options.timeLineColumnWidth / 2, this.canvas.height - this.options.padding + this.options.timeLineHeight);\n            this.ctx.stroke();\n        }\n    }\n}\n\n\n//# sourceURL=webpack://my-webpack-project/./src/classes/dateLine.ts?");
+
+/***/ }),
+
+/***/ "./src/classes/ganttChart.ts":
+/*!***********************************!*\
+  !*** ./src/classes/ganttChart.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"GanttChart\": () => (/* binding */ GanttChart)\n/* harmony export */ });\n/* harmony import */ var _dateLine__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dateLine */ \"./src/classes/dateLine.ts\");\n/* harmony import */ var _task__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./task */ \"./src/classes/task.ts\");\n/* harmony import */ var _utils_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/helper */ \"./src/utils/helper.ts\");\n/* harmony import */ var _utils_scales__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/scales */ \"./src/utils/scales.ts\");\n/* harmony import */ var _timeline__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./timeline */ \"./src/classes/timeline.ts\");\n\n\n\n\n\nclass GanttChart {\n    constructor(options) {\n        this.options = options;\n        this.canvas = options.canvas;\n        this.canvas.height =\n            2 * this.options.padding +\n                this.options.rowHeight * (this.options.data.length + 1);\n        if (this.options.tableWidth) {\n            this.tableWidth = this.options.tableWidth;\n        }\n        else {\n            this.tableWidth = 400;\n            this.options.tableWidth = this.tableWidth;\n        }\n        this.ctx = this.canvas.getContext(\"2d\");\n        this.colors = options.colors;\n        this.titleOptions = options.titleOptions;\n        let maxmin = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_2__.minmax)(this.options.data);\n        this.maxValue = maxmin[1].getTime();\n        this.minValue = maxmin[0].getTime();\n        this.minDate = maxmin[0];\n        this.maxDate = maxmin[1];\n        let duration = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_2__.dayDiff)(this.minDate, this.maxDate) + 1;\n        if (this.options.timeLineHeight) {\n            this.timeLineHeight = this.options.timeLineHeight;\n        }\n        else {\n            this.timeLineHeight = 120;\n            this.options.timeLineHeight = this.timeLineHeight;\n        }\n        this.canvas.width =\n            2 * this.options.padding +\n                this.tableWidth +\n                this.options.timeLineColumnWidth * duration;\n        this.dateLine = new _dateLine__WEBPACK_IMPORTED_MODULE_0__.DateLine(this.ctx, this.canvas, this.options, this.minDate);\n        this.timeLine = new _timeline__WEBPACK_IMPORTED_MODULE_4__.TimeLine(this.ctx, this.canvas, this.options);\n        this.tasks = [];\n        let currentDate = new Date(2020, 1, 15);\n        this.canvas.addEventListener(\"mousemove\", (e) => {\n            let parent = e.target.parentElement;\n            let offsetpos = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_2__.recursive_offset)(e.target);\n            let posX = e.clientX + offsetpos.x;\n            let posY = e.clientY + offsetpos.y + parent.offsetTop;\n            for (let task of this.tasks) {\n                task.collision(posX, posY);\n            }\n            if (this.dateLine) {\n                this.dateLine.collision(posX, posY);\n            }\n        });\n    }\n    drawGridLines() {\n        var canvasActualHeight = this.canvas.height -\n            this.options.padding * 2 -\n            this.options.timeLineHeight;\n        var canvasActualWidth = this.canvas.width - this.options.tableWidth - this.options.padding * 2;\n        var gridValue = 0;\n        // while (gridValue <= this.maxValue) {\n        (0,_utils_helper__WEBPACK_IMPORTED_MODULE_2__.drawLine)(this.ctx, this.options.padding + this.options.tableWidth, this.options.padding + this.options.timeLineHeight, this.options.padding + canvasActualWidth + this.options.tableWidth, this.options.padding + this.options.timeLineHeight, \"black\");\n        // drawLine(\n        //   this.ctx,\n        //   this.options.padding,\n        //   this.options.padding,\n        //   this.options.padding + canvasActualWidth,\n        //   this.options.padding,\n        //   \"black\"\n        // );\n        let rowHeight = this.options.rowHeight;\n        for (let i in this.options.data) {\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_2__.drawLine)(this.ctx, this.options.padding + this.options.tableWidth, this.options.padding +\n                this.options.timeLineHeight +\n                rowHeight * (parseInt(i) + 1), this.options.padding +\n                canvasActualWidth +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.options.padding +\n                this.options.timeLineHeight +\n                rowHeight * (parseInt(i) + 1), \"lightgray\");\n        }\n        gridValue += this.options.gridScale;\n        // }\n    }\n    drawBars() {\n        var canvasActualHeight = this.canvas.height - this.options.padding * 2;\n        var canvasActualWidth = this.canvas.width - this.options.padding * 2 - this.options.tableWidth;\n        var values = Object.values(this.options.data);\n        for (let idx in this.options.data) {\n            let taskData = this.options.data[idx];\n            let yOffset = this.options.padding + this.options.rowHeight * parseInt(idx) + 10;\n            let xStart = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_3__.scaleX)(taskData.start, this.minDate, this.maxDate, canvasActualWidth);\n            let xEnd = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_3__.scaleX)((0,_utils_helper__WEBPACK_IMPORTED_MODULE_2__.addDays)(taskData.end, 1), this.minDate, this.maxDate, canvasActualWidth);\n            let barWidth = xEnd - xStart;\n            let bar = new _task__WEBPACK_IMPORTED_MODULE_1__.Task(xStart + this.options.padding + this.options.tableWidth, yOffset + this.options.timeLineHeight, barWidth, this.options.rowHeight * 0.6, this.ctx, this.options.colors[0], \"white\", taskData.name, this.options);\n            this.tasks.push(bar);\n            bar.draw();\n            // draw text to the right of the bar\n            //   this.ctx.textAlign = \"center\";\n            //   this.ctx.textBaseline = \"middle\";\n            //   let fontSize = Math.min(barWidth / 1.5, 20);\n            //   this.ctx.font = `${fontSize}px Arial`;\n            //   this.ctx.fillStyle = \"black\";\n            //   this.ctx.fillText(\n            //     taskData.name,\n            //     xEnd + this.options.padding + 3 * fontSize,\n            //     yOffset + 15\n            //   );\n            this.ctx.restore();\n            // this.colors[barIndex % this.colors.length];\n        }\n    }\n    drawDateLine() {\n        this.dateLine = new _dateLine__WEBPACK_IMPORTED_MODULE_0__.DateLine(this.ctx, this.canvas, this.options, new Date(2020, 1, 15));\n        this.dateLine.draw();\n    }\n    drawTimeLine() {\n        this.timeLine = new _timeline__WEBPACK_IMPORTED_MODULE_4__.TimeLine(this.ctx, this.canvas, this.options);\n        this.timeLine.draw();\n    }\n    draw() {\n        this.drawGridLines();\n        this.drawBars();\n        this.drawDateLine();\n        this.drawTimeLine();\n    }\n    update() {\n        let duration = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_2__.dayDiff)(this.minDate, this.maxDate) + 1;\n        this.canvas.width =\n            2 * this.options.padding +\n                this.tableWidth +\n                this.options.timeLineColumnWidth * duration;\n        this.ctx.clearRect(0, 0, this.canvas.width + this.options.padding * 2 + this.options.tableWidth, this.canvas.height +\n            this.options.padding * 2 +\n            this.options.timeLineHeight);\n        this.tasks = [];\n        this.dateLine = null;\n        this.draw();\n    }\n}\n\n\n//# sourceURL=webpack://my-webpack-project/./src/classes/ganttChart.ts?");
+
+/***/ }),
+
+/***/ "./src/classes/task.ts":
+/*!*****************************!*\
+  !*** ./src/classes/task.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Task\": () => (/* binding */ Task)\n/* harmony export */ });\nclass Task {\n    constructor(x, y, width, height, context, color, fontColor, name, options) {\n        this.width = width;\n        this.height = height;\n        this.x = x;\n        this.y = y;\n        this.color = color;\n        this.fontColor = fontColor;\n        this.name = name;\n        this.context = context;\n        this.options = options;\n        this.color = this.options.barColor;\n        this.hoverColor = this.options.barColorHover;\n    }\n    draw(color, fontColor, name) {\n        color\n            ? (this.color = color)\n            : this.color\n                ? this.color\n                : (this.color = \"lightgreen\");\n        fontColor\n            ? (this.fontColor = fontColor)\n            : this.fontColor\n                ? this.fontColor\n                : (this.fontColor = \"white\");\n        name ? (this.name = name) : this.name ? this.name : (this.name = \"Task\");\n        if (this.name) {\n            this.context.globalCompositeOperation = \"source-over\";\n            this.context.textAlign = \"center\";\n            this.context.textBaseline = \"middle\";\n            let fontSize = Math.min(this.width / 1.5, this.height / 1.5);\n            this.context.font = `${fontSize}px Arial`;\n            this.context.fillStyle = this.color;\n            this.context.fillRect(this.x, this.y, this.width, this.height);\n            this.context.fillStyle = this.fontColor;\n            // this.context.fillStyle = \"black\";\n            this.context.fillText(this.name, this.x + this.width / 2, this.y + this.height / 2);\n        }\n    }\n    update(x, y) {\n        this.draw();\n        this.x = x;\n        this.y = y;\n    }\n    collision(x, y) {\n        if (x >= this.x - this.options.timeLineColumnWidth / 2 &&\n            x <= this.x + this.width - this.options.timeLineColumnWidth / 2 &&\n            y >= this.y &&\n            y <= this.y + this.height) {\n            this.color = this.options.barColorHover;\n            this.draw();\n            return true;\n        }\n        else {\n            this.color = this.options.barColor;\n            this.draw();\n            return false;\n        }\n    }\n}\n\n\n//# sourceURL=webpack://my-webpack-project/./src/classes/task.ts?");
+
+/***/ }),
+
+/***/ "./src/classes/timeline.ts":
+/*!*********************************!*\
+  !*** ./src/classes/timeline.ts ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"TimeLine\": () => (/* binding */ TimeLine)\n/* harmony export */ });\n/* harmony import */ var _utils_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/helper */ \"./src/utils/helper.ts\");\n/* harmony import */ var _utils_scales__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/scales */ \"./src/utils/scales.ts\");\n\n\n\nclass TimeLine {\n    constructor(ctx, canvas, options) {\n        this.options = options;\n        this.canvas = canvas;\n        this.ctx = ctx;\n        let maxmin = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.minmax)(this.options.data);\n        this.minDate = maxmin[0];\n        this.maxDate = maxmin[1];\n        this.maxValue = maxmin[1].getTime();\n        this.minValue = maxmin[0].getTime();\n    }\n    draw() {\n        let noOfYears = this.maxDate.getFullYear() - this.minDate.getFullYear() + 1;\n        let noOfMonths = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.monthDiff)(this.minDate, this.maxDate);\n        let noOfDays = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.dayDiff)(this.minDate, this.maxDate);\n        for (let i = 0; i < noOfDays; i++) {\n            let scaledX = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_1__.scaleX)((0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.addDays)(this.minDate, i), this.minDate, this.maxDate, this.canvas.width - 2 * this.options.padding - this.options.tableWidth);\n            let date = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.addDays)(this.minDate, i);\n            let dayName = (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.getDayOfWeek)(date.getFullYear(), date.getMonth(), date.getDate() - 1);\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawBar)(this.ctx, scaledX + this.options.padding + this.options.tableWidth, this.options.padding + (this.options.timeLineHeight * 3) / 4, this.options.timeLineColumnWidth, 30, this.options.timeLineBackgroundColor, date.getDate().toString());\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawBar)(this.ctx, scaledX + this.options.padding + this.options.tableWidth, this.options.padding + (this.options.timeLineHeight * 2) / 4, this.options.timeLineColumnWidth, 30, this.options.timeLineBackgroundColor, dayName);\n            //   this.ctx.fillText(dayName, scaledX + this.options.padding, 85);\n            // line seperator between days\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, scaledX + this.options.padding + this.options.tableWidth, this.options.padding + (this.options.timeLineHeight * 2) / 4, scaledX + this.options.padding + this.options.tableWidth, this.canvas.height + this.options.padding, \"lightgray\");\n        }\n        (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, this.options.padding + this.options.tableWidth, this.options.padding + (this.options.timeLineHeight * 2) / 4, this.canvas.width -\n            this.options.padding +\n            this.options.timeLineColumnWidth, this.options.padding + (this.options.timeLineHeight * 2) / 4, \"black\");\n        let offset = (this.options.timeLineHeight * 3) / 4;\n        (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, this.options.padding + this.options.tableWidth, this.options.padding + offset, this.canvas.width -\n            this.options.padding +\n            this.options.timeLineColumnWidth, this.options.padding + offset, \"black\");\n        let date = this.minDate;\n        // draw month timeline\n        while (date <= this.maxDate) {\n            let mnth = date.getMonth();\n            let year = date.getFullYear();\n            let day = date.getDate();\n            let monthName = _utils_helper__WEBPACK_IMPORTED_MODULE_0__.months[mnth];\n            let minScale = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_1__.scaleX)(new Date(year, mnth, 0), this.minDate, this.maxDate, this.canvas.width - 2 * this.options.padding - this.options.tableWidth);\n            let maxScale = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_1__.scaleX)(new Date(year, mnth + 1, 0), this.minDate, this.maxDate, this.canvas.width - 2 * this.options.padding - this.options.tableWidth);\n            let scaledX = (minScale + maxScale) / 2.0;\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawBar)(this.ctx, minScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.options.padding + this.options.timeLineHeight / 4, maxScale - minScale, 30, this.options.timeLineBackgroundColor, monthName);\n            mnth += 1;\n            date = new Date(year, mnth, day);\n            // month seperator\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, minScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.options.padding + this.options.timeLineHeight / 4, minScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.canvas.height - this.options.padding + this.options.timeLineHeight, \"black\");\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, maxScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.options.padding + this.options.timeLineHeight / 4, maxScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.canvas.height - this.options.padding + this.options.timeLineHeight, \"black\");\n        }\n        //topline above month names\n        (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, this.options.padding + this.options.tableWidth, this.options.padding, this.canvas.width -\n            this.options.padding +\n            this.options.timeLineColumnWidth, \n        // this.options.tableWidth,\n        this.options.padding, \"black\");\n        for (let i = 0; i < noOfYears; i++) {\n            let fDayOfYear = new Date(this.minDate.getFullYear() + i, 0, 1);\n            let lDayOfYear = new Date(this.minDate.getFullYear() + i, 11, 31);\n            if (fDayOfYear < this.minDate) {\n                fDayOfYear = this.minDate;\n            }\n            if (lDayOfYear > this.maxDate) {\n                lDayOfYear = this.maxDate;\n            }\n            let minScale = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_1__.scaleX)(fDayOfYear, this.minDate, this.maxDate, this.canvas.width - 2 * this.options.padding - this.options.tableWidth);\n            let maxScale = (0,_utils_scales__WEBPACK_IMPORTED_MODULE_1__.scaleX)(lDayOfYear, this.minDate, this.maxDate, this.canvas.width - 2 * this.options.padding - this.options.tableWidth);\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawBar)(this.ctx, minScale + this.options.padding + this.options.tableWidth, this.options.padding, maxScale - minScale + this.options.timeLineColumnWidth, 30, this.options.timeLineBackgroundColor, fDayOfYear.getFullYear().toString());\n            //line under the year\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, minScale + this.options.padding + this.options.tableWidth, this.options.padding + this.options.timeLineHeight / 4, maxScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.options.padding + this.options.timeLineHeight / 4, \"black\");\n            // line to the left of the year\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, minScale + this.options.padding + this.options.tableWidth, this.options.padding, minScale + this.options.padding + this.options.tableWidth, this.canvas.height + this.options.padding, \"black\");\n            (0,_utils_helper__WEBPACK_IMPORTED_MODULE_0__.drawLine)(this.ctx, maxScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.options.padding, maxScale +\n                this.options.padding +\n                this.options.timeLineColumnWidth +\n                this.options.tableWidth, this.canvas.height + this.options.padding, \"black\");\n        }\n    }\n    update(date) { }\n}\n\n\n//# sourceURL=webpack://my-webpack-project/./src/classes/timeline.ts?");
+
+/***/ }),
+
+/***/ "./src/data.ts":
+/*!*********************!*\
+  !*** ./src/data.ts ***!
+  \*********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"scheduleData\": () => (/* binding */ scheduleData)\n/* harmony export */ });\nconst scheduleData = [\n    {\n        id: 1,\n        name: \"Task 1\",\n        start: new Date(2020, 3, 1),\n        end: new Date(2020, 3, 30),\n        parent: 0,\n    },\n    {\n        id: 2,\n        name: \"Task 2\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 3,\n        name: \"Task 3\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n    {\n        id: 4,\n        name: \"Task 4\",\n        start: new Date(2020, 0, 1),\n        end: new Date(2020, 0, 30),\n        parent: 0,\n    },\n    {\n        id: 5,\n        name: \"Task 5\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 6,\n        name: \"Task 6\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n    {\n        id: 7,\n        name: \"Task 7\",\n        start: new Date(2020, 0, 1),\n        end: new Date(2020, 0, 30),\n        parent: 0,\n    },\n    {\n        id: 8,\n        name: \"Task 8\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 9,\n        name: \"Task 9\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n    {\n        id: 10,\n        name: \"Task 10\",\n        start: new Date(2020, 0, 1),\n        end: new Date(2020, 0, 30),\n        parent: 0,\n    },\n    {\n        id: 11,\n        name: \"Task 11\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 12,\n        name: \"Task 12\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n    {\n        id: 13,\n        name: \"Task 13\",\n        start: new Date(2020, 0, 1),\n        end: new Date(2020, 0, 30),\n        parent: 0,\n    },\n    {\n        id: 14,\n        name: \"Task 14\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 15,\n        name: \"Task 15\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n    {\n        id: 16,\n        name: \"Task 16\",\n        start: new Date(2020, 0, 1),\n        end: new Date(2020, 0, 30),\n        parent: 0,\n    },\n    {\n        id: 17,\n        name: \"Task 17\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 18,\n        name: \"Task 18\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n    {\n        id: 19,\n        name: \"Task 19\",\n        start: new Date(2020, 0, 1),\n        end: new Date(2020, 0, 30),\n        parent: 0,\n    },\n    {\n        id: 20,\n        name: \"Task 20\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 21,\n        name: \"Task 21\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n    {\n        id: 22,\n        name: \"Task 22\",\n        start: new Date(2020, 0, 1),\n        end: new Date(2020, 0, 30),\n        parent: 0,\n    },\n    {\n        id: 23,\n        name: \"Task 23\",\n        start: new Date(2020, 0, 12),\n        end: new Date(2020, 1, 28),\n        parent: 0,\n    },\n    {\n        id: 24,\n        name: \"Task 24\",\n        start: new Date(2020, 2, 1),\n        end: new Date(2020, 2, 30),\n        parent: 0,\n    },\n];\n\n\n//# sourceURL=webpack://my-webpack-project/./src/data.ts?");
+
+/***/ }),
+
+/***/ "./src/index.ts":
+/*!**********************!*\
+  !*** ./src/index.ts ***!
+  \**********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./data */ \"./src/data.ts\");\n/* harmony import */ var _classes_ganttChart__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./classes/ganttChart */ \"./src/classes/ganttChart.ts\");\n\n\nlet data = _data__WEBPACK_IMPORTED_MODULE_0__.scheduleData;\nlet gantt;\nfunction drawGantt() {\n    let chartCanvas = document.getElementById(\"chartCanvas\");\n    chartCanvas.width = chartCanvas.parentElement.clientWidth;\n    chartCanvas.height = 500;\n    let options = {\n        canvas: chartCanvas,\n        padding: 120,\n        gridScale: 5,\n        gridColor: \"black\",\n        data: data,\n        titleOptions: \"Music\",\n        rowHeight: 40,\n        timeLineColumnWidth: 12,\n        timeLineBackgroundColor: \"yellow\",\n        tableWidth: 400,\n        barColor: \"lightgreen\",\n        barColorHover: \"red\",\n        colors: [\"#a55ca5\", \"#67b6c7\", \"#bccd7a\", \"#eb9743\"],\n    };\n    gantt = new _classes_ganttChart__WEBPACK_IMPORTED_MODULE_1__.GanttChart(options);\n    gantt.draw();\n}\ndrawGantt();\nlet btnZoomIn = document.getElementById(\"zoom-in\");\nbtnZoomIn.addEventListener(\"click\", () => {\n    gantt.options.timeLineColumnWidth += 5;\n    gantt.update();\n});\nlet btnZoomOut = document.getElementById(\"zoom-out\");\nbtnZoomOut.addEventListener(\"click\", () => {\n    if (gantt.options.timeLineColumnWidth > 5) {\n        gantt.options.timeLineColumnWidth -= 5;\n        gantt.update();\n    }\n});\n\n\n//# sourceURL=webpack://my-webpack-project/./src/index.ts?");
+
+/***/ }),
+
+/***/ "./src/utils/helper.ts":
+/*!*****************************!*\
+  !*** ./src/utils/helper.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"addDays\": () => (/* binding */ addDays),\n/* harmony export */   \"createFormattedDateFromDate\": () => (/* binding */ createFormattedDateFromDate),\n/* harmony export */   \"createFormattedDateFromStr\": () => (/* binding */ createFormattedDateFromStr),\n/* harmony export */   \"dayDiff\": () => (/* binding */ dayDiff),\n/* harmony export */   \"drawBar\": () => (/* binding */ drawBar),\n/* harmony export */   \"drawLine\": () => (/* binding */ drawLine),\n/* harmony export */   \"getDayOfWeek\": () => (/* binding */ getDayOfWeek),\n/* harmony export */   \"getDaysInMonth\": () => (/* binding */ getDaysInMonth),\n/* harmony export */   \"minmax\": () => (/* binding */ minmax),\n/* harmony export */   \"monthDiff\": () => (/* binding */ monthDiff),\n/* harmony export */   \"months\": () => (/* binding */ months),\n/* harmony export */   \"recursive_offset\": () => (/* binding */ recursive_offset)\n/* harmony export */ });\n/**\n * This function draws a line given its coordinates and colour\n * @param {CanvasRenderingContext2D} ctx the canvas context\n * @param {number} startX the starting point of the line on the x axis\n * @param {number} startY the starting point of the line on the y axis\n * @param {number} endX the ending point of the line on the x axis\n * @param {number} endY the ending point of the line on the y axis\n * @param {string} color the color of the line\n */\nfunction drawLine(ctx, startX, startY, endX, endY, color) {\n    // ctx.globalCompositeOperation = \"destination-over\";\n    ctx.save();\n    ctx.strokeStyle = color;\n    ctx.lineWidth = 1;\n    ctx.beginPath();\n    ctx.moveTo(startX, startY);\n    ctx.lineTo(endX, endY);\n    ctx.stroke();\n    ctx.restore();\n}\nfunction drawBar(ctx, upperLeftCornerX, upperLeftCornerY, width, height, color, text) {\n    ctx.save();\n    ctx.fillStyle = color;\n    ctx.fillRect(upperLeftCornerX, upperLeftCornerY, width, height);\n    if (text) {\n        ctx.globalCompositeOperation = \"source-over\";\n        ctx.textAlign = \"center\";\n        ctx.textBaseline = \"middle\";\n        let fontSize = Math.min(12);\n        ctx.font = `${fontSize}px Arial`;\n        ctx.fillStyle = \"black\";\n        ctx.fillText(text, upperLeftCornerX + width / 2, upperLeftCornerY + height / 2, width);\n    }\n    ctx.restore();\n}\n/**\n *\n * @param {data} data the data to be processes\n * @returns an array containing the min and max date\n */\nfunction minmax(data) {\n    let max = new Date(0);\n    let min = data[0].start;\n    data.forEach((element) => {\n        if (element.end > max) {\n            max = element.end;\n        }\n        if (element.start < min) {\n            min = element.start;\n        }\n    });\n    return [min, max];\n}\n/**\n * compares two dates and returns the difference in months\n * @param {Date} firstMonth the first date of the period to compare\n * @param {Date} lastMonth the last date of the period to compare\n * @returns {number} a number representing the number of months between the two dates\n */\nfunction monthDiff(firstMonth, lastMonth) {\n    let months;\n    months = (lastMonth.getFullYear() - firstMonth.getFullYear()) * 12;\n    months -= firstMonth.getMonth();\n    months += lastMonth.getMonth();\n    return months <= 0 ? 0 : months;\n}\n/**\n * Compares two dates and returns the difference in days\n * @param {Date} startDate\n * @param {Date} endDate\n * @returns\n */\nfunction dayDiff(startDate, endDate) {\n    const difference = endDate.getTime() - startDate.getTime();\n    const days = Math.ceil(difference / (1000 * 3600 * 24)) + 1;\n    return days;\n}\n/**\n * This function returns the number of days in a given month\n * @param year the year number\n * @param month the month number\n * @returns {number} the number of days in the given month\n */\nfunction getDaysInMonth(year, month) {\n    return new Date(year, month, 0).getDate();\n}\n/**\n * This function the symbol of a day of the week given the year, month and day\n * @param year the year number\n * @param month the month number\n * @param day day number\n * @returns {string} day symbol as single character\n */\nfunction getDayOfWeek(year, month, day) {\n    const daysOfTheWeekArr = [\"M\", \"T\", \"W\", \"T\", \"F\", \"S\", \"S\"];\n    const dayOfTheWeekIndex = new Date(year, month, day).getDay();\n    return daysOfTheWeekArr[dayOfTheWeekIndex];\n}\n/**\n * Create a formatted date string\n * @param {number} year\n * @param {number} month\n * @param {number} day\n * @returns {string} a formatted date string\n */\nfunction createFormattedDateFromStr(year, month, day) {\n    let monthStr = month.toString();\n    let dayStr = day.toString();\n    if (monthStr.length === 1) {\n        monthStr = `0${monthStr}`;\n    }\n    if (dayStr.length === 1) {\n        dayStr = `0${dayStr}`;\n    }\n    return `${year}-${monthStr}-${dayStr}`;\n}\n/**\n * Formats a date object to a string\n * @param {Date}date the date to be formatted\n * @returns {string} a formatted date string\n */\nfunction createFormattedDateFromDate(date) {\n    let monthStr = (date.getMonth() + 1).toString();\n    let dayStr = date.getDate().toString();\n    if (monthStr.length === 1) {\n        monthStr = `0${monthStr}`;\n    }\n    if (dayStr.length === 1) {\n        dayStr = `0${dayStr}`;\n    }\n    return `${date.getFullYear()}-${monthStr}-${dayStr}`;\n}\n/**\n * Adds number of days to a date and return new date\n * @param date the original date\n * @param days number of days to be added\n * @returns {Date} the new date\n */\nfunction addDays(date, days) {\n    var result = new Date(date);\n    result.setDate(result.getDate() + days);\n    return result;\n}\nconst months = [\n    \"Jan\",\n    \"Feb\",\n    \"Mar\",\n    \"Apr\",\n    \"May\",\n    \"Jun\",\n    \"Jul\",\n    \"Aug\",\n    \"Sep\",\n    \"Oct\",\n    \"Nov\",\n    \"Dec\",\n];\n/**\n * this function solve the issue of scrolling within a div and getting correction for mouse events\n * @param aobj the elemeent hosting the event\n * @returns\n */\nfunction recursive_offset(aobj) {\n    var currOffset = {\n        x: 0,\n        y: 0,\n    };\n    var newOffset = {\n        x: 0,\n        y: 0,\n    };\n    if (aobj !== null) {\n        if (aobj.scrollLeft) {\n            currOffset.x = aobj.scrollLeft;\n        }\n        if (aobj.scrollTop) {\n            currOffset.y = aobj.scrollTop;\n        }\n        if (aobj.offsetLeft) {\n            currOffset.x -= aobj.offsetLeft;\n        }\n        if (aobj.offsetTop) {\n            currOffset.y -= aobj.offsetTop;\n        }\n        if (aobj.parentNode !== undefined) {\n            newOffset = recursive_offset(aobj.parentNode);\n        }\n        currOffset.x = currOffset.x + newOffset.x;\n        currOffset.y = currOffset.y + newOffset.y;\n    }\n    return currOffset;\n}\n\n\n//# sourceURL=webpack://my-webpack-project/./src/utils/helper.ts?");
+
+/***/ }),
+
+/***/ "./src/utils/scales.ts":
+/*!*****************************!*\
+  !*** ./src/utils/scales.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"scaleDate\": () => (/* binding */ scaleDate),\n/* harmony export */   \"scaleX\": () => (/* binding */ scaleX),\n/* harmony export */   \"scaleY\": () => (/* binding */ scaleY)\n/* harmony export */ });\n/**\n * Gets a date and returns a scaled value\n * @param  {Date} dateToSclae the date to convert into a scaled value\n * @param  {Date} minDate the min date of the chart\n * @param {Date} maxDate the max date of the chart\n * @param {number} canvasWidth the width of the canvas\n * @return {number} the scaled value\n */\nfunction scaleX(dateToSclae, minDate, maxDate, width) {\n    const min = minDate.getTime();\n    const max = maxDate.getTime();\n    const overallDuration = max - min;\n    const date = dateToSclae.getTime();\n    const scale = Math.ceil((date - min) * (width / overallDuration));\n    return scale;\n}\nfunction scaleY() {\n    // TODO\n}\n/**\n *\n * @param x the x coordinate of the point\n * @param minStart\n * @param overallDuration\n * @param canvasWidth\n * @returns the date corresponding to the x coordinate\n */\nfunction scaleDate(x, minStart, overallDuration, canvasWidth) {\n    let retDate = new Date(Math.ceil(minStart.getTime() + x * (overallDuration / canvasWidth)));\n    return retDate;\n}\n\n\n//# sourceURL=webpack://my-webpack-project/./src/utils/scales.ts?");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/index.ts");
+/******/ 	
+/******/ })()
+;

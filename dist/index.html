@@ -1,1 +1,20 @@
-<!doctype html><html><head><meta charset="utf-8"/><title>Webpack App</title><link rel="stylesheet" href="style.css"/><script defer="defer" src="bundle.js"></script></head><body><div class="gantt-chart"></div><div class="Chart"><canvas id="chartCanvas"></canvas></div><script src="./dist/bundle.js" type="module"></script></body></html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>4D Gantt Demo</title>
+    <link rel="stylesheet" href="style.css" />
+  <script defer src="bundle.js"></script></head>
+  <body>
+    <div>
+      <button id="zoom-out">-</button>
+      <button id="zoom-in">+</button>
+    </div>
+    <div class="gantt-chart"></div>
+
+    <div class="Chart">
+      <canvas id="chartCanvas"></canvas>
+    </div>
+    <script src="./dist/bundle.js" type="module"></script>
+  </body>
+</html>

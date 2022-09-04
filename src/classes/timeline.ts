@@ -7,6 +7,7 @@ import {
   addDays,
   getDayOfWeek,
   months,
+  drawBar,
 } from "../utils/helper";
 import { scaleX } from "../utils/scales";
 import { drawLine } from "../utils/helper";
@@ -37,17 +38,16 @@ export class TimeLine {
   }
 
   draw() {
-    let noOfYears = this.maxDate.getFullYear() - this.minDate.getFullYear();
+    let noOfYears = this.maxDate.getFullYear() - this.minDate.getFullYear() + 1;
     let noOfMonths = monthDiff(this.minDate, this.maxDate);
     let noOfDays = dayDiff(this.minDate, this.maxDate);
 
-    console.log(noOfYears, noOfMonths, noOfDays, this.canvas.width);
     for (let i = 0; i < noOfDays; i++) {
       let scaledX = scaleX(
         addDays(this.minDate, i),
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding
+        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
       );
       let date = addDays(this.minDate, i);
       let dayName = getDayOfWeek(
@@ -55,55 +55,64 @@ export class TimeLine {
         date.getMonth(),
         date.getDate() - 1
       );
-      console.log(
-        getDayOfWeek(date.getFullYear(), date.getMonth(), date.getDate() - 1),
-        date,
-        date.getDate(),
-        date.getMonth(),
-        date.getFullYear(),
-        "\n Date Entered " + new Date(2022, 0, 30).getDay(),
-        getDayOfWeek(2022, 0, 30)
+
+      drawBar(
+        this.ctx,
+        scaledX + this.options.padding + this.options.tableWidth,
+        this.options.padding + (this.options.timeLineHeight * 3) / 4,
+        this.options.timeLineColumnWidth,
+        30,
+        this.options.timeLineBackgroundColor,
+        date.getDate().toString()
       );
-      this.ctx.textAlign = "center";
-      this.ctx.textBaseline = "middle";
-      let fontSize = Math.min(12);
-      this.ctx.font = `${fontSize}px Arial`;
-      this.ctx.fillStyle = "black";
-      this.ctx.fillText(
-        date.getDate().toString(),
-        scaledX + this.options.padding,
-        50
+
+      drawBar(
+        this.ctx,
+        scaledX + this.options.padding + this.options.tableWidth,
+        this.options.padding + (this.options.timeLineHeight * 2) / 4,
+        this.options.timeLineColumnWidth,
+        30,
+        this.options.timeLineBackgroundColor,
+        dayName
       );
-      this.ctx.fillText(dayName, scaledX + this.options.padding, 85);
+      //   this.ctx.fillText(dayName, scaledX + this.options.padding, 85);
 
       // line seperator between days
       drawLine(
         this.ctx,
-        scaledX + this.options.padding + 15,
-        40,
-        scaledX + this.options.padding + 15,
-        this.canvas.height - this.options.padding,
+        scaledX + this.options.padding + this.options.tableWidth,
+        this.options.padding + (this.options.timeLineHeight * 2) / 4,
+        scaledX + this.options.padding + this.options.tableWidth,
+        this.canvas.height + this.options.padding,
         "lightgray"
       );
     }
 
     drawLine(
       this.ctx,
-      this.options.padding - 15,
-      40,
-      this.canvas.width - this.options.padding + 15,
-      40,
+      this.options.padding + this.options.tableWidth,
+      this.options.padding + (this.options.timeLineHeight * 2) / 4,
+      this.canvas.width -
+        this.options.padding +
+        this.options.timeLineColumnWidth,
+      this.options.padding + (this.options.timeLineHeight * 2) / 4,
       "black"
     );
+
+    let offset = (this.options.timeLineHeight * 3) / 4;
     drawLine(
       this.ctx,
-      this.options.padding - 15,
-      70,
-      this.canvas.width - this.options.padding + 15,
-      70,
+      this.options.padding + this.options.tableWidth,
+      this.options.padding + offset,
+      this.canvas.width -
+        this.options.padding +
+        this.options.timeLineColumnWidth,
+      this.options.padding + offset,
       "black"
     );
     let date = this.minDate;
+
+    // draw month timeline
     while (date <= this.maxDate) {
       let mnth = date.getMonth();
       let year = date.getFullYear();
@@ -113,51 +122,140 @@ export class TimeLine {
         new Date(year, mnth, 0),
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding
+        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
       );
       let maxScale = scaleX(
         new Date(year, mnth + 1, 0),
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding
+        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
       );
       let scaledX = (minScale + maxScale) / 2.0;
-      this.ctx.textAlign = "center";
-      this.ctx.textBaseline = "middle";
-      let fontSize = Math.min(18);
-      this.ctx.font = `${fontSize}px Arial`;
-      this.ctx.fillStyle = "black";
-      this.ctx.fillText(monthName, scaledX + this.options.padding, 30);
+      drawBar(
+        this.ctx,
+        minScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.options.padding + this.options.timeLineHeight / 4,
+        maxScale - minScale,
+        30,
+        this.options.timeLineBackgroundColor,
+        monthName
+      );
+
       mnth += 1;
-      console.log(monthName);
       date = new Date(year, mnth, day);
+
+      // month seperator
       drawLine(
         this.ctx,
-        minScale + this.options.padding + 15,
-        15,
-        minScale + this.options.padding + 15,
-        this.canvas.height - this.options.padding,
+        minScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.options.padding + this.options.timeLineHeight / 4,
+        minScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.canvas.height - this.options.padding + this.options.timeLineHeight,
         "black"
       );
-      //   drawLine(
-      //     this.ctx,
-      //     maxScale + this.options.padding + 15,
-      //     15,
-      //     maxScale + this.options.padding + 15,
-      //     this.canvas.height - this.options.padding,
-      //     "black"
-      //   );
+      drawLine(
+        this.ctx,
+        maxScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.options.padding + this.options.timeLineHeight / 4,
+        maxScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.canvas.height - this.options.padding + this.options.timeLineHeight,
+        "black"
+      );
     }
 
     //topline above month names
     drawLine(
       this.ctx,
-      this.options.padding - 15,
-      15,
-      this.canvas.width - this.options.padding + 15,
-      15,
+      this.options.padding + this.options.tableWidth,
+      this.options.padding,
+      this.canvas.width -
+        this.options.padding +
+        this.options.timeLineColumnWidth,
+      // this.options.tableWidth,
+      this.options.padding,
       "black"
     );
+    for (let i = 0; i < noOfYears; i++) {
+      let fDayOfYear = new Date(this.minDate.getFullYear() + i, 0, 1);
+      let lDayOfYear = new Date(this.minDate.getFullYear() + i, 11, 31);
+      if (fDayOfYear < this.minDate) {
+        fDayOfYear = this.minDate;
+      }
+      if (lDayOfYear > this.maxDate) {
+        lDayOfYear = this.maxDate;
+      }
+      let minScale = scaleX(
+        fDayOfYear,
+        this.minDate,
+        this.maxDate,
+        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
+      );
+      let maxScale = scaleX(
+        lDayOfYear,
+        this.minDate,
+        this.maxDate,
+        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
+      );
+      drawBar(
+        this.ctx,
+        minScale + this.options.padding + this.options.tableWidth,
+        this.options.padding,
+        maxScale - minScale + this.options.timeLineColumnWidth,
+        30,
+        this.options.timeLineBackgroundColor,
+        fDayOfYear.getFullYear().toString()
+      );
+      //line under the year
+      drawLine(
+        this.ctx,
+        minScale + this.options.padding + this.options.tableWidth,
+        this.options.padding + this.options.timeLineHeight / 4,
+        maxScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.options.padding + this.options.timeLineHeight / 4,
+        "black"
+      );
+      // line to the left of the year
+      drawLine(
+        this.ctx,
+        minScale + this.options.padding + this.options.tableWidth,
+        this.options.padding,
+        minScale + this.options.padding + this.options.tableWidth,
+        this.canvas.height + this.options.padding,
+        "black"
+      );
+      drawLine(
+        this.ctx,
+        maxScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.options.padding,
+        maxScale +
+          this.options.padding +
+          this.options.timeLineColumnWidth +
+          this.options.tableWidth,
+        this.canvas.height + this.options.padding,
+        "black"
+      );
+    }
   }
 
   update(date: Date) {}

@@ -34,7 +34,7 @@ export class DateLine {
       this.dateLine,
       this.minDate,
       this.maxDate,
-      this.canvas.width - 2 * this.options.padding
+      this.canvas.width - 2 * this.options.padding - this.options.tableWidth
     );
   }
 
@@ -42,10 +42,19 @@ export class DateLine {
     this.ctx.beginPath();
     this.ctx.strokeStyle = "red";
     this.ctx.lineWidth = 3;
-    this.ctx.moveTo(this.xpos + this.options.padding, this.options.padding);
+    this.ctx.moveTo(
+      this.xpos +
+        this.options.padding +
+        this.options.tableWidth +
+        this.options.timeLineColumnWidth / 2,
+      this.options.padding + this.options.timeLineHeight
+    );
     this.ctx.lineTo(
-      this.xpos + this.options.padding,
-      this.canvas.height - this.options.padding
+      this.xpos +
+        this.options.padding +
+        this.options.tableWidth +
+        this.options.timeLineColumnWidth / 2,
+      this.canvas.height - this.options.padding + this.options.timeLineHeight
     );
     this.ctx.stroke();
   }
@@ -56,32 +65,50 @@ export class DateLine {
       this.dateLine,
       this.minDate,
       this.maxDate,
-      this.canvas.width - 2 * this.options.padding
+      this.canvas.width - this.options.tableWidth - 2 * this.options.padding
     );
     this.draw();
   }
   collision(x: number, y: number) {
     if (
-      this.xpos + this.options.padding - 5 <= x &&
-      this.xpos + this.options.padding + 5 >= x
+      this.xpos + this.options.padding + this.options.tableWidth - 5 <= x &&
+      this.xpos + this.options.padding + this.options.tableWidth + 5 >= x
     ) {
       this.ctx.beginPath();
       this.ctx.strokeStyle = "red";
       this.ctx.lineWidth = 3;
-      this.ctx.moveTo(this.xpos + this.options.padding, this.options.padding);
+      this.ctx.moveTo(
+        this.xpos +
+          this.options.padding +
+          this.options.tableWidth +
+          this.options.timeLineColumnWidth / 2,
+        this.options.padding + this.options.timeLineHeight
+      );
       this.ctx.lineTo(
-        this.xpos + this.options.padding,
-        this.canvas.height - this.options.padding
+        this.xpos +
+          this.options.padding +
+          this.options.tableWidth +
+          this.options.timeLineColumnWidth / 2,
+        this.canvas.height - this.options.padding + this.options.timeLineHeight
       );
       this.ctx.stroke();
     } else {
       this.ctx.beginPath();
       this.ctx.strokeStyle = "blue";
       this.ctx.lineWidth = 3;
-      this.ctx.moveTo(this.xpos + this.options.padding, this.options.padding);
+      this.ctx.moveTo(
+        this.xpos +
+          this.options.padding +
+          this.options.tableWidth +
+          this.options.timeLineColumnWidth / 2,
+        this.options.padding + this.options.timeLineHeight
+      );
       this.ctx.lineTo(
-        this.xpos + this.options.padding,
-        this.canvas.height - this.options.padding
+        this.xpos +
+          this.options.padding +
+          this.options.tableWidth +
+          this.options.timeLineColumnWidth / 2,
+        this.canvas.height - this.options.padding + this.options.timeLineHeight
       );
       this.ctx.stroke();
     }

@@ -1,3 +1,6 @@
+.Chart {
+  overflow: auto;
+}
 /* html,
 body {
   width: 100%;
