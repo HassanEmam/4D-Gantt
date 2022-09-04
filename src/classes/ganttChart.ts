@@ -28,6 +28,7 @@ export class GanttChart {
   timeLine: TimeLine;
   timeLineHeight: number;
   tableWidth: number;
+  dataDate: Date;
 
   constructor(options: options) {
     this.options = options;
@@ -41,7 +42,12 @@ export class GanttChart {
       this.tableWidth = 400;
       this.options.tableWidth = this.tableWidth;
     }
-
+    if (this.options.dataDate) {
+      this.dataDate = this.options.dataDate;
+    } else {
+      this.dataDate = new Date();
+      this.options.dataDate = this.dataDate;
+    }
     this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
     this.colors = options.colors;
     this.titleOptions = options.titleOptions;
@@ -191,11 +197,12 @@ export class GanttChart {
   }
 
   drawDateLine() {
+    console.log("Data Date", this.dataDate);
     this.dateLine = new DateLine(
       this.ctx,
       this.canvas,
       this.options,
-      new Date(2020, 1, 15)
+      this.dataDate
     );
     this.dateLine.draw();
   }

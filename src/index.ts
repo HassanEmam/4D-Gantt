@@ -3,6 +3,7 @@ import { options } from "./classes/options";
 import { scaleX, scaleDate } from "./utils/scales";
 import { GanttChart } from "./classes/ganttChart";
 import { data } from "./classes/data";
+import { addDays } from "./utils/helper";
 
 let data = scheduleData;
 let gantt: GanttChart;
@@ -14,6 +15,7 @@ function drawGantt() {
   let options: options = {
     canvas: chartCanvas,
     padding: 120,
+    dataDate: new Date(2020, 0, 15),
     gridScale: 5,
     gridColor: "black",
     data: data,
@@ -27,6 +29,8 @@ function drawGantt() {
     colors: ["#a55ca5", "#67b6c7", "#bccd7a", "#eb9743"],
   };
   gantt = new GanttChart(options);
+  console.log("drawin gantt");
+
   gantt.draw();
 }
 
@@ -45,3 +49,18 @@ btnZoomOut.addEventListener("click", () => {
     gantt.update();
   }
 });
+
+let btnPlay = document.getElementById("play") as HTMLButtonElement;
+btnPlay.addEventListener("click", play);
+function play() {
+  let counter = 0;
+  const timer = setInterval(() => {
+    if (timer && ++counter >= 100) {
+      clearInterval(timer);
+    }
+    console.log("counter", counter);
+    gantt.dataDate = addDays(gantt.dataDate, 1);
+    gantt.options.dataDate = addDays(gantt.options.dataDate, counter);
+    gantt.update();
+  }, 1000);
+}
