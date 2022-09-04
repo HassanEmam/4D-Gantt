@@ -2,6 +2,7 @@ import { DateLine } from "./dateLine";
 import { options } from "./options";
 import { data } from "./data";
 import { Task } from "./task";
+import { Table } from "./table";
 import {
   drawLine,
   drawBar,
@@ -212,11 +213,24 @@ export class GanttChart {
     this.timeLine.draw();
   }
 
+  drawTable() {
+    let table = new Table(
+      this.ctx,
+      this.options.colors[0],
+      this.options.barColorHover,
+      "black",
+      ["id", "name", "start", "end"],
+      this.options
+    );
+    table.draw();
+  }
+
   draw() {
     this.drawGridLines();
     this.drawBars();
     this.drawDateLine();
     this.drawTimeLine();
+    this.drawTable();
   }
 
   update() {

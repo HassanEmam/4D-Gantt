@@ -4,6 +4,7 @@ import { scaleX, scaleDate } from "./utils/scales";
 import { GanttChart } from "./classes/ganttChart";
 import { data } from "./classes/data";
 import { addDays } from "./utils/helper";
+import { time } from "console";
 
 let data = scheduleData;
 let gantt: GanttChart;
@@ -23,6 +24,7 @@ function drawGantt() {
     rowHeight: 40,
     timeLineColumnWidth: 12,
     timeLineBackgroundColor: "yellow",
+    timeLineHeight: 120,
     tableWidth: 400,
     barColor: "lightgreen",
     barColorHover: "red",
@@ -52,9 +54,20 @@ btnZoomOut.addEventListener("click", () => {
 
 let btnPlay = document.getElementById("play") as HTMLButtonElement;
 btnPlay.addEventListener("click", play);
+
+let timer: NodeJS.Timeout | undefined = undefined;
+
 function play() {
+  console.log("TIMER", timer);
+  if (timer) {
+    clearInterval(timer);
+    timer = undefined;
+    btnPlay.innerHTML = ">";
+    return;
+  }
   let counter = 0;
-  const timer = setInterval(() => {
+  btnPlay.innerHTML = "||";
+  timer = setInterval(() => {
     if (timer && ++counter >= 100) {
       clearInterval(timer);
     }

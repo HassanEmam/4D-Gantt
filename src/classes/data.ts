@@ -6,4 +6,5 @@ export interface data {
   parent?: number;
   progress?: number;
   level?: number;
+  [key: string]: any;
 }
