@@ -37,11 +37,11 @@ export class GanttChart {
     this.canvas.height =
       2 * this.options.padding +
       this.options.rowHeight * (this.options.data.length + 1);
-    if (this.options.tableWidth) {
-      this.tableWidth = this.options.tableWidth;
+    if (this.options.table.width) {
+      this.tableWidth = this.options.table.width;
     } else {
       this.tableWidth = 400;
-      this.options.tableWidth = this.tableWidth;
+      this.options.table.width = this.tableWidth;
     }
     if (this.options.dataDate) {
       this.dataDate = this.options.dataDate;
@@ -82,7 +82,7 @@ export class GanttChart {
     this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
       let parent = (e.target as HTMLElement).parentElement;
       let offsetpos = recursive_offset(e.target);
-      let posX = e.clientX + offsetpos.x;
+      let posX = e.clientX + offsetpos.x + parent.offsetLeft;
       let posY = e.clientY + offsetpos.y + parent.offsetTop;
 
       for (let task of this.tasks) {
@@ -100,16 +100,16 @@ export class GanttChart {
       this.options.padding * 2 -
       this.options.timeLineHeight;
     var canvasActualWidth =
-      this.canvas.width - this.options.tableWidth - this.options.padding * 2;
+      this.canvas.width - this.options.table.width - this.options.padding * 2;
 
     var gridValue = 0;
     // while (gridValue <= this.maxValue) {
 
     drawLine(
       this.ctx,
-      this.options.padding + this.options.tableWidth,
+      this.options.padding + this.options.table.width,
       this.options.padding + this.options.timeLineHeight,
-      this.options.padding + canvasActualWidth + this.options.tableWidth,
+      this.options.padding + canvasActualWidth + this.options.table.width,
       this.options.padding + this.options.timeLineHeight,
       "black"
     );
@@ -125,14 +125,14 @@ export class GanttChart {
     for (let i in this.options.data) {
       drawLine(
         this.ctx,
-        this.options.padding + this.options.tableWidth,
+        this.options.padding + this.options.table.width,
         this.options.padding +
           this.options.timeLineHeight +
           rowHeight * (parseInt(i) + 1),
         this.options.padding +
           canvasActualWidth +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.options.padding +
           this.options.timeLineHeight +
           rowHeight * (parseInt(i) + 1),
@@ -147,7 +147,7 @@ export class GanttChart {
   drawBars() {
     var canvasActualHeight = this.canvas.height - this.options.padding * 2;
     var canvasActualWidth =
-      this.canvas.width - this.options.padding * 2 - this.options.tableWidth;
+      this.canvas.width - this.options.padding * 2 - this.options.table.width;
 
     var values = Object.values(this.options.data);
     for (let idx in this.options.data) {
@@ -168,7 +168,7 @@ export class GanttChart {
       );
       let barWidth = xEnd - xStart;
       let bar = new Task(
-        xStart + this.options.padding + this.options.tableWidth,
+        xStart + this.options.padding + this.options.table.width,
         yOffset + this.options.timeLineHeight,
         barWidth,
         this.options.rowHeight * 0.6,
@@ -198,7 +198,6 @@ export class GanttChart {
   }
 
   drawDateLine() {
-    console.log("Data Date", this.dataDate);
     this.dateLine = new DateLine(
       this.ctx,
       this.canvas,
@@ -242,7 +241,7 @@ export class GanttChart {
     this.ctx.clearRect(
       0,
       0,
-      this.canvas.width + this.options.padding * 2 + this.options.tableWidth,
+      this.canvas.width + this.options.padding * 2 + this.options.table.width,
       this.canvas.height +
         this.options.padding * 2 +
         this.options.timeLineHeight

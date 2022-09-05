@@ -28,16 +28,9 @@ export class Table {
 
   drawHeadings() {
     let noCols = this.columns.length;
-    let tableWidth = this.options.tableWidth;
+    let tableWidth = this.options.table.width;
     let colWidth = (tableWidth ? tableWidth : 400) / noCols;
-    console.log(
-      "colWidth",
-      colWidth,
-      "noCols",
-      noCols,
-      "tableWidth",
-      tableWidth
-    );
+
     for (let colidx = 0; colidx < this.columns.length; colidx++) {
       let x = colidx * colWidth + this.options.padding;
       let y = this.options.padding;
@@ -67,10 +60,9 @@ export class Table {
     let rowIdx = 0;
     let data = this.options.data;
     let colWidth =
-      (this.options.tableWidth ? this.options.tableWidth : 400) /
+      (this.options.table.width ? this.options.table.width : 400) /
       this.columns.length;
     // let colName: string = this.columns[1];
-    //   console.log("data", data[colName]);
     for (let row of data) {
       let counter = 0;
       for (let col of this.columns) {
@@ -87,7 +79,6 @@ export class Table {
         } else {
           text = row[col].toString();
         }
-        console.log("text", text, x, y, width, height, x + width / 2);
         this.context.globalCompositeOperation = "source-over";
 
         this.context.fillStyle = "white";

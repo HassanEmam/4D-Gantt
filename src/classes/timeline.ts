@@ -47,7 +47,7 @@ export class TimeLine {
         addDays(this.minDate, i),
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
+        this.canvas.width - 2 * this.options.padding - this.options.table.width
       );
       let date = addDays(this.minDate, i);
       let dayName = getDayOfWeek(
@@ -58,7 +58,7 @@ export class TimeLine {
 
       drawBar(
         this.ctx,
-        scaledX + this.options.padding + this.options.tableWidth,
+        scaledX + this.options.padding + this.options.table.width,
         this.options.padding + (this.options.timeLineHeight * 3) / 4,
         this.options.timeLineColumnWidth,
         30,
@@ -68,7 +68,7 @@ export class TimeLine {
 
       drawBar(
         this.ctx,
-        scaledX + this.options.padding + this.options.tableWidth,
+        scaledX + this.options.padding + this.options.table.width,
         this.options.padding + (this.options.timeLineHeight * 2) / 4,
         this.options.timeLineColumnWidth,
         30,
@@ -80,9 +80,9 @@ export class TimeLine {
       // line seperator between days
       drawLine(
         this.ctx,
-        scaledX + this.options.padding + this.options.tableWidth,
+        scaledX + this.options.padding + this.options.table.width,
         this.options.padding + (this.options.timeLineHeight * 2) / 4,
-        scaledX + this.options.padding + this.options.tableWidth,
+        scaledX + this.options.padding + this.options.table.width,
         this.canvas.height + this.options.padding,
         "lightgray"
       );
@@ -90,7 +90,7 @@ export class TimeLine {
 
     drawLine(
       this.ctx,
-      this.options.padding + this.options.tableWidth,
+      this.options.padding + this.options.table.width,
       this.options.padding + (this.options.timeLineHeight * 2) / 4,
       this.canvas.width -
         this.options.padding +
@@ -102,7 +102,7 @@ export class TimeLine {
     let offset = (this.options.timeLineHeight * 3) / 4;
     drawLine(
       this.ctx,
-      this.options.padding + this.options.tableWidth,
+      this.options.padding + this.options.table.width,
       this.options.padding + offset,
       this.canvas.width -
         this.options.padding +
@@ -122,13 +122,13 @@ export class TimeLine {
         new Date(year, mnth, 0),
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
+        this.canvas.width - 2 * this.options.padding - this.options.table.width
       );
       let maxScale = scaleX(
         new Date(year, mnth + 1, 0),
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
+        this.canvas.width - 2 * this.options.padding - this.options.table.width
       );
       let scaledX = (minScale + maxScale) / 2.0;
       drawBar(
@@ -136,7 +136,7 @@ export class TimeLine {
         minScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.options.padding + this.options.timeLineHeight / 4,
         maxScale - minScale,
         30,
@@ -153,12 +153,12 @@ export class TimeLine {
         minScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.options.padding + this.options.timeLineHeight / 4,
         minScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.canvas.height - this.options.padding + this.options.timeLineHeight,
         "black"
       );
@@ -167,12 +167,12 @@ export class TimeLine {
         maxScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.options.padding + this.options.timeLineHeight / 4,
         maxScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.canvas.height - this.options.padding + this.options.timeLineHeight,
         "black"
       );
@@ -181,12 +181,12 @@ export class TimeLine {
     //topline above month names
     drawLine(
       this.ctx,
-      this.options.padding + this.options.tableWidth,
+      this.options.padding + this.options.table.width,
       this.options.padding,
       this.canvas.width -
         this.options.padding +
         this.options.timeLineColumnWidth,
-      // this.options.tableWidth,
+      // this.options.table.width,
       this.options.padding,
       "black"
     );
@@ -203,17 +203,17 @@ export class TimeLine {
         fDayOfYear,
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
+        this.canvas.width - 2 * this.options.padding - this.options.table.width
       );
       let maxScale = scaleX(
         lDayOfYear,
         this.minDate,
         this.maxDate,
-        this.canvas.width - 2 * this.options.padding - this.options.tableWidth
+        this.canvas.width - 2 * this.options.padding - this.options.table.width
       );
       drawBar(
         this.ctx,
-        minScale + this.options.padding + this.options.tableWidth,
+        minScale + this.options.padding + this.options.table.width,
         this.options.padding,
         maxScale - minScale + this.options.timeLineColumnWidth,
         30,
@@ -223,21 +223,21 @@ export class TimeLine {
       //line under the year
       drawLine(
         this.ctx,
-        minScale + this.options.padding + this.options.tableWidth,
+        minScale + this.options.padding + this.options.table.width,
         this.options.padding + this.options.timeLineHeight / 4,
         maxScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.options.padding + this.options.timeLineHeight / 4,
         "black"
       );
       // line to the left of the year
       drawLine(
         this.ctx,
-        minScale + this.options.padding + this.options.tableWidth,
+        minScale + this.options.padding + this.options.table.width,
         this.options.padding,
-        minScale + this.options.padding + this.options.tableWidth,
+        minScale + this.options.padding + this.options.table.width,
         this.canvas.height + this.options.padding,
         "black"
       );
@@ -246,12 +246,12 @@ export class TimeLine {
         maxScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.options.padding,
         maxScale +
           this.options.padding +
           this.options.timeLineColumnWidth +
-          this.options.tableWidth,
+          this.options.table.width,
         this.canvas.height + this.options.padding,
         "black"
       );

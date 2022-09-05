@@ -1,6 +1,37 @@
+body {
+  margin: 0;
+}
 .Chart {
   overflow: auto;
 }
+
+#container {
+  width: 1200px;
+  height: 600px;
+  margin: 0 auto;
+  background-color: aqua;
+}
+
+#table {
+  width: 30%;
+  min-width: 30%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: yellow;
+  display: inline-block;
+}
+
+#gantt {
+  width: 69%;
+  height: 100%;
+  margin: 0;
+  background-color: red;
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
 /* html,
 body {
   width: 100%;

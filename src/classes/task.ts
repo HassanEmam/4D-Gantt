@@ -75,8 +75,8 @@ export class Task {
 
   collision(x: number, y: number) {
     if (
-      x >= this.x - this.options.timeLineColumnWidth / 2 &&
-      x <= this.x + this.width - this.options.timeLineColumnWidth / 2 &&
+      x >= this.x &&
+      x <= this.x + this.width &&
       y >= this.y &&
       y <= this.y + this.height
     ) {

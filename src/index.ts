@@ -26,12 +26,14 @@ function drawGantt() {
     timeLineBackgroundColor: "yellow",
     timeLineHeight: 120,
     tableWidth: 400,
+    table: {
+      width: 400,
+    },
     barColor: "lightgreen",
     barColorHover: "red",
     colors: ["#a55ca5", "#67b6c7", "#bccd7a", "#eb9743"],
   };
   gantt = new GanttChart(options);
-  console.log("drawin gantt");
 
   gantt.draw();
 }
@@ -58,7 +60,6 @@ btnPlay.addEventListener("click", play);
 let timer: NodeJS.Timeout | undefined = undefined;
 
 function play() {
-  console.log("TIMER", timer);
   if (timer) {
     clearInterval(timer);
     timer = undefined;
@@ -71,7 +72,6 @@ function play() {
     if (timer && ++counter >= 100) {
       clearInterval(timer);
     }
-    console.log("counter", counter);
     gantt.dataDate = addDays(gantt.dataDate, 1);
     gantt.options.dataDate = addDays(gantt.options.dataDate, counter);
     gantt.update();
