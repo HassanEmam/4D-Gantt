@@ -12,14 +12,13 @@ export interface tableOptions {
 export interface options {
   barColor?: string;
   barColorHover?: string;
-  canvas: HTMLCanvasElement;
+  container: HTMLElement;
   colors?: string[];
   data: data[]; // TODO: data could be removed from options
   dataDate?: Date;
   focusTime?: Date;
   gridColor: string;
   gridScale: number;
-  padding: number;
   rowHeight?: number;
   tableWidth: number;
   table?: tableOptions;

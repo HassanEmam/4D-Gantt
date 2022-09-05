@@ -32,8 +32,8 @@ export class Table {
     let colWidth = (tableWidth ? tableWidth : 400) / noCols;
 
     for (let colidx = 0; colidx < this.columns.length; colidx++) {
-      let x = colidx * colWidth + this.options.padding;
-      let y = this.options.padding;
+      let x = colidx * colWidth;
+      let y = 0;
       let height = this.options.timeLineHeight
         ? this.options.timeLineHeight
         : 100;
@@ -67,11 +67,8 @@ export class Table {
       let counter = 0;
       for (let col of this.columns) {
         let text;
-        let x = counter * colWidth + this.options.padding;
-        let y =
-          this.options.padding +
-          this.options.timeLineHeight +
-          rowIdx * this.options.rowHeight;
+        let x = counter * colWidth;
+        let y = +this.options.timeLineHeight + rowIdx * this.options.rowHeight;
         let height = this.options.timeLineHeight;
         let width = colWidth;
         if (row[col] instanceof Date) {

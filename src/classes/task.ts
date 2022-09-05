@@ -80,6 +80,7 @@ export class Task {
       y >= this.y &&
       y <= this.y + this.height
     ) {
+      console.log("Mouse", x, y, "Task", this.x, this.y);
       this.color = this.options.barColorHover;
       this.draw();
       return true;

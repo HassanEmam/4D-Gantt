@@ -10,12 +10,12 @@ let data = scheduleData;
 let gantt: GanttChart;
 
 function drawGantt() {
-  let chartCanvas = document.getElementById("chartCanvas") as HTMLCanvasElement;
-  chartCanvas.width = chartCanvas.parentElement.clientWidth;
-  chartCanvas.height = 500;
+  let container = document.getElementById("Chart") as HTMLCanvasElement;
+  console.log(container);
+  // chartCanvas.width = chartCanvas.parentElement.clientWidth;
+  // chartCanvas.height = 500;
   let options: options = {
-    canvas: chartCanvas,
-    padding: 120,
+    container: container,
     dataDate: new Date(2020, 0, 15),
     gridScale: 5,
     gridColor: "black",

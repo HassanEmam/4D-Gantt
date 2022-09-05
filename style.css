@@ -1,8 +1,10 @@
 body {
   margin: 0;
 }
-.Chart {
-  overflow: auto;
+#Chart {
+  /* overflow: auto; */
+  width: 800px;
+  height: 600px;
 }
 
 #container {
