@@ -1,7 +1,8 @@
+import { Tasks } from "./tasks";
 import { DateLine } from "./dateLine";
 import { options } from "./options";
 import { data } from "./data";
-import { Task } from "./task";
+import { Bar } from "./bar";
 import { Table } from "./table";
 import {
   drawLine,
@@ -26,7 +27,7 @@ export class GanttChart {
   minValue: number;
   minDate: Date;
   maxDate: Date;
-  tasks: Task[];
+  tasks: Bar[];
   dateLine: DateLine;
   timeLine: TimeLine;
   timeLineHeight: number;
@@ -34,19 +35,40 @@ export class GanttChart {
   dataDate: Date;
   container: HTMLElement;
   tableCanvas: HTMLCanvasElement;
+  table: Table;
 
   constructor(options: options) {
     this.options = options;
     this.container = options.container;
     console.log(this.container);
+    let styleEl = document.createElement("style");
+    styleEl.appendChild(
+      document.createTextNode(
+        `#gantt_canvas__chart__::-webkit-scrollbar {width:10px;} 
+         #gantt_canvas__chart__::-webkit-scrollbar-track{box-shadow:inset 0 0 5px grey; border-radius:10px;}
+         #gantt_canvas__chart__::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
+         #gantt_canvas__chart__::-webkit-scrollbar-thumb:hover{background:gray;}
+
+         #gantt_canvas__chart__table::-webkit-scrollbar {width:10px;} 
+         #gantt_canvas__chart__table::-webkit-scrollbar-track{box-shadow:inset 0 0 5px grey; border-radius:10px;}
+         #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
+         #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
+        `
+      )
+    );
+    document.getElementsByTagName("head")[0].append(styleEl);
     this.canvas = document.createElement("canvas");
+    // this.canvas.setAttribute("id", "gantt_canvas__chart__");
     this.tableCanvas = document.createElement("canvas");
     const tablediv = document.createElement("div");
+    tablediv.id = "gantt_canvas__chart__table";
     tablediv.style.display = "inline-block";
     tablediv.style.width = `${this.options.table.width + 20}px`;
     tablediv.style.overflow = "auto";
     tablediv.style.height = "100%";
     const chartDiv = document.createElement("div");
+    chartDiv.setAttribute("id", "gantt_canvas__chart__");
+
     chartDiv.appendChild(this.canvas);
     chartDiv.style.display = "inline-block";
     chartDiv.style.height = "100%";
@@ -139,28 +161,30 @@ export class GanttChart {
     drawLine(
       this.ctx,
       0,
-      +this.options.timeLineHeight,
-      +canvasActualWidth,
-      +this.options.timeLineHeight,
+      this.options.timeLineHeight,
+      canvasActualWidth,
+      this.options.timeLineHeight,
       "black"
     );
-    // drawLine(
-    //   this.ctx,
-    //   ,
-    //   ,
-    //    + canvasActualWidth,
-    //   ,
-    //   "black"
-    // );
+    // horizontal grids between tasks
     let rowHeight = this.options.rowHeight;
     for (let i in this.options.data) {
       drawLine(
         this.ctx,
         0,
-        +this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
-        +canvasActualWidth + this.options.timeLineColumnWidth,
-        +this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        canvasActualWidth + this.options.timeLineColumnWidth,
+        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
         "lightgray"
+      );
+
+      drawLine(
+        this.tableCtx,
+        0,
+        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        this.options.table.width,
+        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        "black"
       );
     }
 
@@ -168,57 +192,57 @@ export class GanttChart {
     // }
   }
 
-  drawBars() {
-    var canvasActualHeight = this.canvas.height;
-    var canvasActualWidth = this.canvas.width;
+  // drawBars() {
+  //   var canvasActualHeight = this.canvas.height;
+  //   var canvasActualWidth = this.canvas.width;
 
-    var values = Object.values(this.options.data);
-    for (let idx in this.options.data) {
-      let taskData = this.options.data[idx];
-      let yOffset =
-        this.options.rowHeight * parseInt(idx) + this.options.rowHeight * 0.2;
-      let xStart = scaleX(
-        taskData.start,
-        this.minDate,
-        this.maxDate,
-        canvasActualWidth
-      );
-      let xEnd = scaleX(
-        addDays(taskData.end, 1),
-        this.minDate,
-        this.maxDate,
-        canvasActualWidth
-      );
-      let barWidth = xEnd - xStart;
-      let bar = new Task(
-        xStart,
-        yOffset + this.options.timeLineHeight,
-        barWidth,
-        this.options.rowHeight * 0.6,
-        this.ctx,
-        this.options.colors[0],
-        "white",
-        taskData.name,
-        this.options
-      );
-      this.tasks.push(bar);
-      bar.draw();
-      // draw text to the right of the bar
+  //   var values = Object.values(this.options.data);
+  //   for (let idx in this.options.data) {
+  //     let taskData = this.options.data[idx];
+  //     let yOffset =
+  //       this.options.rowHeight * parseInt(idx) + this.options.rowHeight * 0.2;
+  //     let xStart = scaleX(
+  //       taskData.start,
+  //       this.minDate,
+  //       this.maxDate,
+  //       canvasActualWidth
+  //     );
+  //     let xEnd = scaleX(
+  //       addDays(taskData.end, 1),
+  //       this.minDate,
+  //       this.maxDate,
+  //       canvasActualWidth
+  //     );
+  //     let barWidth = xEnd - xStart;
+  //     let bar = new Bar(
+  //       xStart,
+  //       yOffset + this.options.timeLineHeight,
+  //       barWidth,
+  //       this.options.rowHeight * 0.6,
+  //       this.ctx,
+  //       this.options.colors[0],
+  //       "white",
+  //       taskData.name,
+  //       this.options
+  //     );
+  //     this.tasks.push(bar);
+  //     bar.draw();
+  //     // draw text to the right of the bar
 
-      //   this.ctx.textAlign = "center";
-      //   this.ctx.textBaseline = "middle";
-      //   let fontSize = Math.min(barWidth / 1.5, 20);
-      //   this.ctx.font = `${fontSize}px Arial`;
-      //   this.ctx.fillStyle = "black";
-      //   this.ctx.fillText(
-      //     taskData.name,
-      //     xEnd +  + 3 * fontSize,
-      //     yOffset + 15
-      //   );
-      this.ctx.restore();
-      // this.colors[barIndex % this.colors.length];
-    }
-  }
+  //     //   this.ctx.textAlign = "center";
+  //     //   this.ctx.textBaseline = "middle";
+  //     //   let fontSize = Math.min(barWidth / 1.5, 20);
+  //     //   this.ctx.font = `${fontSize}px Arial`;
+  //     //   this.ctx.fillStyle = "black";
+  //     //   this.ctx.fillText(
+  //     //     taskData.name,
+  //     //     xEnd +  + 3 * fontSize,
+  //     //     yOffset + 15
+  //     //   );
+  //     this.ctx.restore();
+  //     // this.colors[barIndex % this.colors.length];
+  //   }
+  // }
 
   drawDateLine() {
     this.dateLine = new DateLine(
@@ -236,23 +260,25 @@ export class GanttChart {
   }
 
   drawTable() {
-    let table = new Table(
+    this.table = new Table(
       this.tableCtx,
       this.options.colors[0],
       this.options.barColorHover,
       "black",
       ["id", "name", "start", "end"],
-      this.options
+      this.options,
+      this
     );
-    table.draw();
+    this.table.draw();
   }
 
   draw() {
+    this.drawTable();
     this.drawGridLines();
-    this.drawBars();
+    // this.drawBars();
     this.drawDateLine();
     this.drawTimeLine();
-    this.drawTable();
+    let tasks = new Tasks(this.options.data, this);
   }
 
   update() {

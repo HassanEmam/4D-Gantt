@@ -1,6 +1,6 @@
-import { options } from "../classes/options";
+import { options } from "./options";
 
-export class Task {
+export class Bar {
   width: number;
   height: number;
   x: number;
@@ -80,7 +80,6 @@ export class Task {
       y >= this.y &&
       y <= this.y + this.height
     ) {
-      console.log("Mouse", x, y, "Task", this.x, this.y);
       this.color = this.options.barColorHover;
       this.draw();
       return true;
