@@ -11,7 +11,6 @@ let gantt: GanttChart;
 
 function drawGantt() {
   let container = document.getElementById("Chart") as HTMLCanvasElement;
-  console.log(container);
   // chartCanvas.width = chartCanvas.parentElement.clientWidth;
   // chartCanvas.height = 500;
   let options: options = {

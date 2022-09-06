@@ -28,7 +28,6 @@ export class TableRow {
   ) {
     this.context = ctx;
     // this.nestedData = data;
-    console.log("data", rowIndex, data);
     this.x = 0;
     this.options = options;
     this.width = options.table.width;
@@ -40,6 +39,7 @@ export class TableRow {
     this.data = data;
     this.columns = columns;
     this.color = "rgba(255,255,255,0)";
+    this.drawBar();
   }
 
   drawBar() {
@@ -85,8 +85,7 @@ export class TableRow {
   }
 
   draw() {
-    this.drawBar();
-    console.log("Redraw", this.y, this.width, this.height);
+    // this.drawBar();
     drawBar(this.context, this.x, this.y, this.width, this.height, this.color);
     if (!this.options.timeLineHeight) {
       this.options.timeLineHeight = 120;
@@ -139,7 +138,16 @@ export class TableRow {
         x = x + width / 2;
       }
       this.context.fillText(text, x, y + height / 2);
+      this.context.strokeStyle = "black";
     }
+    drawLine(
+      this.context,
+      this.x,
+      this.y,
+      this.x + this.width,
+      this.y,
+      "black"
+    );
   }
 
   collision(x: number, y: number) {
@@ -150,16 +158,6 @@ export class TableRow {
       y <= this.y + this.height
     ) {
       this.color = "rgba(173,216,230,0.1)";
-      console.log(
-        "Row Counter",
-        this.rowCounter,
-        this.data.name,
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      );
-      console.log("mouse", x, y);
 
       this.draw();
       return true;

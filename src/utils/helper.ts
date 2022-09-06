@@ -42,7 +42,7 @@ export function drawBar(
   ctx.fillStyle = color;
   ctx.fillRect(upperLeftCornerX, upperLeftCornerY, width, height);
   if (text) {
-    ctx.globalCompositeOperation = "source-over";
+    // ctx.globalCompositeOperation = "source-over";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     let fontSize = Math.min(12);

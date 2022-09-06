@@ -43,7 +43,6 @@ export class GanttChart {
     this.options = options;
     this.rows = [];
     this.container = options.container;
-    console.log(this.container);
     let styleEl = document.createElement("style");
     styleEl.appendChild(
       document.createTextNode(
@@ -233,13 +232,12 @@ export class GanttChart {
   }
 
   draw() {
-    this.drawTable();
     this.drawGridLines();
+    this.drawTable();
     // this.drawBars();
-    this.drawDateLine();
     this.drawTimeLine();
+    this.drawDateLine();
     let tasks = new Tasks(this.options.data, this);
-    console.log(this.rows);
   }
 
   update() {

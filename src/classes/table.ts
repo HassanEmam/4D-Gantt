@@ -50,7 +50,7 @@ export class Table {
         : 100;
       let width = colWidth;
 
-      this.context.globalCompositeOperation = "source-over";
+      // this.context.globalCompositeOperation = "source-over";
       this.context.textAlign = "center";
       this.context.textBaseline = "middle";
       this.context.font = `12px Arial`;
@@ -82,7 +82,6 @@ export class Table {
     this.gantt.rows.push(tr);
     // }
     this.rowCounter++;
-    console.log("_______COUNTER INCREASED ___________", this.rowCounter, data);
   }
 
   draw() {
