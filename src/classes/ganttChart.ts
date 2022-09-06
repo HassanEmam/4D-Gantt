@@ -15,6 +15,7 @@ import {
 import { scaleX } from "../utils/scales";
 import { TimeLine } from "./timeline";
 import { table } from "console";
+import { TableRow } from "./tableRow";
 
 export class GanttChart {
   options: options;
@@ -36,9 +37,11 @@ export class GanttChart {
   container: HTMLElement;
   tableCanvas: HTMLCanvasElement;
   table: Table;
+  rows: TableRow[];
 
   constructor(options: options) {
     this.options = options;
+    this.rows = [];
     this.container = options.container;
     console.log(this.container);
     let styleEl = document.createElement("style");
@@ -134,7 +137,16 @@ export class GanttChart {
     this.timeLine = new TimeLine(this.ctx, this.canvas, this.options);
     this.tasks = [];
     let currentDate = new Date(2020, 1, 15);
-
+    this.tableCanvas.addEventListener("mousemove", (e) => {
+      let parent = (e.target as HTMLElement).parentElement;
+      let offsetpos = recursive_offset(e.target);
+      let posX = e.clientX + offsetpos.x + parent.offsetLeft;
+      let posY =
+        e.clientY + offsetpos.y + parent.offsetTop + this.canvas.offsetTop;
+      for (let row of this.rows) {
+        row.collision(posX, posY);
+      }
+    });
     this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
       let parent = (e.target as HTMLElement).parentElement;
       let offsetpos = recursive_offset(e.target);
@@ -192,58 +204,6 @@ export class GanttChart {
     // }
   }
 
-  // drawBars() {
-  //   var canvasActualHeight = this.canvas.height;
-  //   var canvasActualWidth = this.canvas.width;
-
-  //   var values = Object.values(this.options.data);
-  //   for (let idx in this.options.data) {
-  //     let taskData = this.options.data[idx];
-  //     let yOffset =
-  //       this.options.rowHeight * parseInt(idx) + this.options.rowHeight * 0.2;
-  //     let xStart = scaleX(
-  //       taskData.start,
-  //       this.minDate,
-  //       this.maxDate,
-  //       canvasActualWidth
-  //     );
-  //     let xEnd = scaleX(
-  //       addDays(taskData.end, 1),
-  //       this.minDate,
-  //       this.maxDate,
-  //       canvasActualWidth
-  //     );
-  //     let barWidth = xEnd - xStart;
-  //     let bar = new Bar(
-  //       xStart,
-  //       yOffset + this.options.timeLineHeight,
-  //       barWidth,
-  //       this.options.rowHeight * 0.6,
-  //       this.ctx,
-  //       this.options.colors[0],
-  //       "white",
-  //       taskData.name,
-  //       this.options
-  //     );
-  //     this.tasks.push(bar);
-  //     bar.draw();
-  //     // draw text to the right of the bar
-
-  //     //   this.ctx.textAlign = "center";
-  //     //   this.ctx.textBaseline = "middle";
-  //     //   let fontSize = Math.min(barWidth / 1.5, 20);
-  //     //   this.ctx.font = `${fontSize}px Arial`;
-  //     //   this.ctx.fillStyle = "black";
-  //     //   this.ctx.fillText(
-  //     //     taskData.name,
-  //     //     xEnd +  + 3 * fontSize,
-  //     //     yOffset + 15
-  //     //   );
-  //     this.ctx.restore();
-  //     // this.colors[barIndex % this.colors.length];
-  //   }
-  // }
-
   drawDateLine() {
     this.dateLine = new DateLine(
       this.ctx,
@@ -279,6 +239,7 @@ export class GanttChart {
     this.drawDateLine();
     this.drawTimeLine();
     let tasks = new Tasks(this.options.data, this);
+    console.log(this.rows);
   }
 
   update() {

@@ -16,11 +16,13 @@ export class Tasks {
   }
 
   createTree() {
+    console.log(this.nestedData.length);
     for (let i = 0; i < this.nestedData.length; i++) {
       const element = this.nestedData[i];
       this.gantt.table.drawRow(element);
       // console.log(element);
       for (let j = 0; j < element.children.length; j++) {
+        console.log("child", element.children[j]);
         this.constructTree(element.children[j]);
       }
     }
@@ -28,7 +30,7 @@ export class Tasks {
 
   constructTree(task: nestedData) {
     if (task.children.length === 0) {
-      // console.log("leaf", task);
+      console.log("leaf", task);
       this.gantt.table.drawRow(task);
       return;
     }

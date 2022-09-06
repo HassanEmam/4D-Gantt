@@ -21,7 +21,7 @@ export interface options {
   gridScale: number;
   rowHeight?: number;
   tableWidth: number;
-  table?: tableOptions;
+  table: tableOptions;
   timeLineColumnWidth?: number;
   timeLineBackgroundColor?: string;
   timeLineHeight?: number;
