@@ -1,3 +1,4 @@
+import { RowCell } from "./rowCell";
 import { GanttChart } from "./ganttChart";
 import { options } from "./options";
 import { drawBar, drawLine, addDays } from "../utils/helper";
@@ -17,6 +18,8 @@ export class TableRow {
   width: number;
   height: number;
   color: string;
+  cells: RowCell[];
+  heilighted: boolean;
 
   constructor(
     ctx: CanvasRenderingContext2D,
@@ -29,10 +32,12 @@ export class TableRow {
     this.context = ctx;
     // this.nestedData = data;
     this.x = 0;
+    this.cells = [];
     this.options = options;
     this.width = options.table.width;
     this.height = this.options.rowHeight;
     this.rowCounter = rowIndex;
+    this.heilighted = false;
     this.y =
       this.options.timeLineHeight + this.options.rowHeight * this.rowCounter;
     this.gantt = gantt;
@@ -86,6 +91,7 @@ export class TableRow {
 
   draw() {
     // this.drawBar();
+    this.cells = [];
     drawBar(this.context, this.x, this.y, this.width, this.height, this.color);
     if (!this.options.timeLineHeight) {
       this.options.timeLineHeight = 120;
@@ -100,45 +106,8 @@ export class TableRow {
       hasChilds = true;
     }
     for (let colidx = 0; colidx < this.columns.length; colidx++) {
-      let x: number;
-      if (!this.options.table?.width) {
-        this.options.table.width = 400;
-      }
-      let width = this.options.table.width / this.columns.length;
-      let height = this.options.rowHeight;
-      // if (colidx === 0) {
-      //   x = this.data.level * 20;
-      // } else {
-      x = colidx * width;
-      // }
-      //   this.context.globalCompositeOperation = "destination-over";
-
-      this.context.fillStyle = "white";
-      this.context.rect(x, y, width, height);
-      this.context.fillStyle = this.options.table.header?.fontColor || "black";
-      this.context.textBaseline = "middle";
-      this.context.font = `14px Arial`;
-      let text: string;
-      if (this.data[this.columns[colidx]] instanceof Date) {
-        text = this.data[this.columns[colidx]]
-          .toLocaleString("en-GB")
-          .split(",")[0];
-      } else {
-        text = this.data[this.columns[colidx]].toString();
-      }
-      if (colidx === 0) {
-        x = (this.data.level || 0) * 20 + colidx * width;
-        if (hasChilds) {
-          let addChar = "\u{229F}";
-          text = addChar + "\t\t" + text;
-        }
-        this.context.textAlign = "left";
-      } else {
-        this.context.textAlign = "center";
-        x = x + width / 2;
-      }
-      this.context.fillText(text, x, y + height / 2);
-      this.context.strokeStyle = "black";
+      let cell = new RowCell(this, colidx, this.data);
+      this.cells.push(cell);
     }
     drawLine(
       this.context,
@@ -157,13 +126,17 @@ export class TableRow {
       y >= this.y &&
       y <= this.y + this.height
     ) {
-      this.color = "rgba(173,216,230,0.1)";
-
-      this.draw();
+      if (!this.heilighted) {
+        this.color = "rgba(173,216,230,0.1)";
+        this.draw();
+        this.heilighted = true;
+        console.log(this.data);
+      }
       return true;
     } else {
       this.color = "rgba(255,255,255,1)";
       this.draw();
+      this.heilighted = false;
       return false;
     }
   }

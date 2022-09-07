@@ -38,12 +38,19 @@ export class Tasks {
   list_to_tree(dataset: data[]) {
     const hashTable = Object.create(null);
     dataset.forEach(
-      (aData) => (hashTable[aData.id] = { ...aData, children: [], level: 0 })
+      (aData) =>
+        (hashTable[aData.id] = {
+          ...aData,
+          children: [],
+          level: 0,
+          expanded: true,
+        })
     );
     const dataTree: nestedData[] = [];
     dataset.forEach((aData) => {
       if (aData.parent) {
         hashTable[aData.id].level = hashTable[aData.parent].level + 1;
+        hashTable[aData.id].expanded = true;
         hashTable[aData.parent].children.push(hashTable[aData.id]);
       } else {
         dataTree.push(hashTable[aData.id]);

@@ -18,5 +18,6 @@ export interface nestedData {
   progress?: number;
   children?: nestedData[];
   level?: number;
+  expanded?: boolean;
   [key: string]: any;
 }

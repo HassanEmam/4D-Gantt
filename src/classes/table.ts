@@ -80,6 +80,7 @@ export class Table {
     );
     tr.draw();
     this.gantt.rows.push(tr);
+    this.gantt.cells.push(...tr.cells);
     // }
     this.rowCounter++;
   }
