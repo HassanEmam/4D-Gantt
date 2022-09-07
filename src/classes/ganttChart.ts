@@ -45,6 +45,7 @@ export class GanttChart {
   chartDiv: HTMLElement;
 
   constructor(options: options) {
+    this.initStyle();
     this.options = options;
     this.rows = [];
     this.cells = [];
@@ -87,7 +88,7 @@ export class GanttChart {
     this.initEvents();
   }
 
-  init() {
+  initStyle() {
     let styleEl = document.createElement("style");
     styleEl.appendChild(
       document.createTextNode(
@@ -100,10 +101,106 @@ export class GanttChart {
          #gantt_canvas__chart__table::-webkit-scrollbar-track{box-shadow:inset 0 0 5px grey; border-radius:10px;}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
+         .level1 td:first-child {
+  padding-left: 15px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  position: relative;
+}
+
+table th {
+  background: lightgray;
+  position: sticky;
+  top: 0;
+}
+
+table td {
+  border: 1px solid #eee;
+}
+.level2 td:first-child {
+  padding-left: 30px;
+}
+
+.level3 td:first-child {
+  padding-left: 45px;
+}
+
+.level4 td:first-child {
+  padding-left: 60px;
+}
+
+.level5 td:first-child {
+  padding-left: 75px;
+}
+
+.level6 td:first-child {
+  padding-left: 90px;
+}
+
+.level7 td:first-child {
+  padding-left: 105px;
+}
+.table-collapse .toggle {
+  width: 0;
+  height: 0;
+  border-left: 0.25rem solid transparent;
+  border-right: 0.25rem solid transparent;
+  border-top: 0.5rem solid var(--dark-blue);
+  content: "\\229F";
+
+  }
+
+.table-expand .toggle {
+  width: 0;
+  height: 0;
+  border-top: 0.25rem solid transparent;
+  border-left: 0.5rem solid var(--dark-blue);
+  border-bottom: 0.25rem solid transparent;
+}
+
+.toggle {
+  height: 9px;
+  width: 9px;
+  display: inline-block;
+  margin: 0.2rem;
+  margin-right:1rem;
+
+}
+
+.toggle:before{
+  content: "\\229F";
+  color:"black";
+  display:inline-block;
+  margin-right:1rem;
+}
+.expanded {
+  height: 9px;
+  width: 9px;
+  display: inline-block;
+  margin: 0.2rem;
+  margin-right:1rem;
+}
+
+.expanded:before{
+  content:"\\229E";
+  color:"black";
+  display:inline-block;
+  margin: 0.2rem;
+  margin-right:1rem;
+}
+
+tr:hover {
+  background-color: #d6eeee;
+}
         `
       )
     );
     document.getElementsByTagName("head")[0].append(styleEl);
+  }
+  init() {
     this.tablediv = document.createElement("div");
     this.tablediv.id = "gantt_canvas__chart__table";
     this.tablediv.style.display = "inline-block";

@@ -160,7 +160,7 @@ export const scheduleData: data[] = [
     name: "Task 23",
     start: new Date(2020, 0, 12),
     end: new Date(2020, 1, 28),
-    parent: 1,
+    parent: 4,
   },
   {
     id: 24,
