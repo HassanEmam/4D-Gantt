@@ -25,7 +25,6 @@ export class RowCell {
     this.width = this.row.width / this.row.columns.length;
     this.height = this.row.height;
     this.text = data[this.row.columns[this.index]];
-    // console.log(this);
     this.draw();
     // this.row.gantt.cells.push(this);
   }
@@ -97,11 +96,7 @@ export class RowCell {
       }
 
       this.draw();
-      console.log(
-        this.text,
-        this.expanded,
-        this.row.gantt.tasksData.nestedData
-      );
+
       return true;
     } else {
       this.color = "rgba(255,255,255,1)";

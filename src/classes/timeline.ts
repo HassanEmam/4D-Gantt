@@ -11,6 +11,7 @@ import {
 } from "../utils/helper";
 import { scaleX } from "../utils/scales";
 import { drawLine } from "../utils/helper";
+import { GanttChart } from "./ganttChart";
 
 export class TimeLine {
   ctx: CanvasRenderingContext2D;
@@ -20,21 +21,23 @@ export class TimeLine {
   maxDate: Date;
   minValue: number;
   maxValue: number;
+  gantt: GanttChart;
 
   constructor(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
-    options: options
+    options: options,
+    gantt: GanttChart
   ) {
     this.options = options;
     this.canvas = canvas;
     this.ctx = ctx;
+    this.gantt = gantt;
 
-    let maxmin = minmax(this.options.data);
-    this.minDate = maxmin[0];
-    this.maxDate = maxmin[1];
-    this.maxValue = maxmin[1].getTime();
-    this.minValue = maxmin[0].getTime();
+    this.minDate = this.gantt.minDate;
+    this.maxDate = this.gantt.maxDate;
+    this.maxValue = this.gantt.maxValue;
+    this.minValue = this.gantt.minValue;
   }
 
   draw() {

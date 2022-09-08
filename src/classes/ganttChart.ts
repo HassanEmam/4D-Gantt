@@ -17,6 +17,7 @@ import { TimeLine } from "./timeline";
 import { table } from "console";
 import { TableRow } from "./tableRow";
 import { RowCell } from "./rowCell";
+import { threadId } from "worker_threads";
 
 export class GanttChart {
   options: options;
@@ -43,6 +44,7 @@ export class GanttChart {
   cells: RowCell[];
   tablediv: HTMLElement;
   chartDiv: HTMLElement;
+  visibleTasks: data[];
 
   constructor(options: options) {
     this.initStyle();
@@ -50,7 +52,7 @@ export class GanttChart {
     this.rows = [];
     this.cells = [];
     this.container = options.container;
-
+    this.visibleTasks = this.options.data;
     this.canvas = document.createElement("canvas");
     // this.canvas.setAttribute("id", "gantt_canvas__chart__");
     this.tableCanvas = document.createElement("canvas");
@@ -82,7 +84,7 @@ export class GanttChart {
       this.options,
       this.minDate
     );
-    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options);
+    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
     this.tasks = [];
     let currentDate = new Date(2020, 1, 15);
     this.initEvents();
@@ -200,6 +202,7 @@ tr:hover {
     );
     document.getElementsByTagName("head")[0].append(styleEl);
   }
+
   init() {
     this.tablediv = document.createElement("div");
     this.tablediv.id = "gantt_canvas__chart__table";
@@ -303,7 +306,7 @@ tr:hover {
     );
     // horizontal grids between tasks
     let rowHeight = this.options.rowHeight;
-    for (let i in this.options.data) {
+    for (let i in this.visibleTasks) {
       drawLine(
         this.ctx,
         0,
@@ -338,21 +341,23 @@ tr:hover {
   }
 
   drawTimeLine() {
-    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options);
+    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
     this.timeLine.draw();
   }
 
-  drawTable() {
-    this.table = new Table(
-      this.tableCtx,
-      this.options.colors[0],
-      this.options.barColorHover,
-      "black",
-      ["id", "name", "start", "end"],
-      this.options,
-      this
-    );
-    this.table.draw();
+  drawTable(update: boolean = false) {
+    if (update !== true) {
+      this.table = new Table(
+        this.tableCtx,
+        this.options.colors[0],
+        this.options.barColorHover,
+        "black",
+        ["id", "name", "start", "end"],
+        this.options,
+        this
+      );
+    }
+    this.table.draw(update);
   }
 
   draw() {
@@ -362,7 +367,6 @@ tr:hover {
     this.drawTimeLine();
     this.drawDateLine();
     this.tasksData = new Tasks(this.options.data, this);
-    console.log(this.cells, this.rows);
   }
 
   update() {
@@ -378,5 +382,72 @@ tr:hover {
     this.tasks = [];
     this.dateLine = null;
     this.draw();
+  }
+
+  updateGantt() {
+    this.ctx.clearRect(
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height + this.options.timeLineHeight
+    );
+    this.visibleTasks = [];
+    for (let task of this.options.data) {
+      if (task.visible !== false) {
+        this.visibleTasks.push(task);
+      }
+    }
+    this.canvas.height =
+      this.options.timeLineHeight +
+      this.options.rowHeight * this.visibleTasks.length;
+    this.tableCanvas.height = this.canvas.height;
+    let maxmin = minmax(this.visibleTasks);
+    this.maxValue = maxmin[1].getTime();
+    this.minValue = maxmin[0].getTime();
+    this.minDate = maxmin[0];
+    this.maxDate = maxmin[1];
+    this.tasks = [];
+    this.dateLine = null;
+
+    // this.drawTable(true);
+    this.drawGridLines();
+    this.drawTimeLine();
+    this.drawDateLine();
+    console.log("visibleTasks from Gantt", this.visibleTasks);
+    // let nestedData = this.tasksData.list_to_tree(this.visibleTasks, true);
+    this.tasksData = new Tasks(this.visibleTasks, this);
+
+    // this.tasksData.update();
+    // draw bars
+    // let counter = 0;
+    // for (let element of this.visibleTasks) {
+    //   let x = scaleX(
+    //     element.start,
+    //     this.minDate,
+    //     this.maxDate,
+    //     this.canvas.width
+    //   );
+    //   let y =
+    //     counter * this.options.rowHeight +
+    //     this.options.timeLineHeight +
+    //     this.options.rowHeight * 0.2;
+    //   let width =
+    //     scaleX(element.end, this.minDate, this.maxDate, this.canvas.width) - x;
+    //   let height = this.options.rowHeight * 0.6;
+
+    //   let bar = new Bar(
+    //     x,
+    //     y,
+    //     width,
+    //     height,
+    //     this.ctx,
+    //     "lightgreen",
+    //     "black",
+    //     element.name,
+    //     this.options
+    //   );
+    //   bar.draw();
+    //   counter++;
+    // }
   }
 }

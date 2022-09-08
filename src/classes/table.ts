@@ -21,6 +21,7 @@ export class Table {
   heading: HTMLTableSectionElement;
   tableBody: HTMLTableSectionElement;
   container: HTMLElement;
+  visibleData: data[];
 
   constructor(
     context: CanvasRenderingContext2D,
@@ -45,109 +46,205 @@ export class Table {
     this.container = this.gantt.tablediv;
   }
 
-  drawHeadings() {
-    this.container.innerHTML = "";
-    let noCols = this.columns.length;
-    let tableWidth = this.options.table.width;
-    let colWidth = (tableWidth ? tableWidth : 400) / noCols;
-    const heading = document.createElement("thead");
-    const row = document.createElement("tr");
-    row.style.height = `${this.options.timeLineHeight}px`;
-    for (let colidx = 0; colidx < this.columns.length; colidx++) {
-      const col = document.createElement("th");
-      col.innerText = this.columns[colidx];
-      col.style.width = `${colWidth}px`;
-      row.appendChild(col);
+  drawHeadings(update: boolean = false) {
+    if (!update === true) {
+      this.container.innerHTML = "";
+      let noCols = this.columns.length;
+      let tableWidth = this.options.table.width;
+      let colWidth = (tableWidth ? tableWidth : 400) / noCols;
+      const heading = document.createElement("thead");
+      const row = document.createElement("tr");
+      row.style.height = `${this.options.timeLineHeight}px`;
+      for (let colidx = 0; colidx < this.columns.length; colidx++) {
+        const col = document.createElement("th");
+        col.innerText = this.columns[colidx];
+        col.style.width = `${colWidth}px`;
+        row.appendChild(col);
+      }
+      heading.appendChild(row);
+      this.tableDOM.appendChild(heading);
+      this.container.appendChild(this.tableDOM);
+      this.container.appendChild(this.tableBody);
     }
-    heading.appendChild(row);
-    this.tableDOM.appendChild(heading);
-    this.container.appendChild(this.tableDOM);
-    this.container.appendChild(this.tableBody);
   }
 
-  drawRow(data: nestedData) {
-    this.createLeaf(data);
+  drawRow(data: nestedData, update: boolean = false) {
+    this.tableBody.innerHTML = "";
+    this.rowCounter = 0;
+    this.createLeaf(data, update);
     if (data.children.length > 0) {
       data.children.forEach((child) => {
-        this.createBranch(child);
+        this.createBranch(child, update);
       });
     } else {
-      this.createLeaf(data);
+      this.createLeaf(data, update);
     }
     this.initEvents();
   }
 
-  createLeaf(data: nestedData) {
-    const row = document.createElement("tr");
-    row.style.height = `${this.options.rowHeight}px`;
-    row.classList.add(`level${data.level}`);
-    row.classList.add("table-collapse");
-    row.setAttribute("data-depth", data.level.toString());
-    // row.setAttribute("data", data);
-    for (let colidx = 0; colidx < this.columns.length; colidx++) {
-      const col = document.createElement("td");
+  createLeaf(data: nestedData, update: boolean = false) {
+    const tableRow = new TableRow(
+      this.context,
+      this.gantt,
+      data,
+      this.options,
+      this.rowCounter,
+      this.columns
+    );
+
+    if (update === true) {
+      this.rowCounter++;
+      return;
+    } else {
+      const row = document.createElement("tr");
+      row.style.height = `${this.options.rowHeight}px`;
+      row.classList.add(`level${data.level}`);
+      row.classList.add("table-collapse");
+      row.setAttribute("data-depth", data.level.toString());
+      row.id = `ganttTable__${data.id.toString()}`;
+      // row.setAttribute("data", data);
       let toggle: HTMLElement;
-      col.style.width = `${this.options.table.width / this.columns.length}px`;
+      for (let colidx = 0; colidx < this.columns.length; colidx++) {
+        const col = document.createElement("td");
+        col.style.width = `${this.options.table.width / this.columns.length}px`;
+        if (data[this.columns[colidx]] instanceof Date) {
+          col.innerText = (
+            data[this.columns[colidx]] as Date
+          ).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "2-digit",
+            year: "numeric",
+          });
+        } else {
+          col.innerText = data[this.columns[colidx]];
+        }
+        if (data.children.length === 0 && data.hasChildren === true) {
+          let childs = this.gantt.options.data.filter(
+            (d) => d.parent === data.id
+          );
+          if (childs.length > 0) {
+            data.hasChildren = true;
+          } else {
+            data.hasChildren = false;
+          }
+        }
+        if (colidx === 0) {
+          if (data.children.length > 0 || data.hasChildren === true) {
+            toggle = document.createElement("span");
+            toggle.id = `gantt__span__${data.id.toString()}`;
+            if (data.expanded && data.expanded === true) {
+              toggle.classList.add("toggle");
+            } else {
+              toggle.classList.add("expanded");
+            }
+            toggle.classList.add("table-collapse");
+            col.insertBefore(toggle, col.firstChild);
+          }
+        }
 
-      if (data[this.columns[colidx]] instanceof Date) {
-        col.innerText = (data[this.columns[colidx]] as Date).toLocaleDateString(
-          "en-GB",
-          { day: "numeric", month: "2-digit", year: "numeric" }
-        );
-      } else {
-        col.innerText = data[this.columns[colidx]];
+        row.appendChild(col);
+
+        this.tableBody.appendChild(row);
       }
-
-      if (colidx === 0 && data.children.length > 0) {
-        console.log(data);
-        toggle = document.createElement("span");
-        toggle.classList.add("toggle");
-        toggle.classList.add("table-collapse");
-        col.insertBefore(toggle, col.firstChild);
+      if (data.children.length > 0 || data.hasChildren === true) {
+        toggle.addEventListener("click", () => {
+          this.addEvents(toggle);
+        });
       }
-
-      row.appendChild(col);
+      this.rowCounter++;
     }
-    this.tableBody.appendChild(row);
   }
 
-  createBranch(data: nestedData) {
-    this.createLeaf(data);
+  addEvents(toggle: HTMLElement) {
+    console.log(toggle.classList, toggle);
+    const tr = toggle.closest("tr");
+    const parent_id = parseInt(tr.id.split("__")[1]);
+    const childs = this.findChildren(tr);
+    // if element has class toggle then remove it and collapse
+    if (toggle.classList.contains("toggle")) {
+      // console.log("first condition", toggle.classList);
+
+      toggle.classList.remove("toggle");
+      toggle.classList.add("expanded");
+      // console.log("first condition", toggle.classList);
+
+      childs.forEach((child) => {
+        const child_id = parseInt(child.id.replace("ganttTable__", ""));
+        this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
+          false;
+        // child.style.display = "none";
+      });
+      this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
+        false;
+      this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
+        true;
+      // console.log("data", this.gantt.options.data);
+      this.gantt.updateGantt();
+    } else if (toggle.classList.contains("expanded")) {
+      console.log("second condition");
+      toggle.classList.remove("expanded");
+      toggle.classList.add("toggle");
+      let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
+      const childss = this.getAllChilds(current);
+      console.log("childs", childss);
+      childss.forEach((child) => {
+        child.visible = true;
+        let childChildren = this.gantt.options.data.filter(
+          (d) => d.parent == child.id
+        );
+        console.log("childChildren", child.id, childChildren.length);
+        if (childChildren.length > 0) {
+          child.hasChildren = true;
+        } else {
+          child.hasChildren = false;
+        }
+        // child.hasChildren =  ? true : false;
+        // child.style.display = "none";
+      });
+
+      this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
+        true;
+      this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
+        true;
+      this.gantt.updateGantt();
+    }
+  }
+
+  getAllChilds(data: data) {
+    let children: data[] = [];
+    let childs = this.gantt.options.data.filter((d) => d.parent === data.id);
+    if (childs.length > 0) {
+      childs.forEach((child) => {
+        children.push(child);
+        children = children.concat(this.getAllChilds(child));
+      });
+    }
+    return children;
+  }
+
+  createBranch(data: nestedData, update: boolean = false) {
+    this.createLeaf(data, update);
     for (let row of data.children) {
       if (row.children.length === 0) {
-        this.createLeaf(row);
+        this.createLeaf(row, update);
       } else {
-        this.createBranch(row);
+        this.createBranch(row, update);
       }
     }
   }
 
-  draw() {
-    this.drawHeadings();
+  draw(update: boolean = false) {
+    if (update === true) {
+      this.rowCounter = 0;
+    }
+    // this.rowCounter = 0;
+    this.drawHeadings(update);
     // this.drawRows();
   }
 
   initEvents() {
-    const toggles = document.querySelectorAll("td > span");
-    for (const el of toggles) {
-      el.addEventListener("click", (e) => {
-        const tr = el.closest("tr");
-        const childs = this.findChildren(tr);
-        console.log(tr, childs);
-        if (el.classList.contains("toggle")) {
-          el.classList.remove("toggle");
-          el.classList.add("expanded");
-          childs.forEach((child) => {
-            child.style.display = "none";
-          });
-        } else if (el.classList.contains("expanded")) {
-          el.classList.remove("expanded");
-          el.classList.add("toggle");
-          childs.forEach((child) => {
-            child.style.display = "table-row";
-          });
-        }
-      });
+    const toggles = document.getElementsByTagName("span");
+    for (let el of toggles) {
     }
   }
 
@@ -161,7 +258,6 @@ export class Table {
     var next = this.nextUntil(tr, elements, null);
     return next;
   }
-
   nextUntil = function (elem: any, elements: any[], filter: any) {
     var siblings = [];
     elem = elem.nextElementSibling;
@@ -171,11 +267,38 @@ export class Table {
         elem = elem.nextElementSibling;
         continue;
       }
+
       siblings.push(elem);
       elem = elem.nextElementSibling;
     }
     return siblings;
   };
+
+  findByKey(obj: nestedData[], keyToFind: number): any {
+    for (let ob of obj) {
+      if (ob["id"] === keyToFind) {
+        ob.visible = false;
+        return obj;
+      }
+      if (ob.children.length > 0) {
+        let childSearch = this.findByKey(ob.children, keyToFind);
+        if (childSearch) {
+          return childSearch;
+        }
+      }
+    }
+    return null;
+  }
+
+  findDataChildren(tasks: nestedData[]) {
+    const childs = [];
+    for (let task of tasks) {
+      // task.visible = false;
+      if (task.children.length > 0) {
+        this.findDataChildren(task.children);
+      }
+    }
+  }
 
   removeAllChildren(element: any) {
     while (element.firstChild) {

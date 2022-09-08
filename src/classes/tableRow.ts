@@ -130,7 +130,6 @@ export class TableRow {
         this.color = "rgba(173,216,230,0.1)";
         this.draw();
         this.heilighted = true;
-        console.log(this.data);
       }
       return true;
     } else {

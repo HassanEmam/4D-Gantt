@@ -6,6 +6,8 @@ export interface data {
   parent?: number;
   progress?: number;
   level?: number;
+  visible?: boolean;
+  hasChildren?: boolean;
   [key: string]: any;
 }
 
@@ -19,5 +21,6 @@ export interface nestedData {
   children?: nestedData[];
   level?: number;
   expanded?: boolean;
+  visible?: boolean;
   [key: string]: any;
 }
