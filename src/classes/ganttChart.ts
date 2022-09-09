@@ -391,6 +391,7 @@ tr:hover {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.tasks = [];
     this.dateLine = null;
+    this.drawGridLines();
     this.draw();
   }
 

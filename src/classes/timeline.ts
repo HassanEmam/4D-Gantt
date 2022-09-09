@@ -89,6 +89,14 @@ export class TimeLine {
         this.canvas.height,
         "lightgray"
       );
+      drawLine(
+        this.gantt.ctx,
+        scaledX,
+        0,
+        scaledX,
+        this.canvas.height,
+        "lightgray"
+      );
     }
 
     drawLine(
@@ -146,17 +154,27 @@ export class TimeLine {
       // month seperator
       drawLine(
         this.ctx,
-        minScale + +this.options.timeLineColumnWidth,
+        minScale + this.options.timeLineColumnWidth,
         +this.options.timeLineHeight / 4,
-        minScale + +this.options.timeLineColumnWidth,
+        minScale + this.options.timeLineColumnWidth,
         this.canvas.height + this.options.timeLineHeight,
         "black"
       );
       drawLine(
         this.ctx,
-        maxScale + +this.options.timeLineColumnWidth,
-        +this.options.timeLineHeight / 4,
-        maxScale + +this.options.timeLineColumnWidth,
+        maxScale + this.options.timeLineColumnWidth,
+        this.options.timeLineHeight / 4,
+        maxScale + this.options.timeLineColumnWidth,
+        this.canvas.height + this.options.timeLineHeight,
+        "black"
+      );
+
+      // draw month vertical line
+      drawLine(
+        this.gantt.ctx,
+        maxScale + this.options.timeLineColumnWidth,
+        0,
+        maxScale + this.options.timeLineColumnWidth,
         this.canvas.height + this.options.timeLineHeight,
         "black"
       );
