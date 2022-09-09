@@ -41,6 +41,9 @@ export class Table {
     this.rowCounter = 0;
     this.columns = columns;
     this.tableDOM = document.createElement("table");
+    // this.tableDOM.style.textAlign = "left";
+    this.tableDOM.style.position = "relative";
+    this.tableDOM.style.borderCollapse = "collapse";
     this.heading = document.createElement("thead");
     this.tableBody = document.createElement("tbody");
     this.container = this.gantt.tablediv;
@@ -57,6 +60,9 @@ export class Table {
       row.style.height = `${this.options.timeLineHeight}px`;
       for (let colidx = 0; colidx < this.columns.length; colidx++) {
         const col = document.createElement("th");
+        col.style.background = "#F5F5F5";
+        col.style.position = "sticky";
+        col.style.top = "0px";
         col.innerText = this.columns[colidx];
         col.style.width = `${colWidth}px`;
         row.appendChild(col);
@@ -64,7 +70,7 @@ export class Table {
       heading.appendChild(row);
       this.tableDOM.appendChild(heading);
       this.container.appendChild(this.tableDOM);
-      this.container.appendChild(this.tableBody);
+      this.tableDOM.appendChild(this.tableBody);
     }
   }
 

@@ -112,17 +112,7 @@ export class GanttChart {
   padding-left: 15px;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-  position: relative;
-}
 
-table th {
-  background: #F5F5F5;
-  position: sticky;
-  top: 0;
-}
 
 table td {
   border: 1px solid #eee;
@@ -215,6 +205,7 @@ tr:hover {
     this.tablediv.style.width = `${this.options.table.width + 20}px`;
     this.tablediv.style.overflow = "auto";
     this.tablediv.style.height = "100%";
+    this.tablediv.style.maxHeight = "100%";
     this.timelineDiv = document.createElement("div");
     this.timelineDiv.id = "gantt__canvas__chart__timeline";
     this.timelineDiv.style.height = this.options.timeLineHeight + "px";
