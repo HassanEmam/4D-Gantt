@@ -71,15 +71,39 @@ export class Table {
   drawRow(data: nestedData, update: boolean = false) {
     this.tableBody.innerHTML = "";
     this.rowCounter = 0;
+    if (data.children.length > 0) {
+      if (data.expanded && data.expanded === true) {
+        data.expanded = true;
+      } else if (data.expanded === undefined) {
+        data.expanded = true;
+      } else {
+        data.expanded = false;
+      }
+    }
     this.createLeaf(data, update);
     if (data.children.length > 0) {
       data.children.forEach((child) => {
         this.createBranch(child, update);
       });
-    } else {
-      this.createLeaf(data, update);
     }
+    // else {
+    //   this.createLeaf(data, update);
+    // }
     this.initEvents();
+  }
+
+  createBranch(data: nestedData, update: boolean = false) {
+    this.createLeaf(data, update);
+    console.log("CreatBranch ", data);
+    if (data.expanded && data.expanded === true) {
+      for (let row of data.children) {
+        if (row.children.length === 0) {
+          this.createLeaf(row, update);
+        } else {
+          this.createBranch(row, update);
+        }
+      }
+    }
   }
 
   createLeaf(data: nestedData, update: boolean = false) {
@@ -220,17 +244,6 @@ export class Table {
       });
     }
     return children;
-  }
-
-  createBranch(data: nestedData, update: boolean = false) {
-    this.createLeaf(data, update);
-    for (let row of data.children) {
-      if (row.children.length === 0) {
-        this.createLeaf(row, update);
-      } else {
-        this.createBranch(row, update);
-      }
-    }
   }
 
   draw(update: boolean = false) {
