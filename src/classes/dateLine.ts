@@ -42,13 +42,10 @@ export class DateLine {
     this.ctx.beginPath();
     this.ctx.strokeStyle = "blue";
     this.ctx.lineWidth = 3;
-    this.ctx.moveTo(
-      this.xpos + +this.options.timeLineColumnWidth / 2,
-      +this.options.timeLineHeight
-    );
+    this.ctx.moveTo(this.xpos + +this.options.timeLineColumnWidth / 2, 0);
     this.ctx.lineTo(
       this.xpos + this.options.timeLineColumnWidth / 2,
-      this.canvas.height + this.options.timeLineHeight
+      this.canvas.height
     );
     this.ctx.stroke();
   }
@@ -71,26 +68,20 @@ export class DateLine {
       this.ctx.beginPath();
       this.ctx.strokeStyle = "red";
       this.ctx.lineWidth = 3;
-      this.ctx.moveTo(
-        this.xpos + this.options.timeLineColumnWidth / 2,
-        +this.options.timeLineHeight
-      );
+      this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
       this.ctx.lineTo(
         this.xpos + this.options.timeLineColumnWidth / 2,
-        this.canvas.height + this.options.timeLineHeight
+        this.canvas.height
       );
       this.ctx.stroke();
     } else {
       this.ctx.beginPath();
       this.ctx.strokeStyle = "blue";
       this.ctx.lineWidth = 3;
-      this.ctx.moveTo(
-        this.xpos + this.options.timeLineColumnWidth / 2,
-        +this.options.timeLineHeight
-      );
+      this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
       this.ctx.lineTo(
         this.xpos + this.options.timeLineColumnWidth / 2,
-        this.canvas.height + this.options.timeLineHeight
+        this.canvas.height
       );
       this.ctx.stroke();
     }

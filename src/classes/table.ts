@@ -94,7 +94,6 @@ export class Table {
 
   createBranch(data: nestedData, update: boolean = false) {
     this.createLeaf(data, update);
-    console.log("CreatBranch ", data);
     if (data.expanded && data.expanded === true) {
       for (let row of data.children) {
         if (row.children.length === 0) {
@@ -180,43 +179,34 @@ export class Table {
   }
 
   addEvents(toggle: HTMLElement) {
-    console.log(toggle.classList, toggle);
     const tr = toggle.closest("tr");
     const parent_id = parseInt(tr.id.split("__")[1]);
     const childs = this.findChildren(tr);
     // if element has class toggle then remove it and collapse
     if (toggle.classList.contains("toggle")) {
-      // console.log("first condition", toggle.classList);
-
       toggle.classList.remove("toggle");
       toggle.classList.add("expanded");
-      // console.log("first condition", toggle.classList);
 
       childs.forEach((child) => {
         const child_id = parseInt(child.id.replace("ganttTable__", ""));
         this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
           false;
-        // child.style.display = "none";
       });
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
         false;
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
         true;
-      // console.log("data", this.gantt.options.data);
       this.gantt.updateGantt();
     } else if (toggle.classList.contains("expanded")) {
-      console.log("second condition");
       toggle.classList.remove("expanded");
       toggle.classList.add("toggle");
       let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
       const childss = this.getAllChilds(current);
-      console.log("childs", childss);
       childss.forEach((child) => {
         child.visible = true;
         let childChildren = this.gantt.options.data.filter(
           (d) => d.parent == child.id
         );
-        console.log("childChildren", child.id, childChildren.length);
         if (childChildren.length > 0) {
           child.hasChildren = true;
         } else {

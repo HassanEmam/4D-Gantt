@@ -24,6 +24,7 @@ export class GanttChart {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   tableCtx: CanvasRenderingContext2D;
+  timelineCtx: CanvasRenderingContext2D;
   colors: string[];
   titleOptions: string;
   maxValue: number;
@@ -38,6 +39,7 @@ export class GanttChart {
   dataDate: Date;
   container: HTMLElement;
   tableCanvas: HTMLCanvasElement;
+  timelineCanvas: HTMLCanvasElement;
   table: Table;
   tasksData: Tasks;
   rows: TableRow[];
@@ -45,6 +47,8 @@ export class GanttChart {
   tablediv: HTMLElement;
   chartDiv: HTMLElement;
   visibleTasks: data[];
+  timelineDiv: HTMLElement;
+  barsDiv: HTMLElement;
 
   constructor(options: options) {
     this.initStyle();
@@ -77,6 +81,7 @@ export class GanttChart {
       this.options.timeLineHeight = this.timeLineHeight;
     }
     this.canvas.width = this.options.timeLineColumnWidth * duration;
+    this.timelineCanvas.width = this.canvas.width;
 
     this.dateLine = new DateLine(
       this.ctx,
@@ -114,7 +119,7 @@ table {
 }
 
 table th {
-  background: lightgray;
+  background: #F5F5F5;
   position: sticky;
   top: 0;
 }
@@ -210,9 +215,23 @@ tr:hover {
     this.tablediv.style.width = `${this.options.table.width + 20}px`;
     this.tablediv.style.overflow = "auto";
     this.tablediv.style.height = "100%";
+    this.timelineDiv = document.createElement("div");
+    this.timelineDiv.id = "gantt__canvas__chart__timeline";
+    this.timelineDiv.style.height = this.options.timeLineHeight + "px";
+    this.timelineDiv.style.width = this.chartDiv.style.width;
+    this.timelineDiv.style.position = "sticky";
+    this.timelineDiv.style.top = "0";
+    this.timelineCanvas = document.createElement("canvas");
+    this.timelineCanvas.height = this.options.timeLineHeight;
+    this.timelineDiv.appendChild(this.timelineCanvas);
+    this.timelineCtx = this.timelineCanvas.getContext("2d");
+    this.barsDiv = document.createElement("div");
+    this.barsDiv.id = "gantt__canvas__chart__bars";
+    this.barsDiv.appendChild(this.canvas);
     this.chartDiv.setAttribute("id", "gantt_canvas__chart__");
+    this.chartDiv.appendChild(this.timelineDiv);
 
-    this.chartDiv.appendChild(this.canvas);
+    this.chartDiv.appendChild(this.barsDiv);
     this.chartDiv.style.display = "inline-block";
     this.chartDiv.style.height = "100%";
     const contWidth =
@@ -223,9 +242,7 @@ tr:hover {
     this.tablediv.appendChild(this.tableCanvas);
     this.container.appendChild(this.tablediv);
     this.container.appendChild(this.chartDiv);
-    this.canvas.height =
-      this.options.timeLineHeight +
-      this.options.rowHeight * this.options.data.length;
+    this.canvas.height = this.options.rowHeight * this.options.data.length;
     if (this.options.table.width) {
       this.tableWidth = this.options.table.width;
     } else {
@@ -290,38 +307,31 @@ tr:hover {
     });
   }
   drawGridLines() {
-    var canvasActualHeight = this.canvas.height - this.options.timeLineHeight;
+    var canvasActualHeight = this.canvas.height;
     var canvasActualWidth = this.canvas.width;
 
     var gridValue = 0;
     // while (gridValue <= this.maxValue) {
 
-    drawLine(
-      this.ctx,
-      0,
-      this.options.timeLineHeight,
-      canvasActualWidth,
-      this.options.timeLineHeight,
-      "black"
-    );
+    drawLine(this.ctx, 0, 0, canvasActualWidth, 0, "black");
     // horizontal grids between tasks
     let rowHeight = this.options.rowHeight;
     for (let i in this.visibleTasks) {
       drawLine(
         this.ctx,
         0,
-        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        rowHeight * (parseInt(i) + 1),
         canvasActualWidth + this.options.timeLineColumnWidth,
-        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        rowHeight * (parseInt(i) + 1),
         "lightgray"
       );
 
       drawLine(
         this.tableCtx,
         0,
-        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        rowHeight * (parseInt(i) + 1),
         this.options.table.width,
-        this.options.timeLineHeight + rowHeight * (parseInt(i) + 1),
+        rowHeight * (parseInt(i) + 1),
         "black"
       );
     }
@@ -341,7 +351,12 @@ tr:hover {
   }
 
   drawTimeLine() {
-    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
+    this.timeLine = new TimeLine(
+      this.timelineCtx,
+      this.canvas,
+      this.options,
+      this
+    );
     this.timeLine.draw();
   }
 
@@ -372,33 +387,21 @@ tr:hover {
   update() {
     let duration = dayDiff(this.minDate, this.maxDate) + 1;
     this.canvas.width = this.options.timeLineColumnWidth * duration;
-    this.ctx.clearRect(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height + this.options.timeLineHeight
-    );
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.tasks = [];
     this.dateLine = null;
     this.draw();
   }
 
   updateGantt() {
-    this.ctx.clearRect(
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height + this.options.timeLineHeight
-    );
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.visibleTasks = [];
     for (let task of this.options.data) {
       if (task.visible !== false) {
         this.visibleTasks.push(task);
       }
     }
-    this.canvas.height =
-      this.options.timeLineHeight +
-      this.options.rowHeight * this.visibleTasks.length;
+    this.canvas.height = this.options.rowHeight * this.visibleTasks.length;
     this.tableCanvas.height = this.canvas.height;
     let maxmin = minmax(this.visibleTasks);
     this.maxValue = maxmin[1].getTime();
@@ -413,7 +416,6 @@ tr:hover {
     this.drawGridLines();
     this.drawTimeLine();
     this.drawDateLine();
-    console.log("visibleTasks from Gantt", this.visibleTasks);
     // let nestedData = this.tasksData.list_to_tree(this.visibleTasks, true);
     this.tasksData = new Tasks(this.visibleTasks, this);
 
