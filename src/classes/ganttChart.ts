@@ -371,8 +371,7 @@ tr:hover {
 
   update() {
     let duration = dayDiff(this.minDate, this.maxDate) + 1;
-    this.canvas.width =
-      this.tableWidth + this.options.timeLineColumnWidth * duration;
+    this.canvas.width = this.options.timeLineColumnWidth * duration;
     this.ctx.clearRect(
       0,
       0,
@@ -408,7 +407,8 @@ tr:hover {
     this.maxDate = maxmin[1];
     this.tasks = [];
     this.dateLine = null;
-
+    this.canvas.width =
+      dayDiff(this.minDate, this.maxDate) * this.options.timeLineColumnWidth;
     // this.drawTable(true);
     this.drawGridLines();
     this.drawTimeLine();
