@@ -15,7 +15,7 @@ function drawGantt() {
   // chartCanvas.height = 500;
   let options: options = {
     container: container,
-    dataDate: new Date(2020, 0, 15),
+    dataDate: new Date(2022, 0, 15),
     gridScale: 5,
     gridColor: "black",
     data: data,

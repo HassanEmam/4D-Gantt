@@ -88,7 +88,6 @@ export class Bar {
   }
 
   collision(x: number, y: number) {
-    // console.log("collision", x, y, this.x, this.y);
     if (
       x >= this.x &&
       x <= this.x + this.width &&

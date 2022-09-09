@@ -45,7 +45,7 @@ export class DateLine {
     this.ctx.beginPath();
     this.ctx.strokeStyle = "blue";
     this.ctx.lineWidth = 3;
-    this.ctx.moveTo(this.xpos + +this.options.timeLineColumnWidth / 2, 0);
+    this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
     this.ctx.lineTo(
       this.xpos + this.options.timeLineColumnWidth / 2,
       this.canvas.height

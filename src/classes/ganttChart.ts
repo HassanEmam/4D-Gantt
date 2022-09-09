@@ -117,27 +117,27 @@ table td {
   border: 1px solid #eee;
 }
 .level2 td:first-child {
-  padding-left: 30px;
+  padding-left: 20px;
 }
 
 .level3 td:first-child {
-  padding-left: 45px;
+  padding-left: 30px;
 }
 
 .level4 td:first-child {
-  padding-left: 60px;
+  padding-left: 40px;
 }
 
 .level5 td:first-child {
-  padding-left: 75px;
+  padding-left: 50px;
 }
 
 .level6 td:first-child {
-  padding-left: 90px;
+  padding-left: 60px;
 }
 
 .level7 td:first-child {
-  padding-left: 105px;
+  padding-left: 70px;
 }
 .table-collapse .toggle {
   width: 0;
@@ -245,7 +245,9 @@ tr:hover {
       this.dataDate = new Date();
       this.options.dataDate = this.dataDate;
     }
-
+    for (let data of this.options.data) {
+      data.visible = true;
+    }
     this.tableCanvas.height = this.canvas.height;
     this.tableCanvas.width = this.tableWidth;
   }
@@ -393,6 +395,6 @@ tr:hover {
     // this.drawGridLines();
     this.drawDateLine();
     this.drawTimeLine();
-    this.tasksData = new Tasks(this.visibleTasks, this);
+    this.tasksData = new Tasks(this.options.data, this);
   }
 }
