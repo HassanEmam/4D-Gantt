@@ -387,6 +387,7 @@ tr:hover {
   update() {
     let duration = dayDiff(this.minDate, this.maxDate) + 1;
     this.canvas.width = this.options.timeLineColumnWidth * duration;
+    this.timelineCanvas.width = this.options.timeLineColumnWidth * duration;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.tasks = [];
     this.dateLine = null;
