@@ -80,7 +80,8 @@ export class TableRow {
       this.options.barColor,
       "white",
       taskData.name,
-      this.options
+      this.options,
+      this.gantt
     );
     this.gantt.tasks.push(bar);
     bar.draw();

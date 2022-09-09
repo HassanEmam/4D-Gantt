@@ -264,33 +264,14 @@ tr:hover {
    * @description - initialize events
    */
   initEvents() {
-    this.tableCanvas.addEventListener("mousemove", (e) => {
-      let parent = (e.target as HTMLElement).parentElement;
-      let offsetpos = recursive_offset(e.target);
-      let posX = e.clientX + offsetpos.x + parent.offsetLeft;
-      let posY =
-        e.clientY + offsetpos.y + parent.offsetTop + this.canvas.offsetTop;
-      for (let row of this.rows) {
-        row.collision(posX, posY);
-      }
-    });
-    this.tableCanvas.addEventListener("click", (e) => {
-      let parent = (e.target as HTMLElement).parentElement;
-      let offsetpos = recursive_offset(e.target);
-      let posX = e.clientX + offsetpos.x + parent.offsetLeft;
-      let posY =
-        e.clientY + offsetpos.y + parent.offsetTop + this.canvas.offsetTop;
-      for (let cell of this.cells) {
-        cell.collision(posX, posY);
-      }
-    });
+    /**
+     * Events to habdle mouse move in the chart area
+     */
     this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
       let parent = (e.target as HTMLElement).parentElement;
       let offsetpos = recursive_offset(e.target);
-      let posX = e.clientX + offsetpos.x + parent.offsetLeft;
-      let posY =
-        e.clientY + offsetpos.y + parent.offsetTop + this.canvas.offsetTop;
-
+      let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
+      let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
       for (let task of this.tasks) {
         task.collision(posX, posY);
       }
@@ -298,6 +279,10 @@ tr:hover {
         this.dateLine.collision(posX, posY);
       }
     });
+
+    /**
+     * Events to synchronise scroll bars of table and canvas
+     */
     this.tablediv.addEventListener("scroll", (event) => {
       this.chartDiv.scrollTop = (event.target as HTMLElement).scrollTop;
     });
@@ -306,14 +291,15 @@ tr:hover {
       this.tablediv.scrollTop = (event.target as HTMLElement).scrollTop;
     });
   }
+
   drawGridLines() {
     var canvasActualHeight = this.canvas.height;
     var canvasActualWidth = this.canvas.width;
 
     var gridValue = 0;
-    // while (gridValue <= this.maxValue) {
 
     drawLine(this.ctx, 0, 0, canvasActualWidth, 0, "black");
+
     // horizontal grids between tasks
     let rowHeight = this.options.rowHeight;
     for (let i in this.visibleTasks) {
@@ -376,9 +362,8 @@ tr:hover {
   }
 
   draw() {
-    this.drawGridLines();
+    // this.drawGridLines();
     this.drawTable();
-    // this.drawBars();
     this.drawTimeLine();
     this.drawDateLine();
     this.tasksData = new Tasks(this.options.data, this);
@@ -391,7 +376,7 @@ tr:hover {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.tasks = [];
     this.dateLine = null;
-    this.drawGridLines();
+    // this.drawGridLines();
     this.draw();
   }
 
@@ -414,44 +399,9 @@ tr:hover {
     this.dateLine = null;
     this.canvas.width =
       dayDiff(this.minDate, this.maxDate) * this.options.timeLineColumnWidth;
-    // this.drawTable(true);
-    this.drawGridLines();
-    this.drawTimeLine();
+    // this.drawGridLines();
     this.drawDateLine();
-    // let nestedData = this.tasksData.list_to_tree(this.visibleTasks, true);
+    this.drawTimeLine();
     this.tasksData = new Tasks(this.visibleTasks, this);
-
-    // this.tasksData.update();
-    // draw bars
-    // let counter = 0;
-    // for (let element of this.visibleTasks) {
-    //   let x = scaleX(
-    //     element.start,
-    //     this.minDate,
-    //     this.maxDate,
-    //     this.canvas.width
-    //   );
-    //   let y =
-    //     counter * this.options.rowHeight +
-    //     this.options.timeLineHeight +
-    //     this.options.rowHeight * 0.2;
-    //   let width =
-    //     scaleX(element.end, this.minDate, this.maxDate, this.canvas.width) - x;
-    //   let height = this.options.rowHeight * 0.6;
-
-    //   let bar = new Bar(
-    //     x,
-    //     y,
-    //     width,
-    //     height,
-    //     this.ctx,
-    //     "lightgreen",
-    //     "black",
-    //     element.name,
-    //     this.options
-    //   );
-    //   bar.draw();
-    //   counter++;
-    // }
   }
 }

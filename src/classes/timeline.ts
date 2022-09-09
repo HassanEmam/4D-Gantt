@@ -89,6 +89,8 @@ export class TimeLine {
         this.canvas.height,
         "lightgray"
       );
+
+      // day gridline in the main chart
       drawLine(
         this.gantt.ctx,
         scaledX,
