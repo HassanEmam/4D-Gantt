@@ -1,52 +1,78 @@
-import { TaskDuration } from "./ganttChart/classes/taskDuration";
-import GanttChart from "./ganttChart/ganttChart";
+import { scheduleData } from "./data";
+import { options } from "./classes/options";
+import { scaleX, scaleDate } from "./utils/scales";
+import { GanttChart } from "./classes/ganttChart";
+import { data } from "./classes/data";
+import { addDays } from "./utils/helper";
+import { time } from "console";
 
-// can have multiple instances of Gantt chart
-document.addEventListener("DOMContentLoaded", () => {
-  // get data - could get from server
-  const tasks = [
-    { id: 1, name: "Task 1" },
-    { id: 2, name: "Task 2" },
-    { id: 3, name: "Task 3" },
-    { id: 4, name: "Task 4" },
-    { id: 5, name: "Task 5" },
-    { id: 6, name: "Task 6" },
-    { id: 7, name: "Task 7" },
-    { id: 8, name: "Task 8" },
-  ];
+let data = scheduleData;
+let gantt: GanttChart;
 
-  /// modified data should be
-  // const tasks = [
-  //   { id: 1, name: "Task 1", start: new Date("2022/1/10"), end: new Date("2022/1/15"), parent:null },
-  //   { id: 2, name: "Task 2", start: new Date("2022/1/10"), end: new Date("2022/1/15"), parent: 1 },
-  //   { id: 3, name: "Task 3" },
-  //   { id: 4, name: "Task 4" , start: new Date("2022/1/11"), end: new Date("2022/1/18"), parent: 3},
-  // ];
-
-  const taskDurations: TaskDuration[] = [
-    {
-      id: "1",
-      start: new Date("2022/1/2"),
-      end: new Date("2022/1/8"),
-      task: 1,
+function drawGantt() {
+  let container = document.getElementById("Chart") as HTMLCanvasElement;
+  // chartCanvas.width = chartCanvas.parentElement.clientWidth;
+  // chartCanvas.height = 500;
+  let options: options = {
+    container: container,
+    dataDate: new Date(2020, 0, 15),
+    gridScale: 5,
+    gridColor: "black",
+    data: data,
+    titleOptions: "Music",
+    rowHeight: 40,
+    timeLineColumnWidth: 12,
+    timeLineBackgroundColor: "yellow",
+    timeLineHeight: 120,
+    tableWidth: 400,
+    table: {
+      width: 400,
     },
-    {
-      id: "2",
-      start: new Date("2022/1/10"),
-      end: new Date("2022/1/15"),
-      task: 2,
-    },
-    {
-      id: "3",
-      start: new Date("2022/1/11"),
-      end: new Date("2022/1/18"),
-      task: 4,
-    },
-  ];
+    barColor: "lightgreen",
+    barColorHover: "red",
+    colors: ["#a55ca5", "#67b6c7", "#bccd7a", "#eb9743"],
+  };
+  gantt = new GanttChart(options);
 
-  const ganttCharts = document.querySelectorAll(".gantt-chart");
-  ganttCharts.forEach((ganttChart) => {
-    ganttChart.innerHTML = "";
-    new GanttChart(ganttChart as HTMLElement, tasks, taskDurations);
-  });
+  gantt.draw();
+}
+
+drawGantt();
+
+let btnZoomIn = document.getElementById("zoom-in") as HTMLButtonElement;
+btnZoomIn.addEventListener("click", () => {
+  gantt.options.timeLineColumnWidth += 5;
+  gantt.update();
 });
+
+let btnZoomOut = document.getElementById("zoom-out") as HTMLButtonElement;
+btnZoomOut.addEventListener("click", () => {
+  if (gantt.options.timeLineColumnWidth > 5) {
+    gantt.options.timeLineColumnWidth -= 5;
+    gantt.update();
+  }
+});
+
+let btnPlay = document.getElementById("play") as HTMLButtonElement;
+btnPlay.addEventListener("click", play);
+
+let timer: NodeJS.Timeout | undefined = undefined;
+
+function play() {
+  if (timer) {
+    clearInterval(timer);
+    timer = undefined;
+    btnPlay.innerHTML = ">";
+    return;
+  }
+  let counter = 0;
+  btnPlay.innerHTML = "||";
+  timer = setInterval(() => {
+    if (timer && ++counter >= 100) {
+      clearInterval(timer);
+    }
+    gantt.dataDate = addDays(gantt.dataDate, 1);
+    gantt.options.dataDate = addDays(gantt.options.dataDate, counter);
+    gantt.update();
+  }, 1000);
+}
