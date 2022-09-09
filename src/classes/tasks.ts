@@ -17,11 +17,7 @@ export class Tasks {
   createTree(update: boolean = false) {
     for (let i = 0; i < this.nestedData.length; i++) {
       const element = this.nestedData[i];
-      // console.log("element", element);
       this.gantt.table.drawRow(element, update);
-      // for (let j = 0; j < element.children.length; j++) {
-      //   this.constructTree(element.children[j]);
-      // }
     }
   }
 

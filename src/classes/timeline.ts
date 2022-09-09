@@ -43,7 +43,7 @@ export class TimeLine {
   draw() {
     let noOfYears = this.maxDate.getFullYear() - this.minDate.getFullYear() + 1;
     let noOfMonths = monthDiff(this.minDate, this.maxDate);
-    let noOfDays = dayDiff(this.minDate, this.maxDate);
+    let noOfDays = dayDiff(this.minDate, this.maxDate) + 1;
 
     for (let i = 0; i < noOfDays; i++) {
       let scaledX = scaleX(
@@ -85,6 +85,16 @@ export class TimeLine {
         this.ctx,
         scaledX,
         +(this.options.timeLineHeight * 2) / 4,
+        scaledX,
+        this.canvas.height,
+        "lightgray"
+      );
+
+      // day gridline in the main chart
+      drawLine(
+        this.gantt.ctx,
+        scaledX,
+        0,
         scaledX,
         this.canvas.height,
         "lightgray"
@@ -146,17 +156,27 @@ export class TimeLine {
       // month seperator
       drawLine(
         this.ctx,
-        minScale + +this.options.timeLineColumnWidth,
+        minScale + this.options.timeLineColumnWidth,
         +this.options.timeLineHeight / 4,
-        minScale + +this.options.timeLineColumnWidth,
+        minScale + this.options.timeLineColumnWidth,
         this.canvas.height + this.options.timeLineHeight,
         "black"
       );
       drawLine(
         this.ctx,
-        maxScale + +this.options.timeLineColumnWidth,
-        +this.options.timeLineHeight / 4,
-        maxScale + +this.options.timeLineColumnWidth,
+        maxScale + this.options.timeLineColumnWidth,
+        this.options.timeLineHeight / 4,
+        maxScale + this.options.timeLineColumnWidth,
+        this.canvas.height + this.options.timeLineHeight,
+        "black"
+      );
+
+      // draw month vertical line
+      drawLine(
+        this.gantt.ctx,
+        maxScale + this.options.timeLineColumnWidth,
+        0,
+        maxScale + this.options.timeLineColumnWidth,
         this.canvas.height + this.options.timeLineHeight,
         "black"
       );

@@ -15,13 +15,13 @@ function drawGantt() {
   // chartCanvas.height = 500;
   let options: options = {
     container: container,
-    dataDate: new Date(2020, 0, 15),
+    dataDate: new Date(2022, 0, 15),
     gridScale: 5,
     gridColor: "black",
     data: data,
     titleOptions: "Music",
-    rowHeight: 40,
-    timeLineColumnWidth: 12,
+    rowHeight: 30,
+    timeLineColumnWidth: 20,
     timeLineBackgroundColor: "yellow",
     timeLineHeight: 120,
     tableWidth: 400,

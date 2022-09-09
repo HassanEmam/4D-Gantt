@@ -1,4 +1,6 @@
+import { drawLine } from "../utils/helper";
 import { options } from "./options";
+import { GanttChart } from "./ganttChart";
 
 export class Bar {
   width: number;
@@ -11,6 +13,7 @@ export class Bar {
   context: CanvasRenderingContext2D;
   hoverColor: string;
   options: options;
+  gantt: GanttChart;
 
   constructor(
     x: number,
@@ -21,7 +24,8 @@ export class Bar {
     color?: string,
     fontColor?: string,
     name?: string,
-    options?: options
+    options?: options,
+    gantt?: GanttChart
   ) {
     this.width = width;
     this.height = height;
@@ -34,9 +38,18 @@ export class Bar {
     this.options = options;
     this.color = this.options.barColor;
     this.hoverColor = this.options.barColorHover;
+    this.gantt = gantt;
   }
 
   draw(color?: string, fontColor?: string, name?: string) {
+    drawLine(
+      this.context,
+      0,
+      this.y + this.options.rowHeight * 0.8,
+      this.gantt.canvas.width,
+      this.y + this.options.rowHeight * 0.8,
+      "lightgray"
+    );
     color
       ? (this.color = color)
       : this.color
@@ -56,6 +69,7 @@ export class Bar {
       this.context.font = `${fontSize}px Arial`;
       this.context.fillStyle = this.color;
       this.context.fillRect(this.x, this.y, this.width, this.height);
+
       this.context.fillStyle = this.fontColor;
       // this.context.fillStyle = "black";
 

@@ -41,6 +41,9 @@ export class Table {
     this.rowCounter = 0;
     this.columns = columns;
     this.tableDOM = document.createElement("table");
+    // this.tableDOM.style.textAlign = "center";
+    this.tableDOM.style.position = "relative";
+    this.tableDOM.style.borderCollapse = "collapse";
     this.heading = document.createElement("thead");
     this.tableBody = document.createElement("tbody");
     this.container = this.gantt.tablediv;
@@ -57,6 +60,10 @@ export class Table {
       row.style.height = `${this.options.timeLineHeight}px`;
       for (let colidx = 0; colidx < this.columns.length; colidx++) {
         const col = document.createElement("th");
+        col.style.background = "#F5F5F5";
+        col.style.position = "sticky";
+        col.style.top = "0px";
+        col.style.textAlign = "left";
         col.innerText = this.columns[colidx];
         col.style.width = `${colWidth}px`;
         row.appendChild(col);
@@ -64,7 +71,7 @@ export class Table {
       heading.appendChild(row);
       this.tableDOM.appendChild(heading);
       this.container.appendChild(this.tableDOM);
-      this.container.appendChild(this.tableBody);
+      this.tableDOM.appendChild(this.tableBody);
     }
   }
 
@@ -94,7 +101,6 @@ export class Table {
 
   createBranch(data: nestedData, update: boolean = false) {
     this.createLeaf(data, update);
-    console.log("CreatBranch ", data);
     if (data.expanded && data.expanded === true) {
       for (let row of data.children) {
         if (row.children.length === 0) {
@@ -107,19 +113,22 @@ export class Table {
   }
 
   createLeaf(data: nestedData, update: boolean = false) {
-    const tableRow = new TableRow(
-      this.context,
-      this.gantt,
-      data,
-      this.options,
-      this.rowCounter,
-      this.columns
-    );
+    if (data.visible === true) {
+      const tableRow = new TableRow(
+        this.context,
+        this.gantt,
+        data,
+        this.options,
+        this.rowCounter,
+        this.columns
+      );
+    }
 
     if (update === true) {
       this.rowCounter++;
       return;
-    } else {
+    }
+    if (data.visible && data.visible === true) {
       const row = document.createElement("tr");
       row.style.height = `${this.options.rowHeight}px`;
       row.classList.add(`level${data.level}`);
@@ -180,43 +189,38 @@ export class Table {
   }
 
   addEvents(toggle: HTMLElement) {
-    console.log(toggle.classList, toggle);
     const tr = toggle.closest("tr");
     const parent_id = parseInt(tr.id.split("__")[1]);
     const childs = this.findChildren(tr);
+    console.log(childs);
     // if element has class toggle then remove it and collapse
     if (toggle.classList.contains("toggle")) {
-      // console.log("first condition", toggle.classList);
-
       toggle.classList.remove("toggle");
       toggle.classList.add("expanded");
-      // console.log("first condition", toggle.classList);
 
-      childs.forEach((child) => {
-        const child_id = parseInt(child.id.replace("ganttTable__", ""));
-        this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
-          false;
-        // child.style.display = "none";
-      });
+      this.setInvisible(childs);
+      console.log(this.options.data);
+      // childs.forEach((child) => {
+      //   const child_id = parseInt(child.id.replace("ganttTable__", ""));
+      //   // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
+      //   //   false;
+      // });
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
         false;
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
         true;
-      // console.log("data", this.gantt.options.data);
       this.gantt.updateGantt();
     } else if (toggle.classList.contains("expanded")) {
-      console.log("second condition");
       toggle.classList.remove("expanded");
       toggle.classList.add("toggle");
       let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
       const childss = this.getAllChilds(current);
-      console.log("childs", childss);
+      // this.setVisible(childs);
       childss.forEach((child) => {
         child.visible = true;
         let childChildren = this.gantt.options.data.filter(
           (d) => d.parent == child.id
         );
-        console.log("childChildren", child.id, childChildren.length);
         if (childChildren.length > 0) {
           child.hasChildren = true;
         } else {
@@ -231,6 +235,29 @@ export class Table {
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
         true;
       this.gantt.updateGantt();
+    }
+  }
+
+  setInvisible(childs: HTMLElement[]) {
+    for (let child of childs) {
+      let child_id = parseInt(child.id.toString().split("__")[1]);
+      this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
+        false;
+      let children = this.findChildren(child);
+      console.log(child_id);
+
+      if (children && Array.isArray(children) && children.length > 0)
+        this.setInvisible(children);
+    }
+  }
+
+  setVisible(childs: HTMLElement[]) {
+    for (let child of childs) {
+      let child_id = parseInt(child.id.toString().split("__")[1]);
+      this.gantt.options.data.filter((d) => d.id == child_id)[0].visible = true;
+      let children = this.findChildren(child);
+      if (children && Array.isArray(children) && children.length > 0)
+        this.setVisible(children);
     }
   }
 

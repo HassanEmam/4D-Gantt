@@ -38,8 +38,7 @@ export class TableRow {
     this.height = this.options.rowHeight;
     this.rowCounter = rowIndex;
     this.heilighted = false;
-    this.y =
-      this.options.timeLineHeight + this.options.rowHeight * this.rowCounter;
+    this.y = this.options.rowHeight * this.rowCounter;
     this.gantt = gantt;
     this.data = data;
     this.columns = columns;
@@ -74,14 +73,15 @@ export class TableRow {
     }
     let bar = new Bar(
       xStart,
-      yOffset + this.options.timeLineHeight,
+      yOffset,
       barWidth,
       this.options.rowHeight * 0.6,
       this.gantt.ctx,
       this.options.barColor,
       "white",
       taskData.name,
-      this.options
+      this.options,
+      this.gantt
     );
     this.gantt.tasks.push(bar);
     bar.draw();
@@ -99,8 +99,7 @@ export class TableRow {
     if (!this.options.rowHeight) {
       this.options.rowHeight = 120;
     }
-    let y =
-      this.options.timeLineHeight + this.options.rowHeight * this.rowCounter;
+    let y = this.options.rowHeight * this.rowCounter;
     let hasChilds: boolean = false;
     if ((this.data.children as nestedData[]).length > 0) {
       hasChilds = true;
