@@ -41,7 +41,7 @@ export class Table {
     this.rowCounter = 0;
     this.columns = columns;
     this.tableDOM = document.createElement("table");
-    // this.tableDOM.style.textAlign = "left";
+    // this.tableDOM.style.textAlign = "center";
     this.tableDOM.style.position = "relative";
     this.tableDOM.style.borderCollapse = "collapse";
     this.heading = document.createElement("thead");
@@ -63,6 +63,7 @@ export class Table {
         col.style.background = "#F5F5F5";
         col.style.position = "sticky";
         col.style.top = "0px";
+        col.style.textAlign = "left";
         col.innerText = this.columns[colidx];
         col.style.width = `${colWidth}px`;
         row.appendChild(col);

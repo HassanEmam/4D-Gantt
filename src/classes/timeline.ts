@@ -43,7 +43,7 @@ export class TimeLine {
   draw() {
     let noOfYears = this.maxDate.getFullYear() - this.minDate.getFullYear() + 1;
     let noOfMonths = monthDiff(this.minDate, this.maxDate);
-    let noOfDays = dayDiff(this.minDate, this.maxDate);
+    let noOfDays = dayDiff(this.minDate, this.maxDate) + 1;
 
     for (let i = 0; i < noOfDays; i++) {
       let scaledX = scaleX(

@@ -71,9 +71,9 @@ export class GanttChart {
     let maxmin = minmax(this.options.data);
     this.maxValue = maxmin[1].getTime();
     this.minValue = maxmin[0].getTime();
-    this.minDate = maxmin[0];
-    this.maxDate = maxmin[1];
-    let duration = dayDiff(this.minDate, this.maxDate) + 1;
+    this.minDate = addDays(maxmin[0], -7);
+    this.maxDate = addDays(maxmin[1], 31);
+    let duration = dayDiff(this.minDate, this.maxDate);
     if (this.options.timeLineHeight) {
       this.timeLineHeight = this.options.timeLineHeight;
     } else {
@@ -87,7 +87,8 @@ export class GanttChart {
       this.ctx,
       this.canvas,
       this.options,
-      this.minDate
+      this.minDate,
+      this
     );
     this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
     this.tasks = [];
@@ -111,8 +112,6 @@ export class GanttChart {
          .level1 td:first-child {
   padding-left: 15px;
 }
-
-
 
 table td {
   border: 1px solid #eee;
@@ -322,7 +321,8 @@ tr:hover {
       this.ctx,
       this.canvas,
       this.options,
-      this.dataDate
+      this.dataDate,
+      this
     );
     this.dateLine.draw();
   }
@@ -384,8 +384,8 @@ tr:hover {
     let maxmin = minmax(this.visibleTasks);
     this.maxValue = maxmin[1].getTime();
     this.minValue = maxmin[0].getTime();
-    this.minDate = maxmin[0];
-    this.maxDate = maxmin[1];
+    this.minDate = addDays(maxmin[0], -7);
+    this.maxDate = addDays(maxmin[1], 31);
     this.tasks = [];
     this.dateLine = null;
     this.canvas.width =

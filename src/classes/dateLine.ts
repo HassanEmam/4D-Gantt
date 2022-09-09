@@ -2,6 +2,7 @@ import { options } from "./options";
 import { data } from "./data";
 import { minmax } from "../utils/helper";
 import { scaleX } from "../utils/scales";
+import { GanttChart } from "./ganttChart";
 
 export class DateLine {
   ctx: CanvasRenderingContext2D;
@@ -13,23 +14,25 @@ export class DateLine {
   maxValue: number;
   dateLine: Date;
   xpos: number;
+  gantt: GanttChart;
 
   constructor(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
     options: options,
-    date: Date
+    date: Date,
+    gantt: GanttChart
   ) {
     this.options = options;
     this.dateLine = date;
     this.canvas = canvas;
     this.ctx = ctx;
+    this.gantt = gantt;
 
-    let maxmin = minmax(this.options.data);
-    this.minDate = maxmin[0];
-    this.maxDate = maxmin[1];
-    this.maxValue = maxmin[1].getTime();
-    this.minValue = maxmin[0].getTime();
+    this.minDate = this.gantt.minDate;
+    this.maxDate = this.gantt.maxDate;
+    this.maxValue = this.gantt.maxValue;
+    this.minValue = this.gantt.minValue;
     this.xpos = scaleX(
       this.dateLine,
       this.minDate,
