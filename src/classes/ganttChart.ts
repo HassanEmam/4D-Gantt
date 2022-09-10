@@ -109,9 +109,7 @@ export class GanttChart {
          #gantt_canvas__chart__table::-webkit-scrollbar-track{box-shadow:inset 0 0 5px grey; border-radius:10px;}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
-         .level1 td:first-child {
-  padding-left: 15px;
-}
+         
 .resizer {
     /* Displayed at the right side of column */
     position: absolute;
@@ -130,29 +128,35 @@ export class GanttChart {
 table td {
   border: 1px solid #eee;
 }
-.level2 td:first-child {
-  padding-left: 20px;
+
+.level0.branch{
+  background: blue;
+  color:yellow;
+  font-weight: bold;
+  font-size: 14px;
+}
+.level1.branch{
+  background: green;
+  color: black;
+  font-size: 14px;
+}
+.level2.branch{
+  background: yellow;
+  color: blue;
+  font-size: 12px;
+}
+.level3.branch{
+  background: blue;
+  color: white;
+  font-size: 12px;
+}
+.level4.branch{
+  background: red;
+  color: white;
+  font-size: 11px;
 }
 
-.level3 td:first-child {
-  padding-left: 30px;
-}
 
-.level4 td:first-child {
-  padding-left: 40px;
-}
-
-.level5 td:first-child {
-  padding-left: 50px;
-}
-
-.level6 td:first-child {
-  padding-left: 60px;
-}
-
-.level7 td:first-child {
-  padding-left: 70px;
-}
 .table-collapse .toggle {
   width: 0;
   height: 0;
@@ -413,7 +417,9 @@ tr:hover {
     this.tasks = [];
     this.dateLine = null;
     this.canvas.width =
-      dayDiff(this.minDate, this.maxDate) * this.options.timeLineColumnWidth;
+      (dayDiff(this.minDate, this.maxDate) + 1) *
+      this.options.timeLineColumnWidth;
+    this.timelineCanvas.width = this.canvas.width;
     // this.drawGridLines();
     this.drawDateLine();
     this.drawTimeLine();

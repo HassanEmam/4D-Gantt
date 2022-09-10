@@ -149,13 +149,6 @@ export const scheduleData: data[] = [
     parent: 1,
   },
   {
-    id: 22,
-    name: "Task 22",
-    start: new Date(2022, 0, 1),
-    end: new Date(2022, 0, 30),
-    parent: 1,
-  },
-  {
     id: 23,
     name: "Task 23",
     start: new Date(2022, 0, 12),
@@ -168,5 +161,12 @@ export const scheduleData: data[] = [
     start: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     parent: 23,
+  },
+  {
+    id: 22,
+    name: "Task 22",
+    start: new Date(2022, 0, 1),
+    end: new Date(2022, 0, 30),
+    parent: 24,
   },
 ];

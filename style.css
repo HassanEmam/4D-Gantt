@@ -37,3 +37,30 @@ body {
   margin: 0px;
   padding: 0px;
 }
+
+/*
+.level1 td:first-child {
+  padding-left: 15px;
+}
+.level2 td:first-child {
+  padding-left: 20px;
+}
+.level3 td:first-child {
+  padding-left: 30px;
+}
+
+.level4 td:first-child {
+  padding-left: 40px;
+}
+
+.level5 td:first-child {
+  padding-left: 50px;
+}
+
+.level6 td:first-child {
+  padding-left: 60px;
+}
+
+.level7 td:first-child {
+  padding-left: 70px;
+} */
