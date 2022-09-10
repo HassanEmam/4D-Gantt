@@ -112,6 +112,20 @@ export class GanttChart {
          .level1 td:first-child {
   padding-left: 15px;
 }
+.resizer {
+    /* Displayed at the right side of column */
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    cursor: col-resize;
+    user-select: none;
+}
+
+.resizer:hover,
+.resizing {
+    border-right: 2px solid blue;
+}
 
 table td {
   border: 1px solid #eee;
@@ -148,6 +162,14 @@ table td {
   content: "\\229F";
 
   }
+  .disable-select {
+    user-select: none; /* supported by Chrome and Opera */
+   -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+   -moz-user-select: none; /* Firefox */
+   -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
 
 .table-expand .toggle {
   width: 0;

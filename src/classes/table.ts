@@ -44,6 +44,7 @@ export class Table {
     // this.tableDOM.style.textAlign = "center";
     this.tableDOM.style.position = "relative";
     this.tableDOM.style.borderCollapse = "collapse";
+    this.tableDOM.classList.add("disable-select");
     this.heading = document.createElement("thead");
     this.tableBody = document.createElement("tbody");
     this.container = this.gantt.tablediv;
@@ -66,8 +67,48 @@ export class Table {
         col.style.textAlign = "left";
         col.innerText = this.columns[colidx];
         col.style.width = `${colWidth}px`;
+        const resizer = document.createElement("div");
+        resizer.classList.add("resizer");
+        resizer.style.height =
+          this.options.timeLineHeight +
+          this.options.data.length * this.options.rowHeight +
+          "px";
+        col.appendChild(resizer);
+        let x: number;
+        let w: number;
+
+        const mouseMoveHandler = (event: MouseEvent) => {
+          // Determine how far the mouse has been moved
+          const dx = event.clientX - x;
+          console.log(dx, w + dx);
+          // Update the width of column
+          col.style.width = `${w + dx}px`;
+        };
+
+        const mouseDownHandler = (e: MouseEvent) => {
+          x = e.clientX;
+          console.log("mouseDown", x);
+
+          // Calculate the current width of column
+          const styles = window.getComputedStyle(col);
+          w = parseInt(styles.width, 10);
+
+          // Attach listeners for document's events
+          document.addEventListener("mousemove", mouseMoveHandler);
+          document.addEventListener("mouseup", mouseUpHandler);
+        };
+
+        // When user releases the mouse, remove the existing event listeners
+        const mouseUpHandler = function () {
+          document.removeEventListener("mousemove", mouseMoveHandler);
+          document.removeEventListener("mouseup", mouseUpHandler);
+        };
+
+        resizer.addEventListener("mousedown", mouseDownHandler);
+
         row.appendChild(col);
       }
+
       heading.appendChild(row);
       this.tableDOM.appendChild(heading);
       this.container.appendChild(this.tableDOM);
