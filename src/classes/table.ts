@@ -236,14 +236,12 @@ export class Table {
         }
 
         if (data.children.length === 0 && colidx > 0) {
-          console.log("no children", data);
           col.addEventListener("dblclick", (e) => {
             col.contentEditable = "true";
             col.focus();
           });
           col.addEventListener("blur", (e) => {
             col.contentEditable = "false";
-            console.log("blur", col.firstElementChild.textContent);
           });
           col.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
@@ -354,12 +352,6 @@ export class Table {
     // this.rowCounter = 0;
     this.drawHeadings(update);
     const cells = this.tableDOM.getElementsByTagName("td");
-    console.log(cells.length);
-    for (const cell of cells) {
-      cell.addEventListener("click", (event) => {
-        console.log("Click", event);
-      });
-    }
   }
 
   initEvents() {
