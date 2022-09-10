@@ -48,7 +48,7 @@ export class Table {
     this.tableDOM.classList.add("disable-select");
     this.heading = document.createElement("thead");
     this.tableBody = document.createElement("tbody");
-    this.container = this.gantt.tablediv;
+    this.container = this.gantt.internalTableDiv;
   }
 
   drawHeadings(update: boolean = false) {
@@ -222,7 +222,13 @@ export class Table {
             toggle.classList.add("table-collapse");
             col.insertBefore(toggle, col.firstChild);
           }
-          for (let level = data.level; level >= 0; level--) {
+          let dataLevel: number;
+          if (data.children.length === 0) {
+            dataLevel = data.level - 1;
+          } else {
+            dataLevel = data.level;
+          }
+          for (let level = dataLevel; level >= 0; level--) {
             const spacer = document.createElement("div");
             spacer.classList.add("branch");
             spacer.classList.add(`level${level}`);
