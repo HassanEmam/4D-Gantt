@@ -16,9 +16,11 @@
     "webpack-dev-server": "^4.10.1",
     "wepack-cli": "^0.0.1-security"
   },
-  "version": "1.0.0",
-  "description": "My webpack project",
-  "name": "my-webpack-project",
+  "version": "0.0.7",
+  "description": "4D Gantt Chart Example",
+  "name": "4d-gantt-chart",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "webpack --mode=production --node-env=production",
     "build:dev": "webpack --mode=development",

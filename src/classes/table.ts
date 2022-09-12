@@ -362,17 +362,17 @@ export class Table {
 
   initEvents() {
     const toggles = document.getElementsByTagName("span");
-    for (let el of toggles) {
-    }
+    // for (let el of Array.from(toggles)) {
+    // }
   }
 
   findChildren(tr: HTMLElement) {
     var depth = tr.dataset.depth;
-    var elements = [...document.querySelectorAll("tr")].filter(function (
-      element
-    ) {
-      return element.dataset.depth <= depth;
-    });
+    var elements = [...Array.from(document.querySelectorAll("tr"))].filter(
+      function (element) {
+        return element.dataset.depth <= depth;
+      }
+    );
     var next = this.nextUntil(tr, elements, null);
     return next;
   }
