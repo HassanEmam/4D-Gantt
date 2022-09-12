@@ -22,7 +22,7 @@ function drawGantt() {
     titleOptions: "Music",
     rowHeight: 30,
     timeLineColumnWidth: 20,
-    timeLineBackgroundColor: "yellow",
+    timeLineBackgroundColor: "rgb(245, 245, 245)",
     timeLineHeight: 120,
     tableWidth: 400,
     table: {

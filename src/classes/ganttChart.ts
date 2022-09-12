@@ -49,6 +49,10 @@ export class GanttChart {
   visibleTasks: data[];
   timelineDiv: HTMLElement;
   barsDiv: HTMLElement;
+  splitter: HTMLElement;
+  splitterX: number = 0;
+  splitterY: number = 0;
+  internalTableDiv: HTMLElement;
 
   constructor(options: options) {
     this.initStyle();
@@ -56,6 +60,8 @@ export class GanttChart {
     this.rows = [];
     this.cells = [];
     this.container = options.container;
+    // this.container.style.display = "flex";
+    this.splitter = document.createElement("div");
     this.visibleTasks = this.options.data;
     this.canvas = document.createElement("canvas");
     // this.canvas.setAttribute("id", "gantt_canvas__chart__");
@@ -109,36 +115,54 @@ export class GanttChart {
          #gantt_canvas__chart__table::-webkit-scrollbar-track{box-shadow:inset 0 0 5px grey; border-radius:10px;}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
-         .level1 td:first-child {
-  padding-left: 15px;
+         
+.resizer {
+    /* Displayed at the right side of column */
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    cursor: col-resize;
+    user-select: none;
+}
+
+.resizer:hover,
+.resizing {
+    border-right: 2px solid blue;
 }
 
 table td {
   border: 1px solid #eee;
 }
-.level2 td:first-child {
-  padding-left: 20px;
+
+.level0.branch{
+  background: blue;
+  color:yellow;
+  font-weight: bold;
+  font-size: 14px;
+}
+.level1.branch{
+  background: green;
+  color: black;
+  font-size: 14px;
+}
+.level2.branch{
+  background: yellow;
+  color: blue;
+  font-size: 12px;
+}
+.level3.branch{
+  background: blue;
+  color: white;
+  font-size: 12px;
+}
+.level4.branch{
+  background: red;
+  color: white;
+  font-size: 11px;
 }
 
-.level3 td:first-child {
-  padding-left: 30px;
-}
 
-.level4 td:first-child {
-  padding-left: 40px;
-}
-
-.level5 td:first-child {
-  padding-left: 50px;
-}
-
-.level6 td:first-child {
-  padding-left: 60px;
-}
-
-.level7 td:first-child {
-  padding-left: 70px;
-}
 .table-collapse .toggle {
   width: 0;
   height: 0;
@@ -148,6 +172,14 @@ table td {
   content: "\\229F";
 
   }
+  .disable-select {
+    user-select: none; /* supported by Chrome and Opera */
+   -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+   -moz-user-select: none; /* Firefox */
+   -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
 
 .table-expand .toggle {
   width: 0;
@@ -205,6 +237,21 @@ tr:hover {
     this.tablediv.style.overflow = "auto";
     this.tablediv.style.height = "100%";
     this.tablediv.style.maxHeight = "100%";
+    this.internalTableDiv = document.createElement("div");
+    this.internalTableDiv.style.width = `${this.options.table.width}px`;
+    this.internalTableDiv.style.height = "100%";
+    this.internalTableDiv.style.maxHeight = "100%";
+    this.tablediv.appendChild(this.internalTableDiv);
+
+    this.splitter.classList.add("splitter");
+    this.splitter.style.width = "10px";
+    this.splitter.style.height = "100%";
+    this.splitter.style.display = "inline-block";
+    this.splitter.style.cursor = "col-resize";
+    this.splitter.style.position = "relative";
+    this.splitter.style.top = "0px";
+    this.splitter.style.zIndex = "100";
+    this.splitter.style.backgroundColor = "transparent";
     this.timelineDiv = document.createElement("div");
     this.timelineDiv.id = "gantt__canvas__chart__timeline";
     this.timelineDiv.style.height = this.options.timeLineHeight + "px";
@@ -220,6 +267,7 @@ tr:hover {
     this.barsDiv.appendChild(this.canvas);
     this.chartDiv.setAttribute("id", "gantt_canvas__chart__");
     this.chartDiv.appendChild(this.timelineDiv);
+    // this.chartDiv.style.flex = "1 1 auto";
 
     this.chartDiv.appendChild(this.barsDiv);
     this.chartDiv.style.display = "inline-block";
@@ -229,8 +277,9 @@ tr:hover {
     this.chartDiv.style.overflow = "auto";
     this.chartDiv.style.width = `${contWidth}px`;
     this.chartDiv.style.margin = "0px";
-    this.tablediv.appendChild(this.tableCanvas);
+    // this.tablediv.appendChild(this.tableCanvas);
     this.container.appendChild(this.tablediv);
+    this.container.appendChild(this.splitter);
     this.container.appendChild(this.chartDiv);
     this.canvas.height = this.options.rowHeight * this.options.data.length;
     if (this.options.table.width) {
@@ -250,7 +299,44 @@ tr:hover {
     }
     this.tableCanvas.height = this.canvas.height;
     this.tableCanvas.width = this.tableWidth;
+    this.splitter.addEventListener("mousedown", this.splitterMouseDownHandler);
   }
+
+  splitterMouseDownHandler = (e: MouseEvent) => {
+    this.splitterX = e.clientX;
+    this.splitterY = e.clientY;
+    this.tableWidth = this.tablediv.getBoundingClientRect().width;
+    console.log(this.tableWidth);
+    // Attach the listeners to `document`
+    document.addEventListener("mousemove", this.splitterMouseMoveHandler);
+    document.addEventListener("mouseup", this.splitterMouseUpHandler);
+  };
+
+  splitterMouseMoveHandler = (e: MouseEvent) => {
+    const dx = e.clientX - this.splitterX;
+
+    const newLeftWidth =
+      ((this.tableWidth + dx) * 100) /
+      (this.splitter.parentNode as HTMLElement).getBoundingClientRect().width;
+    this.tablediv.style.width = `${newLeftWidth}%`;
+    this.chartDiv.style.width = `${95 - newLeftWidth}%`;
+  };
+
+  splitterMouseUpHandler = (e: MouseEvent) => {
+    console.log("mouse up");
+    // this.splitter.style.removeProperty("cursor");
+    document.body.style.removeProperty("cursor");
+
+    // this.tablediv.style.removeProperty("user-select");
+    this.tablediv.style.removeProperty("pointer-events");
+
+    this.chartDiv.style.removeProperty("user-select");
+    this.chartDiv.style.removeProperty("pointer-events");
+
+    // Remove the handlers of `mousemove` and `mouseup`
+    document.removeEventListener("mousemove", this.splitterMouseMoveHandler);
+    document.removeEventListener("mouseup", this.splitterMouseUpHandler);
+  };
 
   /**
    * @description - initialize events
@@ -391,7 +477,9 @@ tr:hover {
     this.tasks = [];
     this.dateLine = null;
     this.canvas.width =
-      dayDiff(this.minDate, this.maxDate) * this.options.timeLineColumnWidth;
+      (dayDiff(this.minDate, this.maxDate) + 1) *
+      this.options.timeLineColumnWidth;
+    this.timelineCanvas.width = this.canvas.width;
     // this.drawGridLines();
     this.drawDateLine();
     this.drawTimeLine();

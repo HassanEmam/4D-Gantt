@@ -7,6 +7,7 @@ import { options } from "./options";
 import { toUTF16 } from "../utils/helper";
 import { scaleX } from "../utils/scales";
 import { Bar } from "./bar";
+import { clearLine } from "readline";
 
 export class Table {
   color: string;
@@ -44,9 +45,10 @@ export class Table {
     // this.tableDOM.style.textAlign = "center";
     this.tableDOM.style.position = "relative";
     this.tableDOM.style.borderCollapse = "collapse";
+    this.tableDOM.classList.add("disable-select");
     this.heading = document.createElement("thead");
     this.tableBody = document.createElement("tbody");
-    this.container = this.gantt.tablediv;
+    this.container = this.gantt.internalTableDiv;
   }
 
   drawHeadings(update: boolean = false) {
@@ -66,8 +68,43 @@ export class Table {
         col.style.textAlign = "left";
         col.innerText = this.columns[colidx];
         col.style.width = `${colWidth}px`;
+        const resizer = document.createElement("div");
+        resizer.classList.add("resizer");
+        resizer.style.height = this.options.timeLineHeight + "px";
+        col.appendChild(resizer);
+        let x: number;
+        let w: number;
+
+        const mouseMoveHandler = (event: MouseEvent) => {
+          // Determine how far the mouse has been moved
+          const dx = event.clientX - x;
+          // Update the width of column
+          col.style.width = `${w + dx}px`;
+        };
+
+        const mouseDownHandler = (e: MouseEvent) => {
+          x = e.clientX;
+
+          // Calculate the current width of column
+          const styles = window.getComputedStyle(col);
+          w = parseInt(styles.width, 10);
+
+          // Attach listeners for document's events
+          document.addEventListener("mousemove", mouseMoveHandler);
+          document.addEventListener("mouseup", mouseUpHandler);
+        };
+
+        // When user releases the mouse, remove the existing event listeners
+        const mouseUpHandler = function () {
+          document.removeEventListener("mousemove", mouseMoveHandler);
+          document.removeEventListener("mouseup", mouseUpHandler);
+        };
+
+        resizer.addEventListener("mousedown", mouseDownHandler);
+
         row.appendChild(col);
       }
+
       heading.appendChild(row);
       this.tableDOM.appendChild(heading);
       this.container.appendChild(this.tableDOM);
@@ -131,7 +168,9 @@ export class Table {
     if (data.visible && data.visible === true) {
       const row = document.createElement("tr");
       row.style.height = `${this.options.rowHeight}px`;
+      row.style.maxHeight = `${this.options.rowHeight}px`;
       row.classList.add(`level${data.level}`);
+
       row.classList.add("table-collapse");
       row.setAttribute("data-depth", data.level.toString());
       row.id = `ganttTable__${data.id.toString()}`;
@@ -140,16 +179,21 @@ export class Table {
       for (let colidx = 0; colidx < this.columns.length; colidx++) {
         const col = document.createElement("td");
         col.style.width = `${this.options.table.width / this.columns.length}px`;
+        col.style.height = `${this.options.rowHeight}px`;
+        col.style.maxHeight = `${this.options.rowHeight}px`;
+        col.style.margin = "0px";
+        col.style.padding = "0px";
+        col.style.border = "0px";
         if (data[this.columns[colidx]] instanceof Date) {
-          col.innerText = (
+          col.innerHTML = `<span>${(
             data[this.columns[colidx]] as Date
           ).toLocaleDateString("en-GB", {
             day: "numeric",
             month: "2-digit",
             year: "numeric",
-          });
+          })}</span>`;
         } else {
-          col.innerText = data[this.columns[colidx]];
+          col.innerHTML = `<span>${data[this.columns[colidx]]}</span>`;
         }
         if (data.children.length === 0 && data.hasChildren === true) {
           let childs = this.gantt.options.data.filter(
@@ -162,8 +206,13 @@ export class Table {
           }
         }
         if (colidx === 0) {
+          col.style.width = `${
+            this.options.table.width / this.columns.length -
+            (data.level + 1) * 10
+          }px`;
           if (data.children.length > 0 || data.hasChildren === true) {
             toggle = document.createElement("span");
+            row.classList.add("branch");
             toggle.id = `gantt__span__${data.id.toString()}`;
             if (data.expanded && data.expanded === true) {
               toggle.classList.add("toggle");
@@ -173,6 +222,38 @@ export class Table {
             toggle.classList.add("table-collapse");
             col.insertBefore(toggle, col.firstChild);
           }
+          let dataLevel: number;
+          if (data.children.length === 0) {
+            dataLevel = data.level - 1;
+          } else {
+            dataLevel = data.level;
+          }
+          for (let level = dataLevel; level >= 0; level--) {
+            const spacer = document.createElement("div");
+            spacer.classList.add("branch");
+            spacer.classList.add(`level${level}`);
+            spacer.style.height = "100%";
+            spacer.style.margin = "0px";
+            spacer.style.display = "inline-block";
+            spacer.style.padding = "0px";
+            spacer.style.width = "10px";
+            col.insertBefore(spacer, col.firstChild);
+          }
+        }
+
+        if (data.children.length === 0 && colidx > 0) {
+          col.addEventListener("dblclick", (e) => {
+            col.contentEditable = "true";
+            col.focus();
+          });
+          col.addEventListener("blur", (e) => {
+            col.contentEditable = "false";
+          });
+          col.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              col.contentEditable = "false";
+            }
+          });
         }
 
         row.appendChild(col);
@@ -192,14 +273,12 @@ export class Table {
     const tr = toggle.closest("tr");
     const parent_id = parseInt(tr.id.split("__")[1]);
     const childs = this.findChildren(tr);
-    console.log(childs);
     // if element has class toggle then remove it and collapse
     if (toggle.classList.contains("toggle")) {
       toggle.classList.remove("toggle");
       toggle.classList.add("expanded");
 
       this.setInvisible(childs);
-      console.log(this.options.data);
       // childs.forEach((child) => {
       //   const child_id = parseInt(child.id.replace("ganttTable__", ""));
       //   // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
@@ -244,7 +323,6 @@ export class Table {
       this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
         false;
       let children = this.findChildren(child);
-      console.log(child_id);
 
       if (children && Array.isArray(children) && children.length > 0)
         this.setInvisible(children);
@@ -279,7 +357,7 @@ export class Table {
     }
     // this.rowCounter = 0;
     this.drawHeadings(update);
-    // this.drawRows();
+    const cells = this.tableDOM.getElementsByTagName("td");
   }
 
   initEvents() {
