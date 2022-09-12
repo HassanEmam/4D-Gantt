@@ -2,10 +2,11 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
+    "outDir": "dist",
     "module": "ES6",
     "target": "ES6",
     "allowJs": true,
     "moduleResolution": "node"
   },
-  "files": ["src/index.ts"]
+  "include": ["src/**/*.ts"]
 }
