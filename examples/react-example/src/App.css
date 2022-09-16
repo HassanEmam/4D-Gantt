@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  text-align: left;
+  height: 100%;
+  margin: 0px;
+}
+td span:last-child {
+  padding-top: 8px;
+}
+
+#ganttChart {
+  height: 600px;
+  width: 1200px;
+}
+
+#container {
+  width: 1200px;
+  height: 600px;
+  margin: 0 auto;
+  background-color: aqua;
+}
+
+#gantt {
+  width: 69%;
+  height: 100%;
+  margin: 0;
+  background-color: red;
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
+tr {
+  vertical-align: end;
+}

@@ -944,6 +944,7 @@ class Table {
                         spacer.style.display = "inline-block";
                         spacer.style.padding = "0px";
                         spacer.style.width = "10px";
+                        spacer.style.minWidth = "10px";
                         col.insertBefore(spacer, col.firstChild);
                     }
                 }
@@ -1269,6 +1270,10 @@ class GanttChart {
 
 table td {
   border: 1px solid #eee;
+}
+
+tr td:first-child {
+  display:flex;
 }
 
 .level0.branch{

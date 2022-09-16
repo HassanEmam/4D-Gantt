@@ -132,6 +132,10 @@ table td {
   border: 1px solid #eee;
 }
 
+tr td:first-child {
+  display:flex;
+}
+
 .level0.branch{
   background: blue;
   color:yellow;

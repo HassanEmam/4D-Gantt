@@ -231,6 +231,7 @@ export class Table {
             spacer.style.display = "inline-block";
             spacer.style.padding = "0px";
             spacer.style.width = "10px";
+            spacer.style.minWidth = "10px";
             col.insertBefore(spacer, col.firstChild);
           }
         }
