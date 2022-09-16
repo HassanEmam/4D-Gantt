@@ -1,13 +1,7 @@
 import { TableRow } from "./tableRow";
 import { GanttChart } from "./ganttChart";
-import { threadId } from "worker_threads";
-import { drawLine, addDays } from "../utils/helper";
 import { data, nestedData } from "./data";
 import { options } from "./options";
-import { toUTF16 } from "../utils/helper";
-import { scaleX } from "../utils/scales";
-import { Bar } from "./bar";
-import { clearLine } from "readline";
 
 export class Table {
   color: string;

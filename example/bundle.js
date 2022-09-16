@@ -259,7 +259,7 @@ class Tasks {
         for (const parent of parents) {
             parent.level = 0;
             let nestedObj = Object.create(null);
-            nestedObj = Object.assign(Object.assign({}, parent), { children: [] });
+            nestedObj = { ...parent, children: [] };
             nestedObj.level = 0;
             if (parent.visible === undefined) {
                 nestedObj.visible = true;
@@ -291,7 +291,7 @@ class Tasks {
         for (const child of children) {
             child.level = parent.level + 1;
             let childObj = {};
-            childObj = Object.assign(Object.assign({}, child), { children: [] });
+            childObj = { ...child, children: [] };
             childObj.level = parent.level + 1;
             if (child.visible === true) {
                 childObj.visible = child.visible;
@@ -383,7 +383,6 @@ class RowCell {
         // this.row.gantt.cells.push(this);
     }
     draw() {
-        var _a;
         let x;
         if (!this.row.width) {
             this.row.width = 400;
@@ -396,7 +395,7 @@ class RowCell {
         this.row.context.fillStyle = "white";
         this.row.context.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
         this.row.context.fillStyle =
-            ((_a = this.row.options.table.header) === null || _a === void 0 ? void 0 : _a.fontColor) || "black";
+            this.row.options.table.header?.fontColor || "black";
         this.row.context.textBaseline = "middle";
         this.row.context.font = `14px Arial`;
         let text;
@@ -1057,13 +1056,13 @@ class Table {
         this.tableDOM.getElementsByTagName("td");
     }
     initEvents() {
-        const toggles = document.getElementsByTagName("span");
-        for (let el of toggles) {
-        }
+        document.getElementsByTagName("span");
+        // for (let el of Array.from(toggles)) {
+        // }
     }
     findChildren(tr) {
         var depth = tr.dataset.depth;
-        var elements = [...document.querySelectorAll("tr")].filter(function (element) {
+        var elements = [...Array.from(document.querySelectorAll("tr"))].filter(function (element) {
             return element.dataset.depth <= depth;
         });
         var next = this.nextUntil(tr, elements, null);
@@ -1499,6 +1498,10 @@ tr:hover {
         this.tasksData = new Tasks(this.options.data, this);
     }
     update() {
+        const contWidth = this.container.clientWidth - this.options.table.width - 50;
+        this.chartDiv.style.overflow = "auto";
+        this.chartDiv.style.width = `${contWidth}px`;
+        this.chartDiv.style.margin = "0px";
         let duration = dayDiff(this.minDate, this.maxDate) + 1;
         this.canvas.width = this.options.timeLineColumnWidth * duration;
         this.timelineCanvas.width = this.options.timeLineColumnWidth * duration;
@@ -1510,6 +1513,10 @@ tr:hover {
     }
     updateGantt() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const contWidth = this.container.clientWidth - this.options.table.width - 50;
+        this.chartDiv.style.overflow = "auto";
+        this.chartDiv.style.width = `${contWidth}px`;
+        this.chartDiv.style.margin = "0px";
         this.visibleTasks = [];
         for (let task of this.options.data) {
             if (task.visible !== false) {

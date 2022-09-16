@@ -12,12 +12,9 @@ import {
   addDays,
   recursive_offset,
 } from "../utils/helper";
-import { scaleX } from "../utils/scales";
 import { TimeLine } from "./timeline";
-import { table } from "console";
 import { TableRow } from "./tableRow";
 import { RowCell } from "./rowCell";
-import { threadId } from "worker_threads";
 
 export class GanttChart {
   options: options;
@@ -449,6 +446,11 @@ tr:hover {
   }
 
   update() {
+    const contWidth =
+      this.container.clientWidth - this.options.table.width - 50;
+    this.chartDiv.style.overflow = "auto";
+    this.chartDiv.style.width = `${contWidth}px`;
+    this.chartDiv.style.margin = "0px";
     let duration = dayDiff(this.minDate, this.maxDate) + 1;
     this.canvas.width = this.options.timeLineColumnWidth * duration;
     this.timelineCanvas.width = this.options.timeLineColumnWidth * duration;
@@ -461,6 +463,12 @@ tr:hover {
 
   updateGantt() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    const contWidth =
+      this.container.clientWidth - this.options.table.width - 50;
+    this.chartDiv.style.overflow = "auto";
+    this.chartDiv.style.width = `${contWidth}px`;
+    this.chartDiv.style.margin = "0px";
+
     this.visibleTasks = [];
     for (let task of this.options.data) {
       if (task.visible !== false) {
@@ -469,6 +477,7 @@ tr:hover {
     }
     this.canvas.height = this.options.rowHeight * this.visibleTasks.length;
     this.tableCanvas.height = this.canvas.height;
+
     let maxmin = minmax(this.visibleTasks);
     this.maxValue = maxmin[1].getTime();
     this.minValue = maxmin[0].getTime();

@@ -13,6 +13,6 @@
     "rollup": "^2.79.0"
   },
   "dependencies": {
-    "4d-gantt-chart": "^0.0.6"
+    "4d-gantt-chart": "file:.."
   }
 }

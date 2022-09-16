@@ -1,6 +1,5 @@
 import { GanttChart } from "./ganttChart";
 import { data, nestedData } from "./data";
-import { Table } from "./table";
 
 export class Tasks {
   data: data[];

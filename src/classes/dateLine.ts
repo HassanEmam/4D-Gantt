@@ -1,6 +1,4 @@
 import { options } from "./options";
-import { data } from "./data";
-import { minmax } from "../utils/helper";
 import { scaleX } from "../utils/scales";
 import { GanttChart } from "./ganttChart";
 
