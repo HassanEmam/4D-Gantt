@@ -830,8 +830,8 @@ class Table {
         }
     }
     drawRow(data, update = false) {
-        this.tableBody.innerHTML = "";
-        this.rowCounter = 0;
+        // this.tableBody.innerHTML = "";
+        // this.rowCounter = 0;
         if (data.children.length > 0) {
             if (data.expanded && data.expanded === true) {
                 data.expanded = true;
