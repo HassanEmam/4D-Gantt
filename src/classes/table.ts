@@ -1,13 +1,7 @@
 import { TableRow } from "./tableRow";
 import { GanttChart } from "./ganttChart";
-import { threadId } from "worker_threads";
-import { drawLine, addDays } from "../utils/helper";
 import { data, nestedData } from "./data";
 import { options } from "./options";
-import { toUTF16 } from "../utils/helper";
-import { scaleX } from "../utils/scales";
-import { Bar } from "./bar";
-import { clearLine } from "readline";
 
 export class Table {
   color: string;
@@ -237,6 +231,7 @@ export class Table {
             spacer.style.display = "inline-block";
             spacer.style.padding = "0px";
             spacer.style.width = "10px";
+            spacer.style.minWidth = "10px";
             col.insertBefore(spacer, col.firstChild);
           }
         }
@@ -362,17 +357,17 @@ export class Table {
 
   initEvents() {
     const toggles = document.getElementsByTagName("span");
-    for (let el of toggles) {
-    }
+    // for (let el of Array.from(toggles)) {
+    // }
   }
 
   findChildren(tr: HTMLElement) {
     var depth = tr.dataset.depth;
-    var elements = [...document.querySelectorAll("tr")].filter(function (
-      element
-    ) {
-      return element.dataset.depth <= depth;
-    });
+    var elements = [...Array.from(document.querySelectorAll("tr"))].filter(
+      function (element) {
+        return element.dataset.depth <= depth;
+      }
+    );
     var next = this.nextUntil(tr, elements, null);
     return next;
   }

@@ -3,7 +3,7 @@ export interface data {
   id: number;
   start: Date;
   end: Date;
-  parent?: number;
+  parent?: number | null;
   progress?: number;
   level?: number;
   visible?: boolean;

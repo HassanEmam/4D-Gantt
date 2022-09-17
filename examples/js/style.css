@@ -1,0 +1,66 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  --light-gray: rgb(123, 123, 123);
+  --light-blue: #8dbafff0;
+  --translucent-white: rgba(255, 255, 255, 0.7);
+
+  --normal-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  --blur-filter: blur(8px);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+#Chart {
+  /* overflow: auto; */
+  width: 1200px;
+  height: 600px;
+}
+
+#container {
+  width: 1200px;
+  height: 600px;
+  margin: 0 auto;
+  background-color: aqua;
+}
+
+#gantt {
+  width: 69%;
+  height: 100%;
+  margin: 0;
+  background-color: red;
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
+/*
+.level1 td:first-child {
+  padding-left: 15px;
+}
+.level2 td:first-child {
+  padding-left: 20px;
+}
+.level3 td:first-child {
+  padding-left: 30px;
+}
+
+.level4 td:first-child {
+  padding-left: 40px;
+}
+
+.level5 td:first-child {
+  padding-left: 50px;
+}
+
+.level6 td:first-child {
+  padding-left: 60px;
+}
+
+.level7 td:first-child {
+  padding-left: 70px;
+} */

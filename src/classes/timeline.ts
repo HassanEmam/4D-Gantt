@@ -1,7 +1,5 @@
 import { options } from "./options";
-import { data } from "./data";
 import {
-  minmax,
   monthDiff,
   dayDiff,
   addDays,
