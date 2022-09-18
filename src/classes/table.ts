@@ -61,7 +61,7 @@ export class Table {
         col.style.top = "0px";
         col.style.textAlign = "left";
         col.innerText = this.columns[colidx];
-        col.style.width = `${colWidth}px`;
+        // col.style.width = `${colWidth}px`;
         const resizer = document.createElement("div");
         resizer.classList.add("resizer");
         resizer.style.height = this.options.timeLineHeight + "px";
@@ -172,7 +172,7 @@ export class Table {
       let toggle: HTMLElement;
       for (let colidx = 0; colidx < this.columns.length; colidx++) {
         const col = document.createElement("td");
-        col.style.width = `${this.options.table.width / this.columns.length}px`;
+        // col.style.width = `${this.options.table.width / this.columns.length}px`;
         col.style.height = `${this.options.rowHeight}px`;
         col.style.maxHeight = `${this.options.rowHeight}px`;
         col.style.margin = "0px";
@@ -200,10 +200,10 @@ export class Table {
           }
         }
         if (colidx === 0) {
-          col.style.width = `${
-            this.options.table.width / this.columns.length -
-            (data.level + 1) * 10
-          }px`;
+          //   col.style.width = `${
+          //     this.options.table.width / this.columns.length -
+          //     (data.level + 1) * 10
+          //   }px`;
           if (data.children.length > 0 || data.hasChildren === true) {
             toggle = document.createElement("span");
             row.classList.add("branch");
