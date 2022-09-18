@@ -1,6 +1,6 @@
 import { scheduleData } from "./data";
-import { GanttChart } from "../dist";
-import { addDays } from "../dist/utils/helper";
+import { GanttChart } from "../../dist";
+import { addDays } from "../../dist/utils/helper";
 
 let data1 = scheduleData;
 let gantt;
