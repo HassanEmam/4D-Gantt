@@ -780,8 +780,9 @@ class Table {
     drawHeadings(update = false) {
         if (!update === true) {
             this.container.innerHTML = "";
-            this.columns.length;
-            this.options.table.width;
+            let noCols = this.columns.length;
+            let tableWidth = this.options.table.width;
+            let colWidth = (tableWidth ? tableWidth : 400) / noCols;
             const heading = document.createElement("thead");
             const row = document.createElement("tr");
             row.style.height = `${this.options.timeLineHeight}px`;
@@ -792,17 +793,20 @@ class Table {
                 col.style.top = "0px";
                 col.style.textAlign = "left";
                 col.innerText = this.columns[colidx];
-                // col.style.width = `${colWidth}px`;
+                col.style.width = `${colWidth}px`;
                 const resizer = document.createElement("div");
                 resizer.classList.add("resizer");
                 resizer.style.height = this.options.timeLineHeight + "px";
                 col.appendChild(resizer);
                 let x;
                 let w;
+                let intW;
+                const int = document.getElementById("gantt_canvas__chart__table__internal");
                 const mouseMoveHandler = (event) => {
                     // Determine how far the mouse has been moved
                     const dx = event.clientX - x;
                     // Update the width of column
+                    int.style.width = intW + dx + "px";
                     col.style.width = `${w + dx}px`;
                 };
                 const mouseDownHandler = (e) => {
@@ -810,6 +814,7 @@ class Table {
                     // Calculate the current width of column
                     const styles = window.getComputedStyle(col);
                     w = parseInt(styles.width, 10);
+                    intW = parseInt(int.style.width, 10);
                     // Attach listeners for document's events
                     document.addEventListener("mousemove", mouseMoveHandler);
                     document.addEventListener("mouseup", mouseUpHandler);
@@ -886,7 +891,7 @@ class Table {
             let toggle;
             for (let colidx = 0; colidx < this.columns.length; colidx++) {
                 const col = document.createElement("td");
-                // col.style.width = `${this.options.table.width / this.columns.length}px`;
+                col.style.width = `${this.options.table.width / this.columns.length}px`;
                 col.style.height = `${this.options.rowHeight}px`;
                 col.style.maxHeight = `${this.options.rowHeight}px`;
                 col.style.margin = "0px";
@@ -912,10 +917,8 @@ class Table {
                     }
                 }
                 if (colidx === 0) {
-                    //   col.style.width = `${
-                    //     this.options.table.width / this.columns.length -
-                    //     (data.level + 1) * 10
-                    //   }px`;
+                    col.style.width = `${this.options.table.width / this.columns.length -
+                        (data.level + 1) * 10}px`;
                     if (data.children.length > 0 || data.hasChildren === true) {
                         toggle = document.createElement("span");
                         row.classList.add("branch");
@@ -1191,6 +1194,8 @@ class GanttChart {
             const newLeftWidth = ((this.tableWidth + dx) * 100) /
                 this.splitter.parentNode.getBoundingClientRect().width;
             this.tablediv.style.width = `${newLeftWidth}%`;
+            console.log("element sibling", this.tablediv.children[0]);
+            this.tablediv.children[0].style.width = `${this.splitter.offsetLeft}px`;
             this.chartDiv.style.width = `${95 - newLeftWidth}%`;
         };
         this.splitterMouseUpHandler = (e) => {
@@ -1380,6 +1385,7 @@ tr:hover {
         this.internalTableDiv.style.width = `${this.options.table.width}px`;
         this.internalTableDiv.style.height = "100%";
         this.internalTableDiv.style.maxHeight = "100%";
+        this.internalTableDiv.id = "gantt_canvas__chart__table__internal";
         this.tablediv.appendChild(this.internalTableDiv);
         this.splitter.classList.add("splitter");
         this.splitter.style.width = "10px";

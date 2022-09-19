@@ -242,6 +242,7 @@ tr:hover {
     this.internalTableDiv.style.width = `${this.options.table.width}px`;
     this.internalTableDiv.style.height = "100%";
     this.internalTableDiv.style.maxHeight = "100%";
+    this.internalTableDiv.id = "gantt_canvas__chart__table__internal";
     this.tablediv.appendChild(this.internalTableDiv);
 
     this.splitter.classList.add("splitter");
@@ -320,6 +321,10 @@ tr:hover {
       ((this.tableWidth + dx) * 100) /
       (this.splitter.parentNode as HTMLElement).getBoundingClientRect().width;
     this.tablediv.style.width = `${newLeftWidth}%`;
+    console.log("element sibling", this.tablediv.children[0]);
+    (
+      this.tablediv.children[0] as HTMLElement
+    ).style.width = `${this.splitter.offsetLeft}px`;
     this.chartDiv.style.width = `${95 - newLeftWidth}%`;
   };
 
