@@ -78,7 +78,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 3,
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 3,
   },
   {
     id: 13,
@@ -115,7 +115,7 @@ export const scheduleData = [
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
 
-    parent: 1,
+    parent: 3,
   },
   {
     id: 14,
@@ -124,7 +124,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 15,
@@ -133,7 +133,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 16,
@@ -142,7 +142,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 17,
@@ -151,7 +151,7 @@ export const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 18,

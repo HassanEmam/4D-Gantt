@@ -78,7 +78,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 3,
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 3,
   },
   {
     id: 13,
@@ -115,7 +115,7 @@ const scheduleData = [
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
 
-    parent: 1,
+    parent: 3,
   },
   {
     id: 14,
@@ -124,7 +124,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 15,
@@ -133,7 +133,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 16,
@@ -142,7 +142,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 17,
@@ -151,7 +151,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 18,
@@ -909,6 +909,9 @@ class Table {
         }
         this.createLeaf(data, update);
         if (data.children.length > 0) {
+            data.children.sort((a, b) => {
+                return a.children.length - b.children.length;
+            });
             data.children.forEach((child) => {
                 this.createBranch(child, update);
             });
@@ -920,6 +923,11 @@ class Table {
     }
     createBranch(data, update = false) {
         this.createLeaf(data, update);
+        data.children.sort((a, b) => {
+            console.log(b.children.length, a.children.length, b.children.length - a.children.length);
+            return a.children.length - b.children.length;
+        });
+        console.log(data.children);
         if (data.expanded && data.expanded === true) {
             for (let row of data.children) {
                 if (row.children.length === 0) {
@@ -1225,7 +1233,7 @@ class TimeLine {
             drawLine(this.ctx, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.canvas.height + this.options.timeLineHeight, "black");
             // month gridline in the timeline chart
             drawLine(this.ctx, maxScale, this.options.timeLineHeight / 4, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
-            // draw month vertical line
+            // draw month vertical line in the main chart
             drawLine(this.gantt.ctx, maxScale, 0, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
         }
         //topline above month names
