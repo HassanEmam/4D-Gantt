@@ -2,7 +2,9 @@ export interface data {
   name: string;
   id: number;
   start: Date;
+  baselineStart?: Date;
   end: Date;
+  baselineEnd?: Date;
   parent?: number | null;
   progress?: number;
   level?: number;
