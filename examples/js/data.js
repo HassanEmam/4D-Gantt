@@ -56,7 +56,7 @@ export const scheduleData = [
   {
     id: 7,
     name: "Task 7",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -83,7 +83,7 @@ export const scheduleData = [
   {
     id: 10,
     name: "Task 10",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -110,7 +110,7 @@ export const scheduleData = [
   {
     id: 13,
     name: "Task 13",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -138,7 +138,7 @@ export const scheduleData = [
   {
     id: 16,
     name: "Task 16",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -165,7 +165,7 @@ export const scheduleData = [
   {
     id: 19,
     name: "Task 19",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -210,7 +210,7 @@ export const scheduleData = [
   {
     id: 22,
     name: "Task 22",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),

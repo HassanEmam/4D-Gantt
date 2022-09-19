@@ -56,7 +56,7 @@ const scheduleData = [
   {
     id: 7,
     name: "Task 7",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -83,7 +83,7 @@ const scheduleData = [
   {
     id: 10,
     name: "Task 10",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -110,7 +110,7 @@ const scheduleData = [
   {
     id: 13,
     name: "Task 13",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -138,7 +138,7 @@ const scheduleData = [
   {
     id: 16,
     name: "Task 16",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -165,7 +165,7 @@ const scheduleData = [
   {
     id: 19,
     name: "Task 19",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -210,7 +210,7 @@ const scheduleData = [
   {
     id: 22,
     name: "Task 22",
-    start: new Date(2022, 0, 1),
+    start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
@@ -1196,21 +1196,37 @@ class TimeLine {
         drawLine(this.ctx, 0, +offset, this.canvas.width + this.options.timeLineColumnWidth, +offset, "black");
         let date = this.minDate;
         // draw month timeline
-        while (date <= this.maxDate) {
+        let maxDate = new Date(this.maxDate.getFullYear(), this.maxDate.getMonth() + 1, 1);
+        while (date <= maxDate) {
             let mnth = date.getMonth();
             let year = date.getFullYear();
             let day = date.getDate();
             let monthName = months[mnth];
-            let minScale = scaleX(new Date(year, mnth, 0), this.minDate, this.maxDate, this.canvas.width);
-            let maxScale = scaleX(new Date(year, mnth + 1, 0), this.minDate, this.maxDate, this.canvas.width);
-            drawBar(this.ctx, minScale + +this.options.timeLineColumnWidth, +this.options.timeLineHeight / 4, maxScale - minScale, 30, this.options.timeLineBackgroundColor, monthName);
+            let minScale;
+            if (this.minDate < date) {
+                minScale = scaleX(new Date(year, mnth, 0), this.minDate, this.maxDate, this.canvas.width);
+            }
+            else {
+                minScale = 0;
+            }
+            let maxScale;
+            if (this.gantt.maxDate > new Date(year, mnth + 1, 1)) {
+                maxScale = scaleX(new Date(year, mnth + 1, 1), this.minDate, this.maxDate, this.canvas.width);
+            }
+            else {
+                maxScale = scaleX(addDays(this.maxDate, 1), this.minDate, this.maxDate, this.canvas.width);
+            }
+            drawBar(this.ctx, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, minScale === 0
+                ? maxScale
+                : maxScale + this.options.timeLineColumnWidth - minScale, 30, this.options.timeLineBackgroundColor, monthName);
             mnth += 1;
             date = new Date(year, mnth, day);
             // month seperator
-            drawLine(this.ctx, minScale + this.options.timeLineColumnWidth, +this.options.timeLineHeight / 4, minScale + this.options.timeLineColumnWidth, this.canvas.height + this.options.timeLineHeight, "black");
-            drawLine(this.ctx, maxScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, maxScale + this.options.timeLineColumnWidth, this.canvas.height + this.options.timeLineHeight, "black");
+            drawLine(this.ctx, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.canvas.height + this.options.timeLineHeight, "black");
+            // month gridline in the timeline chart
+            drawLine(this.ctx, maxScale, this.options.timeLineHeight / 4, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
             // draw month vertical line
-            drawLine(this.gantt.ctx, maxScale + this.options.timeLineColumnWidth, 0, maxScale + this.options.timeLineColumnWidth, this.canvas.height + this.options.timeLineHeight, "black");
+            drawLine(this.gantt.ctx, maxScale, 0, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
         }
         //topline above month names
         drawLine(this.ctx, 0, 0, this.canvas.width + this.options.timeLineColumnWidth, 0, "black");
