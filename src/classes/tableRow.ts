@@ -71,21 +71,70 @@ export class TableRow {
     if (!this.options.timeLineHeight) {
       this.options.timeLineHeight = 120;
     }
-    let bar = new Bar(
-      xStart,
-      yOffset,
-      barWidth,
-      this.options.rowHeight * 0.6,
-      this.gantt.ctx,
-      this.options.barColor,
-      "white",
-      taskData.name,
-      this.options,
-      this.gantt
-    );
-    this.gantt.tasks.push(bar);
-    bar.draw();
+    if (this.options.showBaseline && this.options.showBaseline === true) {
+      console.log("show baseline", taskData);
+      let bar = new Bar(
+        xStart,
+        yOffset,
+        barWidth,
+        this.options.rowHeight * 0.4,
+        this.gantt.ctx,
+        this.options.barColor,
+        "white",
+        taskData.name,
+        this.options,
+        this.gantt
+      );
 
+      this.gantt.tasks.push(bar);
+      bar.draw();
+      let blYOffset =
+        this.options.rowHeight * this.rowCounter + this.options.rowHeight * 0.6;
+
+      let blStart = scaleX(
+        taskData.baselineStart,
+        this.gantt.minDate,
+        this.gantt.maxDate,
+        canvasActualWidth
+      );
+      let blEnd = scaleX(
+        addDays(taskData.baselineEnd, 1),
+        this.gantt.minDate,
+        this.gantt.maxDate,
+        canvasActualWidth
+      );
+      let blWidth = blEnd - blStart;
+
+      let blBar = new Bar(
+        blStart,
+        blYOffset,
+        blWidth,
+        this.options.rowHeight * 0.2,
+        this.gantt.ctx,
+        "yellow",
+        "white",
+        taskData.name,
+        this.options,
+        this.gantt
+      );
+      blBar.draw("yellow");
+      console.log("baseline", blBar);
+    } else {
+      let bar = new Bar(
+        xStart,
+        yOffset,
+        barWidth,
+        this.options.rowHeight * 0.6,
+        this.gantt.ctx,
+        this.options.barColor,
+        "white",
+        taskData.name,
+        this.options,
+        this.gantt
+      );
+      this.gantt.tasks.push(bar);
+      bar.draw();
+    }
     this.gantt.ctx.restore();
   }
 
