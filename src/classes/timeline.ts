@@ -120,29 +120,52 @@ export class TimeLine {
     let date = this.minDate;
 
     // draw month timeline
-    while (date <= this.maxDate) {
+    let maxDate = new Date(
+      this.maxDate.getFullYear(),
+      this.maxDate.getMonth() + 1,
+      1
+    );
+    while (date <= maxDate) {
       let mnth = date.getMonth();
       let year = date.getFullYear();
       let day = date.getDate();
       let monthName = months[mnth];
-      let minScale = scaleX(
-        new Date(year, mnth, 0),
-        this.minDate,
-        this.maxDate,
-        this.canvas.width
-      );
-      let maxScale = scaleX(
-        new Date(year, mnth + 1, 0),
-        this.minDate,
-        this.maxDate,
-        this.canvas.width
-      );
+      let minScale: number;
+      if (this.minDate < date) {
+        minScale = scaleX(
+          new Date(year, mnth, 0),
+          this.minDate,
+          this.maxDate,
+          this.canvas.width
+        );
+      } else {
+        minScale = 0;
+      }
+      let maxScale: number;
+      if (this.gantt.maxDate > new Date(year, mnth + 1, 1)) {
+        maxScale = scaleX(
+          new Date(year, mnth + 1, 1),
+          this.minDate,
+          this.maxDate,
+          this.canvas.width
+        );
+      } else {
+        maxScale = scaleX(
+          addDays(this.maxDate, 1),
+          this.minDate,
+          this.maxDate,
+          this.canvas.width
+        );
+      }
       let scaledX = (minScale + maxScale) / 2.0;
+      let width = maxScale - minScale;
       drawBar(
         this.ctx,
-        minScale + +this.options.timeLineColumnWidth,
-        +this.options.timeLineHeight / 4,
-        maxScale - minScale,
+        minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth,
+        this.options.timeLineHeight / 4,
+        minScale === 0
+          ? maxScale
+          : maxScale + this.options.timeLineColumnWidth - minScale,
         30,
         this.options.timeLineBackgroundColor,
         monthName
@@ -154,27 +177,29 @@ export class TimeLine {
       // month seperator
       drawLine(
         this.ctx,
-        minScale + this.options.timeLineColumnWidth,
-        +this.options.timeLineHeight / 4,
-        minScale + this.options.timeLineColumnWidth,
-        this.canvas.height + this.options.timeLineHeight,
-        "black"
-      );
-      drawLine(
-        this.ctx,
-        maxScale + this.options.timeLineColumnWidth,
+        minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth,
         this.options.timeLineHeight / 4,
-        maxScale + this.options.timeLineColumnWidth,
+        minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth,
         this.canvas.height + this.options.timeLineHeight,
         "black"
       );
 
-      // draw month vertical line
+      // month gridline in the timeline chart
+      drawLine(
+        this.ctx,
+        maxScale,
+        this.options.timeLineHeight / 4,
+        maxScale,
+        this.canvas.height + this.options.timeLineHeight,
+        "black"
+      );
+
+      // draw month vertical line in the main chart
       drawLine(
         this.gantt.ctx,
-        maxScale + this.options.timeLineColumnWidth,
+        maxScale,
         0,
-        maxScale + this.options.timeLineColumnWidth,
+        maxScale,
         this.canvas.height + this.options.timeLineHeight,
         "black"
       );
