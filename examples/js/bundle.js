@@ -243,6 +243,8 @@ class Tasks {
         this.createTree(false);
     }
     createTree(update = false) {
+        this.gantt.table.rowCounter = 0;
+        this.gantt.table.tableBody.innerHTML = "";
         for (let i = 0; i < this.nestedData.length; i++) {
             const element = this.nestedData[i];
             this.gantt.table.drawRow(element, update);
@@ -298,11 +300,9 @@ class Tasks {
     //       dataTree.push(hashTable[aData.id]);
     //     }
     //   });
-    //   console.log(dataTree);
     //   return dataTree;
     // }
     list_to_tree(data, update = false) {
-        console.log(data);
         const tree = [];
         const parents = data.filter((d) => d.parent == null);
         for (const parent of parents) {
@@ -328,7 +328,6 @@ class Tasks {
             nestedObj.children = this.getChildren(parent, data);
             tree.push(nestedObj);
         }
-        console.log(tree);
         return tree;
     }
     getChildren(parent, data) {
@@ -357,7 +356,6 @@ class Tasks {
             else {
                 childObj.expanded = true;
             }
-            console.log(child.id, childObj.visible);
             childObj.children = this.getChildren(child, data);
             childs.push(childObj);
         }
@@ -748,7 +746,6 @@ class TableRow {
             this.options.timeLineHeight = 120;
         }
         if (this.options.showBaseline && this.options.showBaseline === true) {
-            console.log("show baseline", taskData);
             let bar = new Bar(xStart, yOffset, barWidth, this.options.rowHeight * 0.4, this.gantt.ctx, this.options.barColor, "white", taskData.name, this.options, this.gantt);
             this.gantt.tasks.push(bar);
             bar.draw();
@@ -758,10 +755,9 @@ class TableRow {
             let blWidth = blEnd - blStart;
             let blBar = new Bar(blStart, blYOffset, blWidth, this.options.rowHeight * 0.2, this.gantt.ctx, "yellow", "white", taskData.name, this.options, this.gantt);
             blBar.draw("yellow");
-            console.log("baseline", blBar);
         }
         else {
-            let bar = new Bar(xStart, yOffset, barWidth, this.options.rowHeight * 0.6, this.gantt.ctx, this.options.barColor, "white", taskData.name, this.options, this.gantt);
+            let bar = new Bar(xStart >= 0 ? xStart : 0, yOffset, barWidth, this.options.rowHeight * 0.6, this.gantt.ctx, this.options.barColor, "white", taskData.name, this.options, this.gantt);
             this.gantt.tasks.push(bar);
             bar.draw();
         }
@@ -1248,7 +1244,6 @@ class GanttChart {
             this.splitterX = e.clientX;
             this.splitterY = e.clientY;
             this.tableWidth = this.tablediv.getBoundingClientRect().width;
-            console.log(this.tableWidth);
             // Attach the listeners to `document`
             document.addEventListener("mousemove", this.splitterMouseMoveHandler);
             document.addEventListener("mouseup", this.splitterMouseUpHandler);
@@ -1258,12 +1253,10 @@ class GanttChart {
             const newLeftWidth = ((this.tableWidth + dx) * 100) /
                 this.splitter.parentNode.getBoundingClientRect().width;
             this.tablediv.style.width = `${newLeftWidth}%`;
-            console.log("element sibling", this.tablediv.children[0]);
             this.tablediv.children[0].style.width = `${this.splitter.offsetLeft}px`;
             this.chartDiv.style.width = `${95 - newLeftWidth}%`;
         };
         this.splitterMouseUpHandler = (e) => {
-            console.log("mouse up");
             // this.splitter.style.removeProperty("cursor");
             document.body.style.removeProperty("cursor");
             // this.tablediv.style.removeProperty("user-select");

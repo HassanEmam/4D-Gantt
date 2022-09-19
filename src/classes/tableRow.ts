@@ -72,7 +72,6 @@ export class TableRow {
       this.options.timeLineHeight = 120;
     }
     if (this.options.showBaseline && this.options.showBaseline === true) {
-      console.log("show baseline", taskData);
       let bar = new Bar(
         xStart,
         yOffset,
@@ -118,10 +117,9 @@ export class TableRow {
         this.gantt
       );
       blBar.draw("yellow");
-      console.log("baseline", blBar);
     } else {
       let bar = new Bar(
-        xStart,
+        xStart >= 0 ? xStart : 0,
         yOffset,
         barWidth,
         this.options.rowHeight * 0.6,

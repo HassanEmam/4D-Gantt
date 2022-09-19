@@ -308,7 +308,6 @@ tr:hover {
     this.splitterX = e.clientX;
     this.splitterY = e.clientY;
     this.tableWidth = this.tablediv.getBoundingClientRect().width;
-    console.log(this.tableWidth);
     // Attach the listeners to `document`
     document.addEventListener("mousemove", this.splitterMouseMoveHandler);
     document.addEventListener("mouseup", this.splitterMouseUpHandler);
@@ -321,7 +320,6 @@ tr:hover {
       ((this.tableWidth + dx) * 100) /
       (this.splitter.parentNode as HTMLElement).getBoundingClientRect().width;
     this.tablediv.style.width = `${newLeftWidth}%`;
-    console.log("element sibling", this.tablediv.children[0]);
     (
       this.tablediv.children[0] as HTMLElement
     ).style.width = `${this.splitter.offsetLeft}px`;
@@ -329,7 +327,6 @@ tr:hover {
   };
 
   splitterMouseUpHandler = (e: MouseEvent) => {
-    console.log("mouse up");
     // this.splitter.style.removeProperty("cursor");
     document.body.style.removeProperty("cursor");
 
