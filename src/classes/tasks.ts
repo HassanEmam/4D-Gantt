@@ -14,6 +14,8 @@ export class Tasks {
   }
 
   createTree(update: boolean = false) {
+    this.gantt.table.rowCounter = 0;
+    this.gantt.table.tableBody.innerHTML = "";
     for (let i = 0; i < this.nestedData.length; i++) {
       const element = this.nestedData[i];
       this.gantt.table.drawRow(element, update);
@@ -73,12 +75,10 @@ export class Tasks {
   //       dataTree.push(hashTable[aData.id]);
   //     }
   //   });
-  //   console.log(dataTree);
   //   return dataTree;
   // }
 
   list_to_tree(data: data[], update: boolean = false) {
-    console.log(data);
     const tree: nestedData[] = [];
     const parents = data.filter((d) => d.parent == null);
     for (const parent of parents) {
@@ -101,7 +101,6 @@ export class Tasks {
       nestedObj.children = this.getChildren(parent, data);
       tree.push(nestedObj);
     }
-    console.log(tree);
     return tree;
   }
 
@@ -130,7 +129,6 @@ export class Tasks {
       } else {
         childObj.expanded = true;
       }
-      console.log(child.id, childObj.visible);
 
       childObj.children = this.getChildren(child, data);
       childs.push(childObj);
