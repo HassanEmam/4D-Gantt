@@ -64,7 +64,7 @@ const scheduleData = [
   },
   {
     id: 8,
-    name: "Task 8",
+    name: "Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
@@ -829,6 +829,7 @@ class Table {
         this.rowCounter = 0;
         this.columns = columns;
         this.tableDOM = document.createElement("table");
+        this.tableDOM.style.whiteSpace = "nowrap";
         // this.tableDOM.style.textAlign = "center";
         this.tableDOM.style.position = "relative";
         this.tableDOM.style.borderCollapse = "collapse";
@@ -966,14 +967,14 @@ class Table {
                 col.style.padding = "0px";
                 col.style.border = "0px";
                 if (data[this.columns[colidx]] instanceof Date) {
-                    col.innerHTML = `<span>${data[this.columns[colidx]].toLocaleDateString("en-GB", {
+                    col.innerHTML = `${data[this.columns[colidx]].toLocaleDateString("en-GB", {
                         day: "numeric",
                         month: "2-digit",
                         year: "numeric",
-                    })}</span>`;
+                    })}`;
                 }
                 else {
-                    col.innerHTML = `<span>${data[this.columns[colidx]]}</span>`;
+                    col.innerHTML = `${data[this.columns[colidx]]}`;
                 }
                 if (data.children.length === 0 && data.hasChildren === true) {
                     let childs = this.gantt.options.data.filter((d) => d.parent === data.id);
@@ -1019,6 +1020,12 @@ class Table {
                         spacer.style.minWidth = "10px";
                         col.insertBefore(spacer, col.firstChild);
                     }
+                }
+                else {
+                    col.style.maxWidth = "0px";
+                    col.style.overflow = "hidden";
+                    col.style.textOverflow = "ellipsis";
+                    col.style.whiteSpace = "nowrap";
                 }
                 if (data.children.length === 0 && colidx > 0) {
                     col.addEventListener("dblclick", (e) => {

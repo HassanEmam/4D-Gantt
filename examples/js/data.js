@@ -64,7 +64,7 @@ export const scheduleData = [
   },
   {
     id: 8,
-    name: "Task 8",
+    name: "Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
