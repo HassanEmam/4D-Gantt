@@ -36,6 +36,7 @@ export class Table {
     this.rowCounter = 0;
     this.columns = columns;
     this.tableDOM = document.createElement("table");
+    this.tableDOM.style.whiteSpace = "nowrap";
     // this.tableDOM.style.textAlign = "center";
     this.tableDOM.style.position = "relative";
     this.tableDOM.style.borderCollapse = "collapse";
@@ -127,6 +128,9 @@ export class Table {
     }
     this.createLeaf(data, update);
     if (data.children.length > 0) {
+      data.children.sort((a, b) => {
+        return a.children.length - b.children.length;
+      });
       data.children.forEach((child) => {
         this.createBranch(child, update);
       });
@@ -139,6 +143,9 @@ export class Table {
 
   createBranch(data: nestedData, update: boolean = false) {
     this.createLeaf(data, update);
+    data.children.sort((a, b) => {
+      return a.children.length - b.children.length;
+    });
     if (data.expanded && data.expanded === true) {
       for (let row of data.children) {
         if (row.children.length === 0) {
@@ -179,22 +186,24 @@ export class Table {
       let toggle: HTMLElement;
       for (let colidx = 0; colidx < this.columns.length; colidx++) {
         const col = document.createElement("td");
+
         col.style.width = `${this.options.table.width / this.columns.length}px`;
         col.style.height = `${this.options.rowHeight}px`;
         col.style.maxHeight = `${this.options.rowHeight}px`;
         col.style.margin = "0px";
         col.style.padding = "0px";
         col.style.border = "0px";
+
         if (data[this.columns[colidx]] instanceof Date) {
-          col.innerHTML = `<span>${(
+          col.innerHTML = `${(
             data[this.columns[colidx]] as Date
           ).toLocaleDateString("en-GB", {
             day: "numeric",
             month: "2-digit",
             year: "numeric",
-          })}</span>`;
+          })}`;
         } else {
-          col.innerHTML = `<span>${data[this.columns[colidx]]}</span>`;
+          col.innerHTML = `${data[this.columns[colidx]]}`;
         }
         if (data.children.length === 0 && data.hasChildren === true) {
           let childs = this.gantt.options.data.filter(
@@ -241,6 +250,11 @@ export class Table {
             spacer.style.minWidth = "10px";
             col.insertBefore(spacer, col.firstChild);
           }
+        } else {
+          col.style.maxWidth = "0px";
+          col.style.overflow = "hidden";
+          col.style.textOverflow = "ellipsis";
+          col.style.whiteSpace = "nowrap";
         }
 
         if (data.children.length === 0 && colidx > 0) {

@@ -64,7 +64,7 @@ const scheduleData = [
   },
   {
     id: 8,
-    name: "Task 8",
+    name: "Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
@@ -78,7 +78,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 3,
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 3,
   },
   {
     id: 13,
@@ -115,7 +115,7 @@ const scheduleData = [
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
 
-    parent: 1,
+    parent: 3,
   },
   {
     id: 14,
@@ -124,7 +124,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 2,
   },
   {
     id: 15,
@@ -133,7 +133,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 16,
@@ -142,7 +142,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 17,
@@ -151,7 +151,7 @@ const scheduleData = [
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: 13,
   },
   {
     id: 18,
@@ -613,41 +613,6 @@ const months = [
     "Nov",
     "Dec",
 ];
-/**
- * this function solve the issue of scrolling within a div and getting correction for mouse events
- * @param aobj the elemeent hosting the event
- * @returns
- */
-function recursive_offset(aobj) {
-    var currOffset = {
-        x: 0,
-        y: 0,
-    };
-    var newOffset = {
-        x: 0,
-        y: 0,
-    };
-    if (aobj !== null) {
-        if (aobj.scrollLeft) {
-            currOffset.x = aobj.scrollLeft;
-        }
-        if (aobj.scrollTop) {
-            currOffset.y = aobj.scrollTop;
-        }
-        if (aobj.offsetLeft) {
-            currOffset.x -= aobj.offsetLeft;
-        }
-        if (aobj.offsetTop) {
-            currOffset.y -= aobj.offsetTop;
-        }
-        if (aobj.parentNode !== undefined) {
-            newOffset = recursive_offset(aobj.parentNode);
-        }
-        currOffset.x = currOffset.x + newOffset.x;
-        currOffset.y = currOffset.y + newOffset.y;
-    }
-    return currOffset;
-}
 
 class Bar {
     constructor(x, y, width, height, context, color, fontColor, name, options, gantt) {
@@ -829,6 +794,7 @@ class Table {
         this.rowCounter = 0;
         this.columns = columns;
         this.tableDOM = document.createElement("table");
+        this.tableDOM.style.whiteSpace = "nowrap";
         // this.tableDOM.style.textAlign = "center";
         this.tableDOM.style.position = "relative";
         this.tableDOM.style.borderCollapse = "collapse";
@@ -909,6 +875,9 @@ class Table {
         }
         this.createLeaf(data, update);
         if (data.children.length > 0) {
+            data.children.sort((a, b) => {
+                return a.children.length - b.children.length;
+            });
             data.children.forEach((child) => {
                 this.createBranch(child, update);
             });
@@ -920,6 +889,9 @@ class Table {
     }
     createBranch(data, update = false) {
         this.createLeaf(data, update);
+        data.children.sort((a, b) => {
+            return a.children.length - b.children.length;
+        });
         if (data.expanded && data.expanded === true) {
             for (let row of data.children) {
                 if (row.children.length === 0) {
@@ -958,14 +930,14 @@ class Table {
                 col.style.padding = "0px";
                 col.style.border = "0px";
                 if (data[this.columns[colidx]] instanceof Date) {
-                    col.innerHTML = `<span>${data[this.columns[colidx]].toLocaleDateString("en-GB", {
+                    col.innerHTML = `${data[this.columns[colidx]].toLocaleDateString("en-GB", {
                         day: "numeric",
                         month: "2-digit",
                         year: "numeric",
-                    })}</span>`;
+                    })}`;
                 }
                 else {
-                    col.innerHTML = `<span>${data[this.columns[colidx]]}</span>`;
+                    col.innerHTML = `${data[this.columns[colidx]]}`;
                 }
                 if (data.children.length === 0 && data.hasChildren === true) {
                     let childs = this.gantt.options.data.filter((d) => d.parent === data.id);
@@ -1011,6 +983,12 @@ class Table {
                         spacer.style.minWidth = "10px";
                         col.insertBefore(spacer, col.firstChild);
                     }
+                }
+                else {
+                    col.style.maxWidth = "0px";
+                    col.style.overflow = "hidden";
+                    col.style.textOverflow = "ellipsis";
+                    col.style.whiteSpace = "nowrap";
                 }
                 if (data.children.length === 0 && colidx > 0) {
                     col.addEventListener("dblclick", (e) => {
@@ -1225,7 +1203,7 @@ class TimeLine {
             drawLine(this.ctx, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.canvas.height + this.options.timeLineHeight, "black");
             // month gridline in the timeline chart
             drawLine(this.ctx, maxScale, this.options.timeLineHeight / 4, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
-            // draw month vertical line
+            // draw month vertical line in the main chart
             drawLine(this.gantt.ctx, maxScale, 0, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
         }
         //topline above month names
@@ -1525,18 +1503,18 @@ tr:hover {
         /**
          * Events to habdle mouse move in the chart area
          */
-        this.canvas.addEventListener("mousemove", (e) => {
-            e.target.parentElement;
-            recursive_offset(e.target);
-            let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
-            let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
-            for (let task of this.tasks) {
-                task.collision(posX, posY);
-            }
-            if (this.dateLine) {
-                this.dateLine.collision(posX, posY);
-            }
-        });
+        // this.canvas.addEventListener("click", (e: MouseEvent) => {
+        //   let parent = (e.target as HTMLElement).parentElement;
+        //   let offsetpos = recursive_offset(e.target);
+        //   let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
+        //   let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
+        //   for (let task of this.tasks) {
+        //     task.collision(posX, posY);
+        //   }
+        //   if (this.dateLine) {
+        //     this.dateLine.collision(posX, posY);
+        //   }
+        // });
         /**
          * Events to synchronise scroll bars of table and canvas
          */
