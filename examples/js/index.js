@@ -11,7 +11,7 @@ function drawGantt() {
   // chartCanvas.height = 500;
   let options = {
     container: container,
-    showBaseline: true,
+    showBaseline: false,
     dataDate: new Date(2022, 0, 15),
     gridScale: 5,
     gridColor: "black",
