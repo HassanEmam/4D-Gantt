@@ -16,7 +16,7 @@
     "webpack-dev-server": "^4.10.1",
     "wepack-cli": "^0.0.1-security"
   },
-  "version": "0.0.12",
+  "version": "0.0.14",
   "description": "4D Gantt Chart Example",
   "name": "4d-gantt-chart",
   "main": "./dist/index.js",

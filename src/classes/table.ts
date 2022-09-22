@@ -144,14 +144,8 @@ export class Table {
   createBranch(data: nestedData, update: boolean = false) {
     this.createLeaf(data, update);
     data.children.sort((a, b) => {
-      console.log(
-        b.children.length,
-        a.children.length,
-        b.children.length - a.children.length
-      );
       return a.children.length - b.children.length;
     });
-    console.log(data.children);
     if (data.expanded && data.expanded === true) {
       for (let row of data.children) {
         if (row.children.length === 0) {

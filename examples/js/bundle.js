@@ -613,41 +613,6 @@ const months = [
     "Nov",
     "Dec",
 ];
-/**
- * this function solve the issue of scrolling within a div and getting correction for mouse events
- * @param aobj the elemeent hosting the event
- * @returns
- */
-function recursive_offset(aobj) {
-    var currOffset = {
-        x: 0,
-        y: 0,
-    };
-    var newOffset = {
-        x: 0,
-        y: 0,
-    };
-    if (aobj !== null) {
-        if (aobj.scrollLeft) {
-            currOffset.x = aobj.scrollLeft;
-        }
-        if (aobj.scrollTop) {
-            currOffset.y = aobj.scrollTop;
-        }
-        if (aobj.offsetLeft) {
-            currOffset.x -= aobj.offsetLeft;
-        }
-        if (aobj.offsetTop) {
-            currOffset.y -= aobj.offsetTop;
-        }
-        if (aobj.parentNode !== undefined) {
-            newOffset = recursive_offset(aobj.parentNode);
-        }
-        currOffset.x = currOffset.x + newOffset.x;
-        currOffset.y = currOffset.y + newOffset.y;
-    }
-    return currOffset;
-}
 
 class Bar {
     constructor(x, y, width, height, context, color, fontColor, name, options, gantt) {
@@ -925,10 +890,8 @@ class Table {
     createBranch(data, update = false) {
         this.createLeaf(data, update);
         data.children.sort((a, b) => {
-            console.log(b.children.length, a.children.length, b.children.length - a.children.length);
             return a.children.length - b.children.length;
         });
-        console.log(data.children);
         if (data.expanded && data.expanded === true) {
             for (let row of data.children) {
                 if (row.children.length === 0) {
@@ -1540,18 +1503,18 @@ tr:hover {
         /**
          * Events to habdle mouse move in the chart area
          */
-        this.canvas.addEventListener("mousemove", (e) => {
-            e.target.parentElement;
-            recursive_offset(e.target);
-            let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
-            let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
-            for (let task of this.tasks) {
-                task.collision(posX, posY);
-            }
-            if (this.dateLine) {
-                this.dateLine.collision(posX, posY);
-            }
-        });
+        // this.canvas.addEventListener("click", (e: MouseEvent) => {
+        //   let parent = (e.target as HTMLElement).parentElement;
+        //   let offsetpos = recursive_offset(e.target);
+        //   let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
+        //   let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
+        //   for (let task of this.tasks) {
+        //     task.collision(posX, posY);
+        //   }
+        //   if (this.dateLine) {
+        //     this.dateLine.collision(posX, posY);
+        //   }
+        // });
         /**
          * Events to synchronise scroll bars of table and canvas
          */

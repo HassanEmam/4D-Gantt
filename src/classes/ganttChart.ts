@@ -348,18 +348,18 @@ tr:hover {
     /**
      * Events to habdle mouse move in the chart area
      */
-    this.canvas.addEventListener("mousemove", (e: MouseEvent) => {
-      let parent = (e.target as HTMLElement).parentElement;
-      let offsetpos = recursive_offset(e.target);
-      let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
-      let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
-      for (let task of this.tasks) {
-        task.collision(posX, posY);
-      }
-      if (this.dateLine) {
-        this.dateLine.collision(posX, posY);
-      }
-    });
+    // this.canvas.addEventListener("click", (e: MouseEvent) => {
+    //   let parent = (e.target as HTMLElement).parentElement;
+    //   let offsetpos = recursive_offset(e.target);
+    //   let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
+    //   let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
+    //   for (let task of this.tasks) {
+    //     task.collision(posX, posY);
+    //   }
+    //   if (this.dateLine) {
+    //     this.dateLine.collision(posX, posY);
+    //   }
+    // });
 
     /**
      * Events to synchronise scroll bars of table and canvas
