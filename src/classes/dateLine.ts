@@ -3,8 +3,6 @@ import { scaleX } from "../utils/scales";
 import { GanttChart } from "./ganttChart";
 
 export class DateLine {
-  ctx: CanvasRenderingContext2D;
-  canvas: HTMLCanvasElement;
   options: options;
   minDate: Date;
   maxDate: Date;
@@ -13,20 +11,15 @@ export class DateLine {
   dateLine: Date;
   xpos: number;
   gantt: GanttChart;
+  svg: Element;
+  SVGLine: SVGElement;
 
-  constructor(
-    ctx: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement,
-    options: options,
-    date: Date,
-    gantt: GanttChart
-  ) {
+  constructor(svg: Element, options: options, date: Date, gantt: GanttChart) {
     this.options = options;
     this.dateLine = date;
-    this.canvas = canvas;
-    this.ctx = ctx;
+    this.svg = svg;
     this.gantt = gantt;
-
+    this.SVGLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
     this.minDate = this.gantt.minDate;
     this.maxDate = this.gantt.maxDate;
     this.maxValue = this.gantt.maxValue;
@@ -35,20 +28,24 @@ export class DateLine {
       this.dateLine,
       this.minDate,
       this.maxDate,
-      this.canvas.width
+      this.svg.clientWidth
     );
   }
 
   draw() {
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = "blue";
-    this.ctx.lineWidth = 3;
-    this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
-    this.ctx.lineTo(
-      this.xpos + this.options.timeLineColumnWidth / 2,
-      this.canvas.height
-    );
-    this.ctx.stroke();
+    this.SVGLine.setAttribute('stroke', 'blue')
+    this.SVGLine.setAttribute('stroke-width', "3")
+    this.SVGLine.setAttribute('x1', this.xpos.toString())
+    this.SVGLine.setAttribute('x2', this.xpos.toString())
+    this.SVGLine.setAttribute('y1', "0")
+    this.SVGLine.setAttribute('y2', this.svg.clientHeight.toString())
+    this.svg.appendChild(this.SVGLine)
+    this.SVGLine.addEventListener('mouseover', (event)=>{
+      this.SVGLine.setAttribute('stroke', 'red')
+    })
+    this.SVGLine.addEventListener('mouseout', (event)=>{
+      this.SVGLine.setAttribute('stroke', 'blue')
+    })
   }
 
   update(date: Date) {
@@ -57,34 +54,8 @@ export class DateLine {
       this.dateLine,
       this.minDate,
       this.maxDate,
-      this.canvas.width
+      this.svg.clientWidth
     );
     this.draw();
-  }
-  collision(x: number, y: number) {
-    if (
-      this.xpos + this.options.timeLineColumnWidth / 2 - 5 <= x &&
-      this.xpos + this.options.timeLineColumnWidth / 2 + 5 >= x
-    ) {
-      this.ctx.beginPath();
-      this.ctx.strokeStyle = "red";
-      this.ctx.lineWidth = 3;
-      this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
-      this.ctx.lineTo(
-        this.xpos + this.options.timeLineColumnWidth / 2,
-        this.canvas.height
-      );
-      this.ctx.stroke();
-    } else {
-      this.ctx.beginPath();
-      this.ctx.strokeStyle = "blue";
-      this.ctx.lineWidth = 3;
-      this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
-      this.ctx.lineTo(
-        this.xpos + this.options.timeLineColumnWidth / 2,
-        this.canvas.height
-      );
-      this.ctx.stroke();
-    }
   }
 }

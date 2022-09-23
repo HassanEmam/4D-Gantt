@@ -368,49 +368,37 @@ class Tasks {
 }
 
 class DateLine {
-    constructor(ctx, canvas, options, date, gantt) {
+    constructor(svg, options, date, gantt) {
         this.options = options;
         this.dateLine = date;
-        this.canvas = canvas;
-        this.ctx = ctx;
+        this.svg = svg;
         this.gantt = gantt;
+        this.SVGLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         this.minDate = this.gantt.minDate;
         this.maxDate = this.gantt.maxDate;
         this.maxValue = this.gantt.maxValue;
         this.minValue = this.gantt.minValue;
-        this.xpos = scaleX(this.dateLine, this.minDate, this.maxDate, this.canvas.width);
+        this.xpos = scaleX(this.dateLine, this.minDate, this.maxDate, this.svg.clientWidth);
     }
     draw() {
-        this.ctx.beginPath();
-        this.ctx.strokeStyle = "blue";
-        this.ctx.lineWidth = 3;
-        this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
-        this.ctx.lineTo(this.xpos + this.options.timeLineColumnWidth / 2, this.canvas.height);
-        this.ctx.stroke();
+        this.SVGLine.setAttribute('stroke', 'blue');
+        this.SVGLine.setAttribute('stroke-width', "3");
+        this.SVGLine.setAttribute('x1', this.xpos.toString());
+        this.SVGLine.setAttribute('x2', this.xpos.toString());
+        this.SVGLine.setAttribute('y1', "0");
+        this.SVGLine.setAttribute('y2', this.svg.clientHeight.toString());
+        this.svg.appendChild(this.SVGLine);
+        this.SVGLine.addEventListener('mouseover', (event) => {
+            this.SVGLine.setAttribute('stroke', 'red');
+        });
+        this.SVGLine.addEventListener('mouseout', (event) => {
+            this.SVGLine.setAttribute('stroke', 'blue');
+        });
     }
     update(date) {
         this.dateLine = date;
-        this.xpos = scaleX(this.dateLine, this.minDate, this.maxDate, this.canvas.width);
+        this.xpos = scaleX(this.dateLine, this.minDate, this.maxDate, this.svg.clientWidth);
         this.draw();
-    }
-    collision(x, y) {
-        if (this.xpos + this.options.timeLineColumnWidth / 2 - 5 <= x &&
-            this.xpos + this.options.timeLineColumnWidth / 2 + 5 >= x) {
-            this.ctx.beginPath();
-            this.ctx.strokeStyle = "red";
-            this.ctx.lineWidth = 3;
-            this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
-            this.ctx.lineTo(this.xpos + this.options.timeLineColumnWidth / 2, this.canvas.height);
-            this.ctx.stroke();
-        }
-        else {
-            this.ctx.beginPath();
-            this.ctx.strokeStyle = "blue";
-            this.ctx.lineWidth = 3;
-            this.ctx.moveTo(this.xpos + this.options.timeLineColumnWidth / 2, 0);
-            this.ctx.lineTo(this.xpos + this.options.timeLineColumnWidth / 2, this.canvas.height);
-            this.ctx.stroke();
-        }
     }
 }
 
@@ -630,7 +618,21 @@ class Bar {
         this.gantt = gantt;
     }
     draw(color, fontColor, name) {
-        drawLine(this.context, 0, this.y + this.options.rowHeight * 0.8, this.gantt.canvas.width, this.y + this.options.rowHeight * 0.8, "lightgray");
+        const sepLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        sepLine.setAttribute("x1", "0");
+        sepLine.setAttribute("x2", this.gantt.svg.clientWidth.toString());
+        sepLine.setAttribute("y1", (this.y + this.options.rowHeight * 0.8).toString());
+        sepLine.setAttribute("y2", (this.y + this.options.rowHeight * 0.8).toString());
+        sepLine.setAttribute("stroke", "lightgray");
+        this.gantt.svg.appendChild(sepLine);
+        // drawLine(
+        //   this.context,
+        //   0,
+        //   this.y + this.options.rowHeight * 0.8,
+        //   this.gantt.svg.clientWidth,
+        //   this.y + this.options.rowHeight * 0.8,
+        //   "lightgray"
+        // );
         color
             ? (this.color = color)
             : this.color
@@ -643,16 +645,27 @@ class Bar {
                 : (this.fontColor = "white");
         name ? (this.name = name) : this.name ? this.name : (this.name = "Task");
         if (this.name) {
-            this.context.globalCompositeOperation = "source-over";
-            this.context.textAlign = "center";
-            this.context.textBaseline = "middle";
-            let fontSize = Math.min(this.width / 1.5, this.height / 1.5);
-            this.context.font = `${fontSize}px Arial`;
-            this.context.fillStyle = this.color;
-            this.context.fillRect(this.x, this.y, this.width, this.height);
-            this.context.fillStyle = this.fontColor;
+            // this.context.globalCompositeOperation = "source-over";
+            // this.context.textAlign = "center";
+            // this.context.textBaseline = "middle";
+            // let fontSize = Math.min(this.width / 1.5, this.height / 1.5);
+            // this.context.font = `${fontSize}px Arial`;
+            // this.context.fillStyle = this.color;
+            this.bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            this.bar.setAttribute("x", this.x.toString());
+            this.bar.setAttribute("y", this.y.toString());
+            this.bar.setAttribute("width", this.width.toString());
+            this.bar.setAttribute("height", this.height.toString());
+            this.bar.setAttribute("fill", this.color);
+            this.gantt.svg.appendChild(this.bar);
+            // this.context.fillRect(this.x, this.y, this.width, this.height);
+            // this.context.fillStyle = this.fontColor;
             // this.context.fillStyle = "black";
-            this.context.fillText(this.name, this.x + this.width / 2, this.y + this.height / 2);
+            // this.context.fillText(
+            //   this.name,
+            //   this.x + this.width / 2,
+            //   this.y + this.height / 2
+            // );
         }
     }
     update(x, y) {
@@ -697,7 +710,7 @@ class TableRow {
         this.drawBar();
     }
     drawBar() {
-        var canvasActualWidth = this.gantt.canvas.width;
+        var canvasActualWidth = this.gantt.svg.clientWidth;
         Object.values(this.data);
         let taskData = this.data;
         if (!this.options.rowHeight) {
@@ -726,7 +739,7 @@ class TableRow {
             this.gantt.tasks.push(bar);
             bar.draw();
         }
-        this.gantt.ctx.restore();
+        // this.gantt.ctx.restore();
     }
     draw() {
         // this.drawBar();
@@ -1143,9 +1156,9 @@ class Table {
 }
 
 class TimeLine {
-    constructor(ctx, canvas, options, gantt) {
+    constructor(ctx, svg, options, gantt) {
         this.options = options;
-        this.canvas = canvas;
+        this.svg = svg;
         this.ctx = ctx;
         this.gantt = gantt;
         this.minDate = this.gantt.minDate;
@@ -1158,20 +1171,62 @@ class TimeLine {
         monthDiff(this.minDate, this.maxDate);
         let noOfDays = dayDiff(this.minDate, this.maxDate) + 1;
         for (let i = 0; i < noOfDays; i++) {
-            let scaledX = scaleX(addDays(this.minDate, i), this.minDate, this.maxDate, this.canvas.width);
+            let scaledX = scaleX(addDays(this.minDate, i), this.minDate, this.maxDate, this.svg.clientWidth);
             let date = addDays(this.minDate, i);
             let dayName = getDayOfWeek(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+            // const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+            // rect.setAttribute('x', scaledX.toString())
+            // rect.setAttribute('y', ((this.options.timeLineHeight * 3) / 4).toString())
+            // rect.setAttribute('width', this.options.timeLineColumnWidth.toString())
+            // rect.setAttribute('height', "30")
+            // rect.setAttribute('fill', this.options.timeLineBackgroundColor)
+            //day grids and name
             drawBar(this.ctx, scaledX, +(this.options.timeLineHeight * 3) / 4, this.options.timeLineColumnWidth, 30, this.options.timeLineBackgroundColor, date.getDate().toString());
             drawBar(this.ctx, scaledX, +(this.options.timeLineHeight * 2) / 4, this.options.timeLineColumnWidth, 30, this.options.timeLineBackgroundColor, dayName);
             //   this.ctx.fillText(dayName, scaledX + , 85);
             // line seperator between days
-            drawLine(this.ctx, scaledX, +(this.options.timeLineHeight * 2) / 4, scaledX, this.canvas.height, "lightgray");
+            // const daySep = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+            // daySep.setAttribute('x1', scaledX.toString())
+            // daySep.setAttribute('y1', "0")
+            // daySep.setAttribute('x2', scaledX.toString())
+            // daySep.setAttribute('y2', this.options.timeLineHeight.toString())
+            // daySep.setAttribute('stroke', 'lightgray')
+            // this.svg.appendChild(daySep)
+            drawLine(this.ctx, scaledX, +(this.options.timeLineHeight * 2) / 4, scaledX, this.gantt.timelineCanvas.height, "lightgray");
             // day gridline in the main chart
-            drawLine(this.gantt.ctx, scaledX, 0, scaledX, this.canvas.height, "lightgray");
+            const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            gridLine.setAttribute('x1', scaledX.toString());
+            gridLine.setAttribute('y1', "0");
+            gridLine.setAttribute('x2', scaledX.toString());
+            gridLine.setAttribute('y2', this.gantt.svg.clientHeight.toString());
+            gridLine.setAttribute('stroke', 'lightgray');
+            this.svg.appendChild(gridLine);
+            // drawLine(
+            //   this.gantt.ctx,
+            //   scaledX,
+            //   0,
+            //   scaledX,
+            //   this.canvas.height,
+            //   "lightgray"
+            // );
         }
-        drawLine(this.ctx, 0, +(this.options.timeLineHeight * 2) / 4, this.canvas.width + this.options.timeLineColumnWidth, +(this.options.timeLineHeight * 2) / 4, "black");
+        // const grid2 = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+        // grid2.setAttribute('x1', "0")
+        // grid2.setAttribute('y1', "0")
+        // grid2.setAttribute('x2', (this.svg.clientWidth + this.options.timeLineColumnWidth).toString())
+        // grid2.setAttribute('y2',((this.options.timeLineHeight * 2) / 4).toString())
+        // grid2.setAttribute('stroke', 'black')
+        // this.svg.appendChild(grid2)
+        drawLine(this.ctx, 0, (this.options.timeLineHeight * 2) / 4, this.gantt.timelineCanvas.width + this.options.timeLineColumnWidth, (this.options.timeLineHeight * 2) / 4, "black");
         let offset = (this.options.timeLineHeight * 3) / 4;
-        drawLine(this.ctx, 0, +offset, this.canvas.width + this.options.timeLineColumnWidth, +offset, "black");
+        // const grid3 = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+        // grid3.setAttribute('x1', "0")
+        // grid3.setAttribute('y1', offset.toString())
+        // grid3.setAttribute('x2', (this.svg.clientWidth + this.options.timeLineColumnWidth).toString())
+        // grid3.setAttribute('y2', offset.toString())
+        // grid3.setAttribute('stroke', 'black')
+        // this.svg.appendChild(grid3)
+        drawLine(this.ctx, 0, +offset, this.gantt.timelineCanvas.width + this.options.timeLineColumnWidth, +offset, "black");
         let date = this.minDate;
         // draw month timeline
         let maxDate = new Date(this.maxDate.getFullYear(), this.maxDate.getMonth() + 1, 1);
@@ -1182,32 +1237,61 @@ class TimeLine {
             let monthName = months[mnth];
             let minScale;
             if (this.minDate < date) {
-                minScale = scaleX(new Date(year, mnth, 0), this.minDate, this.maxDate, this.canvas.width);
+                minScale = scaleX(new Date(year, mnth, 0), this.minDate, this.maxDate, this.svg.clientWidth);
             }
             else {
                 minScale = 0;
             }
             let maxScale;
             if (this.gantt.maxDate > new Date(year, mnth + 1, 1)) {
-                maxScale = scaleX(new Date(year, mnth + 1, 1), this.minDate, this.maxDate, this.canvas.width);
+                maxScale = scaleX(new Date(year, mnth + 1, 1), this.minDate, this.maxDate, this.svg.clientWidth);
             }
             else {
-                maxScale = scaleX(addDays(this.maxDate, 1), this.minDate, this.maxDate, this.canvas.width);
+                maxScale = scaleX(addDays(this.maxDate, 1), this.minDate, this.maxDate, this.svg.clientWidth);
             }
+            // const mnth2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+            // mnth2.setAttribute('x', scaledX.toString())
+            // mnth2.setAttribute('y', (this.options.timeLineHeight / 4).toString())
+            // mnth2.setAttribute('width', (maxScale + this.options.timeLineColumnWidth - minScale).toString())
+            // mnth2.setAttribute('height', "30")
+            // mnth2.setAttribute('fill', this.options.timeLineBackgroundColor)
+            // this.svg.appendChild(mnth2)
+            //todo: add month name monthName
             drawBar(this.ctx, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, minScale === 0
                 ? maxScale
                 : maxScale + this.options.timeLineColumnWidth - minScale, 30, this.options.timeLineBackgroundColor, monthName);
             mnth += 1;
             date = new Date(year, mnth, day);
             // month seperator
-            drawLine(this.ctx, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.canvas.height + this.options.timeLineHeight, "black");
+            document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            // mnthSep.setAttribute('x1', scaledX.toString())
+            // mnthSep.setAttribute('y1', (this.options.timeLineHeight / 4).toString())
+            // mnthSep.setAttribute('x2', (minScale + this.options.timeLineColumnWidth).toString())
+            // mnthSep.setAttribute('y2', (this.options.timeLineHeight / 4).toString())
+            // mnthSep.setAttribute('stroke', 'black')
+            // this.svg.appendChild(mnthSep)
+            drawLine(this.ctx, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.options.timeLineHeight / 4, minScale === 0 ? 0 : minScale + this.options.timeLineColumnWidth, this.gantt.timelineCanvas.height + this.options.timeLineHeight, "black");
             // month gridline in the timeline chart
-            drawLine(this.ctx, maxScale, this.options.timeLineHeight / 4, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
+            drawLine(this.ctx, maxScale, this.options.timeLineHeight / 4, maxScale, this.gantt.timelineCanvas.height + this.options.timeLineHeight, "black");
             // draw month vertical line in the main chart
-            drawLine(this.gantt.ctx, maxScale, 0, maxScale, this.canvas.height + this.options.timeLineHeight, "black");
+            const mnthLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            mnthLine.setAttribute('x1', maxScale.toString());
+            mnthLine.setAttribute('y1', "0");
+            mnthLine.setAttribute('x2', maxScale.toString());
+            mnthLine.setAttribute('y2', (this.svg.clientHeight).toString());
+            mnthLine.setAttribute('stroke', 'black');
+            this.svg.appendChild(mnthLine);
+            // drawLine(
+            //   this.gantt.ctx,
+            //   maxScale,
+            //   0,
+            //   maxScale,
+            //   this.canvas.height + this.options.timeLineHeight,
+            //   "black"
+            // );
         }
         //topline above month names
-        drawLine(this.ctx, 0, 0, this.canvas.width + this.options.timeLineColumnWidth, 0, "black");
+        drawLine(this.ctx, 0, 0, this.gantt.timelineCanvas.width + this.options.timeLineColumnWidth, 0, "black");
         for (let i = 0; i < noOfYears; i++) {
             let fDayOfYear = new Date(this.minDate.getFullYear() + i, 0, 1);
             let lDayOfYear = new Date(this.minDate.getFullYear() + i, 11, 31);
@@ -1217,14 +1301,21 @@ class TimeLine {
             if (lDayOfYear > this.maxDate) {
                 lDayOfYear = this.maxDate;
             }
-            let minScale = scaleX(fDayOfYear, this.minDate, this.maxDate, this.canvas.width);
-            let maxScale = scaleX(lDayOfYear, this.minDate, this.maxDate, this.canvas.width);
+            let minScale = scaleX(fDayOfYear, this.minDate, this.maxDate, this.svg.clientWidth);
+            let maxScale = scaleX(lDayOfYear, this.minDate, this.maxDate, this.svg.clientWidth);
             drawBar(this.ctx, minScale, 0, maxScale - minScale + this.options.timeLineColumnWidth, 30, this.options.timeLineBackgroundColor, fDayOfYear.getFullYear().toString());
             //line under the year
             drawLine(this.ctx, minScale, +this.options.timeLineHeight / 4, maxScale + +this.options.timeLineColumnWidth, +this.options.timeLineHeight / 4, "black");
             // line to the left of the year
-            drawLine(this.ctx, minScale, 0, minScale, this.canvas.height, "black");
-            drawLine(this.ctx, maxScale + +this.options.timeLineColumnWidth, 0, maxScale + +this.options.timeLineColumnWidth, this.canvas.height, "black");
+            // drawLine(this.ctx, minScale, 0, minScale, this.canvas.height, "black");
+            // drawLine(
+            //   this.ctx,
+            //   maxScale + +this.options.timeLineColumnWidth,
+            //   0,
+            //   maxScale + +this.options.timeLineColumnWidth,
+            //   this.canvas.height,
+            //   "black"
+            // );
         }
     }
     update(date) { }
@@ -1269,13 +1360,10 @@ class GanttChart {
         // this.container.style.display = "flex";
         this.splitter = document.createElement("div");
         this.visibleTasks = this.options.data;
-        this.canvas = document.createElement("canvas");
-        // this.canvas.setAttribute("id", "gantt_canvas__chart__");
-        this.tableCanvas = document.createElement("canvas");
+        this.svgns = "http://www.w3.org/2000/svg";
+        this.svg = document.createElementNS(this.svgns, "svg");
         this.chartDiv = document.createElement("div");
         this.init();
-        this.ctx = this.canvas.getContext("2d");
-        this.tableCtx = this.tableCanvas.getContext("2d");
         this.colors = options.colors;
         this.titleOptions = options.titleOptions;
         let maxmin = minmax(this.options.data);
@@ -1291,9 +1379,9 @@ class GanttChart {
             this.timeLineHeight = 120;
             this.options.timeLineHeight = this.timeLineHeight;
         }
-        this.canvas.width = this.options.timeLineColumnWidth * duration;
-        this.timelineCanvas.width = this.canvas.width;
-        this.dateLine = new DateLine(this.ctx, this.canvas, this.options, this.minDate, this);
+        this.svg.setAttribute("width", (this.options.timeLineColumnWidth * duration).toString());
+        this.timelineCanvas.width = this.svg.clientWidth;
+        this.dateLine = new DateLine(this.svg, this.options, this.minDate, this);
         this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
         this.tasks = [];
         this.initEvents();
@@ -1459,7 +1547,7 @@ tr:hover {
         this.timelineCtx = this.timelineCanvas.getContext("2d");
         this.barsDiv = document.createElement("div");
         this.barsDiv.id = "gantt__canvas__chart__bars";
-        this.barsDiv.appendChild(this.canvas);
+        this.barsDiv.appendChild(this.svg);
         this.chartDiv.setAttribute("id", "gantt_canvas__chart__");
         this.chartDiv.appendChild(this.timelineDiv);
         // this.chartDiv.style.flex = "1 1 auto";
@@ -1470,11 +1558,10 @@ tr:hover {
         this.chartDiv.style.overflow = "auto";
         this.chartDiv.style.width = `${contWidth}px`;
         this.chartDiv.style.margin = "0px";
-        // this.tablediv.appendChild(this.tableCanvas);
         this.container.appendChild(this.tablediv);
         this.container.appendChild(this.splitter);
         this.container.appendChild(this.chartDiv);
-        this.canvas.height = this.options.rowHeight * this.options.data.length;
+        this.svg.setAttribute("height", (this.options.rowHeight * this.options.data.length).toString());
         if (this.options.table.width) {
             this.tableWidth = this.options.table.width;
         }
@@ -1492,29 +1579,12 @@ tr:hover {
         for (let data of this.options.data) {
             data.visible = true;
         }
-        this.tableCanvas.height = this.canvas.height;
-        this.tableCanvas.width = this.tableWidth;
         this.splitter.addEventListener("mousedown", this.splitterMouseDownHandler);
     }
     /**
      * @description - initialize events
      */
     initEvents() {
-        /**
-         * Events to habdle mouse move in the chart area
-         */
-        // this.canvas.addEventListener("click", (e: MouseEvent) => {
-        //   let parent = (e.target as HTMLElement).parentElement;
-        //   let offsetpos = recursive_offset(e.target);
-        //   let posX = e.pageX + this.chartDiv.scrollLeft - this.canvas.offsetLeft;
-        //   let posY = e.pageY + this.chartDiv.scrollTop - this.canvas.offsetTop;
-        //   for (let task of this.tasks) {
-        //     task.collision(posX, posY);
-        //   }
-        //   if (this.dateLine) {
-        //     this.dateLine.collision(posX, posY);
-        //   }
-        // });
         /**
          * Events to synchronise scroll bars of table and canvas
          */
@@ -1526,8 +1596,7 @@ tr:hover {
         });
     }
     drawGridLines() {
-        this.canvas.height;
-        var canvasActualWidth = this.canvas.width;
+        var canvasActualWidth = this.svg.clientWidth;
         var gridValue = 0;
         drawLine(this.ctx, 0, 0, canvasActualWidth, 0, "black");
         // horizontal grids between tasks
@@ -1540,11 +1609,11 @@ tr:hover {
         // }
     }
     drawDateLine() {
-        this.dateLine = new DateLine(this.ctx, this.canvas, this.options, this.dataDate, this);
+        this.dateLine = new DateLine(this.svg, this.options, this.dataDate, this);
         this.dateLine.draw();
     }
     drawTimeLine() {
-        this.timeLine = new TimeLine(this.timelineCtx, this.canvas, this.options, this);
+        this.timeLine = new TimeLine(this.timelineCtx, this.svg, this.options, this);
         this.timeLine.draw();
     }
     drawTable(update = false) {
@@ -1566,16 +1635,17 @@ tr:hover {
         this.chartDiv.style.width = `${contWidth}px`;
         this.chartDiv.style.margin = "0px";
         let duration = dayDiff(this.minDate, this.maxDate) + 1;
-        this.canvas.width = this.options.timeLineColumnWidth * duration;
+        this.svg.setAttribute("width", (this.options.timeLineColumnWidth * duration).toString());
         this.timelineCanvas.width = this.options.timeLineColumnWidth * duration;
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        // this.ctx.clearRect(0, 0, this.svg.clientWidth, this.svg.clientHeight);
+        this.svg.innerHTML = "";
         this.tasks = [];
         this.dateLine = null;
         // this.drawGridLines();
         this.draw();
     }
     updateGantt() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.svg.innerHTML = '';
         const contWidth = this.container.clientWidth - this.options.table.width - 50;
         this.chartDiv.style.overflow = "auto";
         this.chartDiv.style.width = `${contWidth}px`;
@@ -1586,8 +1656,7 @@ tr:hover {
                 this.visibleTasks.push(task);
             }
         }
-        this.canvas.height = this.options.rowHeight * this.visibleTasks.length;
-        this.tableCanvas.height = this.canvas.height;
+        this.svg.setAttribute("height", (this.options.rowHeight * this.visibleTasks.length).toString());
         let maxmin = minmax(this.visibleTasks);
         this.maxValue = maxmin[1].getTime();
         this.minValue = maxmin[0].getTime();
@@ -1595,10 +1664,9 @@ tr:hover {
         this.maxDate = addDays(maxmin[1], 31);
         this.tasks = [];
         this.dateLine = null;
-        this.canvas.width =
-            (dayDiff(this.minDate, this.maxDate) + 1) *
-                this.options.timeLineColumnWidth;
-        this.timelineCanvas.width = this.canvas.width;
+        this.svg.setAttribute("width", ((dayDiff(this.minDate, this.maxDate) + 1) *
+            this.options.timeLineColumnWidth).toString());
+        this.timelineCanvas.width = this.svg.clientWidth;
         // this.drawGridLines();
         this.drawDateLine();
         this.drawTimeLine();

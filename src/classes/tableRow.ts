@@ -47,7 +47,7 @@ export class TableRow {
   }
 
   drawBar() {
-    var canvasActualWidth = this.gantt.canvas.width;
+    var canvasActualWidth = this.gantt.svg.clientWidth;
     var values = Object.values(this.data);
     let taskData = this.data;
     if (!this.options.rowHeight) {
@@ -133,7 +133,7 @@ export class TableRow {
       this.gantt.tasks.push(bar);
       bar.draw();
     }
-    this.gantt.ctx.restore();
+    // this.gantt.ctx.restore();
   }
 
   draw() {
