@@ -435,7 +435,10 @@ tr:hover {
 
   update() {
     const contWidth =
-      this.container.clientWidth - this.options.table.width - 50;
+      this.container.clientWidth -
+      this.tablediv.clientWidth -
+      this.splitter.clientWidth -
+      50;
     this.chartDiv.style.overflow = "auto";
     this.chartDiv.style.width = `${contWidth}px`;
     this.chartDiv.style.margin = "0px";
@@ -457,7 +460,10 @@ tr:hover {
   updateGantt() {
     this.svg.innerHTML = "";
     const contWidth =
-      this.container.clientWidth - this.options.table.width - 50;
+      this.container.clientWidth -
+      this.tablediv.clientWidth -
+      this.splitter.clientWidth -
+      50;
     this.chartDiv.style.overflow = "auto";
     this.chartDiv.style.width = `${contWidth}px`;
     this.chartDiv.style.margin = "0px";
