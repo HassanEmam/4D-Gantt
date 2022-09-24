@@ -2,8 +2,9 @@ import { TableRow } from "./tableRow";
 import { GanttChart } from "./ganttChart";
 import { data, nestedData } from "./data";
 import { options } from "./options";
+import { EventEmitter } from "../utils/EventEmitter";
 
-export class Table {
+export class Table extends EventEmitter {
   color: string;
   fontColor: string;
   context: CanvasRenderingContext2D;
@@ -27,6 +28,7 @@ export class Table {
     options: options,
     gantt: GanttChart
   ) {
+    super();
     this.color = color;
     this.gantt = gantt;
     this.fontColor = fontColor;
@@ -115,8 +117,6 @@ export class Table {
   }
 
   drawRow(data: nestedData, update: boolean = false) {
-    // this.tableBody.innerHTML = "";
-    // this.rowCounter = 0;
     if (data.children.length > 0) {
       if (data.expanded && data.expanded === true) {
         data.expanded = true;
@@ -126,6 +126,7 @@ export class Table {
         data.expanded = false;
       }
     }
+
     this.createLeaf(data, update);
     if (data.children.length > 0) {
       data.children.sort((a, b) => {
@@ -281,6 +282,9 @@ export class Table {
           this.addEvents(toggle);
         });
       }
+      row.addEventListener("click", (e) => {
+        this.trigger("taskClicked", [data]);
+      });
       this.rowCounter++;
     }
   }
@@ -295,11 +299,6 @@ export class Table {
       toggle.classList.add("expanded");
 
       this.setInvisible(childs);
-      // childs.forEach((child) => {
-      //   const child_id = parseInt(child.id.replace("ganttTable__", ""));
-      //   // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
-      //   //   false;
-      // });
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
         false;
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
@@ -310,7 +309,6 @@ export class Table {
       toggle.classList.add("toggle");
       let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
       const childss = this.getAllChilds(current);
-      // this.setVisible(childs);
       childss.forEach((child) => {
         child.visible = true;
         let childChildren = this.gantt.options.data.filter(
@@ -321,8 +319,6 @@ export class Table {
         } else {
           child.hasChildren = false;
         }
-        // child.hasChildren =  ? true : false;
-        // child.style.display = "none";
       });
 
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =

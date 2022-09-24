@@ -67,13 +67,15 @@ export function minmax(data: data[]) {
   let max = new Date(0);
   let min = data[0].start;
   data.forEach((element) => {
-    if (element.end > max) {
+    if (element.end && element.end > max) {
       max = element.end;
     }
-    if (element.start < min) {
+    if (element.start && element.start < min && element.start > new Date(0)) {
       min = element.start;
     }
   });
+  min = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+  max = new Date(max.getFullYear(), max.getMonth(), max.getDate());
   return [min, max];
 }
 

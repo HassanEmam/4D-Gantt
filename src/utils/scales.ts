@@ -15,10 +15,12 @@ export function scaleX(
   const min = minDate.getTime();
   const max = maxDate.getTime();
   const overallDuration = max - min;
-  const date = dateToSclae.getTime();
-  const scale = Math.ceil((date - min) * (width / overallDuration));
-
-  return scale;
+  if (dateToSclae && dateToSclae instanceof Date) {
+    const date = dateToSclae.getTime();
+    const scale = Math.ceil((date - min) * (width / overallDuration));
+    return scale;
+  }
+  return 0;
 }
 
 export function scaleY() {
