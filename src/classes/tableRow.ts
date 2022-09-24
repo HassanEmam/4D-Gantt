@@ -82,7 +82,8 @@ export class TableRow {
         "white",
         taskData.name,
         this.options,
-        this.gantt
+        this.gantt,
+        taskData
       );
 
       this.gantt.tasks.push(bar);
@@ -114,7 +115,8 @@ export class TableRow {
         "white",
         taskData.name,
         this.options,
-        this.gantt
+        this.gantt,
+        taskData
       );
       blBar.draw("yellow");
     } else {
@@ -128,7 +130,8 @@ export class TableRow {
         "white",
         taskData.name,
         this.options,
-        this.gantt
+        this.gantt,
+        taskData
       );
       this.gantt.tasks.push(bar);
       bar.draw();

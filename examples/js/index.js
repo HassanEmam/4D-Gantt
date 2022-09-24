@@ -31,6 +31,9 @@ function drawGantt() {
   };
   gantt = new GanttChart(options);
   gantt.draw();
+  gantt.on("taskClicked", (task) => {
+    console.log("Index.js Even", task);
+  });
 }
 
 drawGantt();

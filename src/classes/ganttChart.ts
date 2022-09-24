@@ -15,8 +15,9 @@ import {
 import { TimeLine } from "./timeline";
 import { TableRow } from "./tableRow";
 import { RowCell } from "./rowCell";
+import { EventEmitter } from "../utils/EventEmitter";
 
-export class GanttChart {
+export class GanttChart extends EventEmitter {
   options: options;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -51,9 +52,11 @@ export class GanttChart {
   splitterY: number = 0;
   internalTableDiv: HTMLElement;
   svg: Element;
-  svgns:string;
+  svgns: string;
+  bars: Bar[] = [];
 
   constructor(options: options) {
+    super();
     this.initStyle();
     this.options = options;
     this.rows = [];
@@ -80,15 +83,13 @@ export class GanttChart {
       this.timeLineHeight = 120;
       this.options.timeLineHeight = this.timeLineHeight;
     }
-    this.svg.setAttribute("width", (this.options.timeLineColumnWidth * duration).toString());
+    this.svg.setAttribute(
+      "width",
+      (this.options.timeLineColumnWidth * duration).toString()
+    );
     this.timelineCanvas.width = this.svg.clientWidth;
 
-    this.dateLine = new DateLine(
-      this.svg,
-      this.options,
-      this.minDate,
-      this
-    );
+    this.dateLine = new DateLine(this.svg, this.options, this.minDate, this);
     this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
     this.tasks = [];
     let currentDate = new Date(2020, 1, 15);
@@ -278,7 +279,10 @@ tr:hover {
     this.container.appendChild(this.tablediv);
     this.container.appendChild(this.splitter);
     this.container.appendChild(this.chartDiv);
-    this.svg.setAttribute("height", (this.options.rowHeight * this.options.data.length).toString());
+    this.svg.setAttribute(
+      "height",
+      (this.options.rowHeight * this.options.data.length).toString()
+    );
     if (this.options.table.width) {
       this.tableWidth = this.options.table.width;
     } else {
@@ -338,8 +342,6 @@ tr:hover {
    * @description - initialize events
    */
   initEvents() {
-    
-
     /**
      * Events to synchronise scroll bars of table and canvas
      */
@@ -386,12 +388,7 @@ tr:hover {
   }
 
   drawDateLine() {
-    this.dateLine = new DateLine(
-      this.svg,
-      this.options,
-      this.dataDate,
-      this
-    );
+    this.dateLine = new DateLine(this.svg, this.options, this.dataDate, this);
     this.dateLine.draw();
   }
 
@@ -426,6 +423,14 @@ tr:hover {
     this.drawTimeLine();
     this.drawDateLine();
     this.tasksData = new Tasks(this.options.data, this);
+    for (let bar of this.bars) {
+      bar.on("taskClicked", (event: any) => {
+        this.trigger("taskClicked", [event]);
+      });
+    }
+    this.table.on("taskClicked", (event: any) => {
+      this.trigger("taskClicked", [event]);
+    });
   }
 
   update() {
@@ -435,7 +440,10 @@ tr:hover {
     this.chartDiv.style.width = `${contWidth}px`;
     this.chartDiv.style.margin = "0px";
     let duration = dayDiff(this.minDate, this.maxDate) + 1;
-    this.svg.setAttribute("width", (this.options.timeLineColumnWidth * duration).toString());
+    this.svg.setAttribute(
+      "width",
+      (this.options.timeLineColumnWidth * duration).toString()
+    );
     this.timelineCanvas.width = this.options.timeLineColumnWidth * duration;
     // this.ctx.clearRect(0, 0, this.svg.clientWidth, this.svg.clientHeight);
     this.svg.innerHTML = "";
@@ -447,7 +455,7 @@ tr:hover {
   }
 
   updateGantt() {
-    this.svg.innerHTML = '';
+    this.svg.innerHTML = "";
     const contWidth =
       this.container.clientWidth - this.options.table.width - 50;
     this.chartDiv.style.overflow = "auto";
@@ -460,7 +468,10 @@ tr:hover {
         this.visibleTasks.push(task);
       }
     }
-    this.svg.setAttribute("height", (this.options.rowHeight * this.visibleTasks.length).toString())
+    this.svg.setAttribute(
+      "height",
+      (this.options.rowHeight * this.visibleTasks.length).toString()
+    );
     let maxmin = minmax(this.visibleTasks);
     this.maxValue = maxmin[1].getTime();
     this.minValue = maxmin[0].getTime();
@@ -468,9 +479,13 @@ tr:hover {
     this.maxDate = addDays(maxmin[1], 31);
     this.tasks = [];
     this.dateLine = null;
-    this.svg.setAttribute("width",
-      ((dayDiff(this.minDate, this.maxDate) + 1) *
-      this.options.timeLineColumnWidth).toString());
+    this.svg.setAttribute(
+      "width",
+      (
+        (dayDiff(this.minDate, this.maxDate) + 1) *
+        this.options.timeLineColumnWidth
+      ).toString()
+    );
     this.timelineCanvas.width = this.svg.clientWidth;
     // this.drawGridLines();
     this.drawDateLine();
