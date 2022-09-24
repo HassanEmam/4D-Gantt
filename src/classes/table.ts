@@ -299,11 +299,6 @@ export class Table extends EventEmitter {
       toggle.classList.add("expanded");
 
       this.setInvisible(childs);
-      // childs.forEach((child) => {
-      //   const child_id = parseInt(child.id.replace("ganttTable__", ""));
-      //   // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
-      //   //   false;
-      // });
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
         false;
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
@@ -314,7 +309,6 @@ export class Table extends EventEmitter {
       toggle.classList.add("toggle");
       let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
       const childss = this.getAllChilds(current);
-      // this.setVisible(childs);
       childss.forEach((child) => {
         child.visible = true;
         let childChildren = this.gantt.options.data.filter(
@@ -325,8 +319,6 @@ export class Table extends EventEmitter {
         } else {
           child.hasChildren = false;
         }
-        // child.hasChildren =  ? true : false;
-        // child.style.display = "none";
       });
 
       this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =

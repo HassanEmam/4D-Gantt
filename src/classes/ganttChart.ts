@@ -458,6 +458,7 @@ tr:hover {
   }
 
   updateGantt() {
+    const current_scroll = this.tablediv.scrollTop;
     this.svg.innerHTML = "";
     const contWidth =
       this.container.clientWidth -
@@ -497,5 +498,7 @@ tr:hover {
     this.drawDateLine();
     this.drawTimeLine();
     this.tasksData = new Tasks(this.options.data, this);
+    this.tablediv.scrollTop = current_scroll;
+    this.chartDiv.scrollTop = current_scroll;
   }
 }

@@ -74,6 +74,8 @@ export function minmax(data: data[]) {
       min = element.start;
     }
   });
+  min = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+  max = new Date(max.getFullYear(), max.getMonth(), max.getDate());
   return [min, max];
 }
 
