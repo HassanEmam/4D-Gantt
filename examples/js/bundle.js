@@ -292,9 +292,12 @@ function scaleX(dateToSclae, minDate, maxDate, width) {
     const min = minDate.getTime();
     const max = maxDate.getTime();
     const overallDuration = max - min;
-    const date = dateToSclae.getTime();
-    const scale = Math.ceil((date - min) * (width / overallDuration));
-    return scale;
+    if (dateToSclae && dateToSclae instanceof Date) {
+        const date = dateToSclae.getTime();
+        const scale = Math.ceil((date - min) * (width / overallDuration));
+        return scale;
+    }
+    return 0;
 }
 
 class Tasks {
@@ -605,10 +608,10 @@ function minmax(data) {
     let max = new Date(0);
     let min = data[0].start;
     data.forEach((element) => {
-        if (element.end > max) {
+        if (element.end && element.end > max) {
             max = element.end;
         }
-        if (element.start < min) {
+        if (element.start && element.start < min && element.start > new Date(0)) {
             min = element.start;
         }
     });
