@@ -48,10 +48,15 @@ You can see a live demo of the project [here](https://hassanemam.github.io/4D-Ga
 ```
 
 - [x] Create current Date line to show with 4D simulation.
-- [ ] Make sections resizable i.e. the treetable and the chart area
+- [x] Make sections resizable i.e. the treetable and the chart area
+- [x] Package could be publish to npmjs as a reusable package
+- [x] Add events handlers on taskClicked
+- [ ] Allow user to change timescale to years, months, weeks, days
 - [ ] Allow for multiple themes or even colors setting during development
-- [ ] Package could be publish to npmjs as a reusable package
 - [ ] Change the timescales to show either day, week, month or year
+- [ ] Optimise performance for large schedules
+- [ ] create toolbar to manupilate the Gantt chart with tools like collapse all, expand all, zoom in, zoom out, etc.
+- [ ] Enable dynamic selection of columns
 
 ```
 
