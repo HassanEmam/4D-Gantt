@@ -1,11 +1,11 @@
 export interface data {
   name: string;
-  id: number;
+  id: string;
   start: Date;
   baselineStart?: Date;
   end: Date;
   baselineEnd?: Date;
-  parent?: number | null;
+  parent?: string | null;
   progress?: number;
   level?: number;
   visible?: boolean;
@@ -15,10 +15,10 @@ export interface data {
 
 export interface nestedData {
   name: string;
-  id: number;
+  id: string;
   start: Date;
   end: Date;
-  parent?: number;
+  parent?: string;
   progress?: number;
   children?: nestedData[];
   level?: number;

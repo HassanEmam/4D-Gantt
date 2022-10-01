@@ -1,6 +1,6 @@
 const scheduleData = [
   {
-    id: 1,
+    id: "1",
     name: "Task 1",
     start: new Date(2022, 3, 1),
     baselineStart: new Date(2022, 2, 20),
@@ -9,43 +9,43 @@ const scheduleData = [
     parent: null,
   },
   {
-    id: 2,
+    id: "2",
     name: "Task 2",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 6),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 20),
-    parent: 1,
+    parent: "1",
   },
   {
-    id: 3,
+    id: "3",
     name: "Task 3",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: "1",
   },
   {
-    id: 4,
+    id: "4",
     name: "Task 4",
     start: new Date(2022, 0, 1),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 2,
+    parent: "2",
   },
   {
-    id: 5,
+    id: "5",
     name: "Task 5",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 2,
+    parent: "2",
   },
   {
-    id: 6,
+    id: "6",
     name: "Task 6",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
@@ -54,167 +54,167 @@ const scheduleData = [
     parent: 2,
   },
   {
-    id: 7,
+    id: "7",
     name: "Task 7",
     start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 3,
+    parent: "3",
   },
   {
-    id: 8,
+    id: "8",
     name: "Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8 Task 8",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: "1",
   },
   {
-    id: 9,
+    id: "9",
     name: "Task 9",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 3,
+    parent: "3",
   },
   {
-    id: 10,
+    id: "10",
     name: "Task 10",
     start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 2,
+    parent: "2",
   },
   {
-    id: 11,
+    id: "11",
     name: "Task 11",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 2,
+    parent: "2",
   },
   {
-    id: 12,
+    id: "12",
     name: "Task 12",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 3,
+    parent: "3",
   },
   {
-    id: 13,
+    id: "13",
     name: "Task 13",
     start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
 
-    parent: 3,
+    parent: "3",
   },
   {
-    id: 14,
+    id: "14",
     name: "Task 14",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 2,
+    parent: "2",
   },
   {
-    id: 15,
+    id: "15",
     name: "Task 15",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 13,
+    parent: "13",
   },
   {
-    id: 16,
+    id: "16",
     name: "Task 16",
     start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 13,
+    parent: "13",
   },
   {
-    id: 17,
+    id: "17",
     name: "Task 17",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 13,
+    parent: "13",
   },
   {
-    id: 18,
+    id: "18",
     name: "Task 18",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: "1",
   },
   {
-    id: 19,
+    id: "19",
     name: "Task 19",
     start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 1,
+    parent: "1",
   },
   {
-    id: 20,
+    id: "20",
     name: "Task 20",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 1,
+    parent: "1",
   },
   {
-    id: 21,
+    id: "21",
     name: "Task 21",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 1,
+    parent: "1",
   },
   {
-    id: 23,
+    id: "23",
     name: "Task 23",
     start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 12),
     end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 28),
-    parent: 4,
+    parent: "4",
   },
   {
-    id: 24,
+    id: "24",
     name: "Task 24",
     start: new Date(2022, 2, 1),
     baselineStart: new Date(2022, 2, 1),
     end: new Date(2022, 2, 30),
     baselineEnd: new Date(2022, 2, 30),
-    parent: 23,
+    parent: "23",
   },
   {
-    id: 22,
+    id: "22",
     name: "Task 22",
     start: new Date(2022, 0, 15),
     baselineStart: new Date(2022, 0, 1),
     end: new Date(2022, 0, 30),
     baselineEnd: new Date(2022, 0, 30),
-    parent: 24,
+    parent: "24",
   },
 ];
 
@@ -541,6 +541,8 @@ function minmax(data) {
             min = element.start;
         }
     });
+    min = new Date(min.getFullYear(), min.getMonth(), min.getDate());
+    max = new Date(max.getFullYear(), max.getMonth(), max.getDate());
     return [min, max];
 }
 /**
@@ -1153,18 +1155,13 @@ class Table extends EventEmitter {
     }
     addEvents(toggle) {
         const tr = toggle.closest("tr");
-        const parent_id = parseInt(tr.id.split("__")[1]);
+        const parent_id = tr.id.split("__")[1];
         const childs = this.findChildren(tr);
         // if element has class toggle then remove it and collapse
         if (toggle.classList.contains("toggle")) {
             toggle.classList.remove("toggle");
             toggle.classList.add("expanded");
             this.setInvisible(childs);
-            // childs.forEach((child) => {
-            //   const child_id = parseInt(child.id.replace("ganttTable__", ""));
-            //   // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
-            //   //   false;
-            // });
             this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
                 false;
             this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
@@ -1176,7 +1173,6 @@ class Table extends EventEmitter {
             toggle.classList.add("toggle");
             let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
             const childss = this.getAllChilds(current);
-            // this.setVisible(childs);
             childss.forEach((child) => {
                 child.visible = true;
                 let childChildren = this.gantt.options.data.filter((d) => d.parent == child.id);
@@ -1186,8 +1182,6 @@ class Table extends EventEmitter {
                 else {
                     child.hasChildren = false;
                 }
-                // child.hasChildren =  ? true : false;
-                // child.style.display = "none";
             });
             this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
                 true;
@@ -1198,7 +1192,7 @@ class Table extends EventEmitter {
     }
     setInvisible(childs) {
         for (let child of childs) {
-            let child_id = parseInt(child.id.toString().split("__")[1]);
+            let child_id = child.id.toString().split("__")[1];
             this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
                 false;
             let children = this.findChildren(child);
@@ -1208,7 +1202,7 @@ class Table extends EventEmitter {
     }
     setVisible(childs) {
         for (let child of childs) {
-            let child_id = parseInt(child.id.toString().split("__")[1]);
+            let child_id = child.id.toString().split("__")[1];
             this.gantt.options.data.filter((d) => d.id == child_id)[0].visible = true;
             let children = this.findChildren(child);
             if (children && Array.isArray(children) && children.length > 0)
@@ -1781,6 +1775,7 @@ tr:hover {
         this.draw();
     }
     updateGantt() {
+        const current_scroll = this.tablediv.scrollTop;
         this.svg.innerHTML = "";
         const contWidth = this.container.clientWidth -
             this.tablediv.clientWidth -
@@ -1810,6 +1805,8 @@ tr:hover {
         this.drawDateLine();
         this.drawTimeLine();
         this.tasksData = new Tasks(this.options.data, this);
+        this.tablediv.scrollTop = current_scroll;
+        this.chartDiv.scrollTop = current_scroll;
     }
 }
 
