@@ -160,6 +160,21 @@ tr td:first-child {
   font-size: 11px;
 }
 
+.level5.branch{
+  background: lightblue;
+  color: black;
+  font-size: 11px;
+}
+.level6.branch{
+  background: lightgreen;
+  color: black;
+  font-size: 11px;
+}
+.level7.branch{
+  background: lightyellow;
+  color: black;
+  font-size: 11px;
+}
 
 .table-collapse .toggle {
   width: 0;

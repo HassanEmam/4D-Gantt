@@ -1,4 +1,3 @@
-import { createVerify } from "crypto";
 import { data } from "../classes/data";
 
 /**
@@ -65,7 +64,7 @@ export function drawBar(
  */
 export function minmax(data: data[]) {
   let max = new Date(0);
-  let min = data[0].start;
+  let min = new Date(2100, 0, 1);
   data.forEach((element) => {
     if (element.end && element.end > max) {
       max = element.end;

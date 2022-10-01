@@ -291,7 +291,7 @@ export class Table extends EventEmitter {
 
   addEvents(toggle: HTMLElement) {
     const tr = toggle.closest("tr");
-    const parent_id = parseInt(tr.id.split("__")[1]);
+    const parent_id = tr.id.split("__")[1];
     const childs = this.findChildren(tr);
     // if element has class toggle then remove it and collapse
     if (toggle.classList.contains("toggle")) {
@@ -331,7 +331,7 @@ export class Table extends EventEmitter {
 
   setInvisible(childs: HTMLElement[]) {
     for (let child of childs) {
-      let child_id = parseInt(child.id.toString().split("__")[1]);
+      let child_id = child.id.toString().split("__")[1];
       this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
         false;
       let children = this.findChildren(child);
@@ -343,7 +343,7 @@ export class Table extends EventEmitter {
 
   setVisible(childs: HTMLElement[]) {
     for (let child of childs) {
-      let child_id = parseInt(child.id.toString().split("__")[1]);
+      let child_id = child.id.toString().split("__")[1];
       this.gantt.options.data.filter((d) => d.id == child_id)[0].visible = true;
       let children = this.findChildren(child);
       if (children && Array.isArray(children) && children.length > 0)
@@ -404,7 +404,7 @@ export class Table extends EventEmitter {
     return siblings;
   };
 
-  findByKey(obj: nestedData[], keyToFind: number): any {
+  findByKey(obj: nestedData[], keyToFind: string): any {
     for (let ob of obj) {
       if (ob["id"] === keyToFind) {
         ob.visible = false;

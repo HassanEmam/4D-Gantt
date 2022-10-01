@@ -9,10 +9,47 @@ export class Tasks {
   constructor(data: data[], gantt: GanttChart) {
     this.data = data;
     this.gantt = gantt;
+    this.calculateWBSDates();
     this.nestedData = this.list_to_tree(this.data);
     this.createTree(false);
   }
 
+  calculateWBSDates() {
+    let tasks = this.data.filter((act) => {
+      return this.data.filter((d) => d.parent === act.id).length === 0;
+    });
+    let wbss = this.data.filter((act) => {
+      return this.data.filter((d) => d.parent === act.id).length !== 0;
+    });
+    for (let wbs of wbss) {
+      const tmpTasks = tasks.filter((t) => t.parent === wbs.id);
+      if (tmpTasks.length > 0) {
+        let min: data = tmpTasks.reduce((prev, current) => {
+          return prev.start < current.start ? prev : current;
+        });
+
+        let max = tmpTasks.reduce((prev, current) => {
+          return prev.start > current.start ? prev : current;
+        });
+        wbs.start = min.start;
+        wbs.end = max.end;
+      }
+    }
+    for (let wbs of wbss) {
+      const tmpChildWbss = wbss.filter((t) => t.parent === wbs.id);
+      if (tmpChildWbss.length > 0) {
+        let min = tmpChildWbss.reduce((prev, current) => {
+          return prev.start < current.start ? prev : current;
+        });
+
+        let max = tmpChildWbss.reduce((prev, current) => {
+          return prev.start > current.start ? prev : current;
+        });
+        wbs.start = min.start;
+        wbs.end = max.end;
+      }
+    }
+  }
   createTree(update: boolean = false) {
     this.gantt.table.rowCounter = 0;
     this.gantt.table.tableBody.innerHTML = "";
