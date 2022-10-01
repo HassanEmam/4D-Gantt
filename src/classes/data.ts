@@ -1,6 +1,7 @@
 export interface data {
   name: string;
   id: string;
+  code?: string;
   start: Date;
   baselineStart?: Date;
   end: Date;
@@ -16,6 +17,7 @@ export interface data {
 export interface nestedData {
   name: string;
   id: string;
+  code?: string;
   start: Date;
   end: Date;
   parent?: string;

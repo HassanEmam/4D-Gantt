@@ -2,18 +2,18 @@ const scheduleData = [
   {
     id: "1",
     name: "Task 1",
-    start: new Date(2022, 3, 1),
+    // start: new Date(2022, 3, 1),
     baselineStart: new Date(2022, 2, 20),
-    end: new Date(2022, 3, 30),
+    // end: new Date(2022, 3, 30),
     baselineEnd: new Date(2022, 2, 30),
     parent: null,
   },
   {
     id: "2",
     name: "Task 2",
-    start: new Date(2022, 0, 12),
+    // start: new Date(2022, 0, 12),
     baselineStart: new Date(2022, 0, 6),
-    end: new Date(2022, 1, 28),
+    // end: new Date(2022, 1, 28),
     baselineEnd: new Date(2022, 1, 20),
     parent: "1",
   },
@@ -242,8 +242,43 @@ class Tasks {
     constructor(data, gantt) {
         this.data = data;
         this.gantt = gantt;
+        this.calculateWBSDates();
         this.nestedData = this.list_to_tree(this.data);
         this.createTree(false);
+    }
+    calculateWBSDates() {
+        let tasks = this.data.filter((act) => {
+            return this.data.filter((d) => d.parent === act.id).length === 0;
+        });
+        let wbss = this.data.filter((act) => {
+            return this.data.filter((d) => d.parent === act.id).length !== 0;
+        });
+        for (let wbs of wbss) {
+            const tmpTasks = tasks.filter((t) => t.parent === wbs.id);
+            if (tmpTasks.length > 0) {
+                let min = tmpTasks.reduce((prev, current) => {
+                    return prev.start < current.start ? prev : current;
+                });
+                let max = tmpTasks.reduce((prev, current) => {
+                    return prev.start > current.start ? prev : current;
+                });
+                wbs.start = min.start;
+                wbs.end = max.end;
+            }
+        }
+        for (let wbs of wbss) {
+            const tmpChildWbss = wbss.filter((t) => t.parent === wbs.id);
+            if (tmpChildWbss.length > 0) {
+                let min = tmpChildWbss.reduce((prev, current) => {
+                    return prev.start < current.start ? prev : current;
+                });
+                let max = tmpChildWbss.reduce((prev, current) => {
+                    return prev.start > current.start ? prev : current;
+                });
+                wbs.start = min.start;
+                wbs.end = max.end;
+            }
+        }
     }
     createTree(update = false) {
         this.gantt.table.rowCounter = 0;
@@ -532,7 +567,7 @@ function drawBar(ctx, upperLeftCornerX, upperLeftCornerY, width, height, color, 
  */
 function minmax(data) {
     let max = new Date(0);
-    let min = data[0].start;
+    let min = new Date(2100, 0, 1);
     data.forEach((element) => {
         if (element.end && element.end > max) {
             max = element.end;
@@ -1567,6 +1602,21 @@ tr td:first-child {
   font-size: 11px;
 }
 
+.level5.branch{
+  background: lightblue;
+  color: black;
+  font-size: 11px;
+}
+.level6.branch{
+  background: lightgreen;
+  color: black;
+  font-size: 11px;
+}
+.level7.branch{
+  background: lightyellow;
+  color: black;
+  font-size: 11px;
+}
 
 .table-collapse .toggle {
   width: 0;
