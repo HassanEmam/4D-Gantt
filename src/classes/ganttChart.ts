@@ -22,7 +22,7 @@ export class GanttChart extends EventEmitter {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   tableCtx: CanvasRenderingContext2D;
-  timelineCtx: CanvasRenderingContext2D;
+  // timelineCtx: CanvasRenderingContext2D;
   colors: string[];
   titleOptions: string;
   maxValue: number;
@@ -37,7 +37,6 @@ export class GanttChart extends EventEmitter {
   dataDate: Date;
   container: HTMLElement;
   tableCanvas: HTMLCanvasElement;
-  timelineCanvas: HTMLCanvasElement;
   table: Table;
   tasksData: Tasks;
   rows: TableRow[];
@@ -54,10 +53,10 @@ export class GanttChart extends EventEmitter {
   svg: Element;
   svgns: string;
   bars: Bar[] = [];
+  duration: number;
 
   constructor(options: options) {
     super();
-    this.initStyle();
     this.options = options;
     this.rows = [];
     this.cells = [];
@@ -68,15 +67,23 @@ export class GanttChart extends EventEmitter {
     this.svgns = "http://www.w3.org/2000/svg";
     this.svg = document.createElementNS(this.svgns, "svg");
     this.chartDiv = document.createElement("div");
-    this.init();
-    this.colors = options.colors;
-    this.titleOptions = options.titleOptions;
     let maxmin = minmax(this.options.data);
     this.maxValue = maxmin[1].getTime();
     this.minValue = maxmin[0].getTime();
     this.minDate = addDays(maxmin[0], -7);
     this.maxDate = addDays(maxmin[1], 31);
-    let duration = dayDiff(this.minDate, this.maxDate);
+    this.duration = dayDiff(this.minDate, this.maxDate);
+    this.initStyle();
+
+    this.init();
+    this.colors = options.colors;
+    this.titleOptions = options.titleOptions;
+    console.log(
+      "duration",
+      this.minDate,
+      this.maxDate,
+      dayDiff(this.minDate, this.maxDate)
+    );
     if (this.options.timeLineHeight) {
       this.timeLineHeight = this.options.timeLineHeight;
     } else {
@@ -85,12 +92,11 @@ export class GanttChart extends EventEmitter {
     }
     this.svg.setAttribute(
       "width",
-      (this.options.timeLineColumnWidth * duration).toString()
+      (this.options.timeLineColumnWidth * this.duration).toString()
     );
-    this.timelineCanvas.width = this.svg.clientWidth;
 
     this.dateLine = new DateLine(this.svg, this.options, this.minDate, this);
-    this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
+    // this.timeLine = new TimeLine(this.ctx, this.canvas, this.options, this);
     this.tasks = [];
     let currentDate = new Date(2020, 1, 15);
     this.initEvents();
@@ -110,132 +116,168 @@ export class GanttChart extends EventEmitter {
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
          
-.resizer {
-    /* Displayed at the right side of column */
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 10px;
-    cursor: col-resize;
-    user-select: none;
-}
+         .gantt__chart__timeline_container_year_container
+          {
+            display:grid;
+          }
+        .gantt__chart__timeline_container_year{
+          display:grid;
+          background-color: #2196F3;
+          grid-auto-flow: column;
+          grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
+          height: ${this.options.timeLineHeight / 3}px;
+          border: 1px solid black;
+        }
+        .gantt__chart__timeline_container_month{
+          display:grid;
+          background-color: #2196F3;
+          grid-auto-flow: column;
+          grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
+          height: ${this.options.timeLineHeight / 3}px;
+          border: 1px solid black;
+        }
 
-.resizer:hover,
-.resizing {
-    border-right: 2px solid blue;
-}
+         .gantt__chart__timeline_container {
+            display: grid;
+            overflow-x: auto;
+          }
 
-table td {
-  border: 1px solid #eee;
-}
+        .gantt__chart__timeline_container_day{
+          display:grid;
+          border: 1px solid black;
+          grid-auto-flow: column;
+          grid-template-columns: minmax(${
+            this.options.timeLineColumnWidth
+          }px, 1fr);
+          justify-content:center;
+          align-items:center;
+        }
+        .resizer {
+            /* Displayed at the right side of column */
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 10px;
+            cursor: col-resize;
+            user-select: none;
+        }
 
-tr td:first-child {
-  display:flex;
-}
+        .resizer:hover,
+        .resizing {
+            border-right: 2px solid blue;
+        }
 
-.level0.branch{
-  background: blue;
-  color:yellow;
-  font-weight: bold;
-  font-size: 14px;
-}
-.level1.branch{
-  background: green;
-  color: black;
-  font-size: 14px;
-}
-.level2.branch{
-  background: yellow;
-  color: blue;
-  font-size: 12px;
-}
-.level3.branch{
-  background: blue;
-  color: white;
-  font-size: 12px;
-}
-.level4.branch{
-  background: red;
-  color: white;
-  font-size: 11px;
-}
+        table td {
+          border: 1px solid #eee;
+        }
 
-.level5.branch{
-  background: lightblue;
-  color: black;
-  font-size: 11px;
-}
-.level6.branch{
-  background: lightgreen;
-  color: black;
-  font-size: 11px;
-}
-.level7.branch{
-  background: lightyellow;
-  color: black;
-  font-size: 11px;
-}
+        tr td:first-child {
+          display:flex;
+        }
 
-.table-collapse .toggle {
-  width: 0;
-  height: 0;
-  border-left: 0.25rem solid transparent;
-  border-right: 0.25rem solid transparent;
-  border-top: 0.5rem solid var(--dark-blue);
-  content: "\\229F";
+        .level0.branch{
+          background: blue;
+          color:yellow;
+          font-weight: bold;
+          font-size: 14px;
+        }
+        .level1.branch{
+          background: green;
+          color: black;
+          font-size: 14px;
+        }
+        .level2.branch{
+          background: yellow;
+          color: blue;
+          font-size: 12px;
+        }
+        .level3.branch{
+          background: blue;
+          color: white;
+          font-size: 12px;
+        }
+        .level4.branch{
+          background: red;
+          color: white;
+          font-size: 11px;
+        }
 
-  }
-  .disable-select {
-    user-select: none; /* supported by Chrome and Opera */
-   -webkit-user-select: none; /* Safari */
-   -khtml-user-select: none; /* Konqueror HTML */
-   -moz-user-select: none; /* Firefox */
-   -ms-user-select: none; /* Internet Explorer/Edge */
-}
+        .level5.branch{
+          background: lightblue;
+          color: black;
+          font-size: 11px;
+        }
+        .level6.branch{
+          background: lightgreen;
+          color: black;
+          font-size: 11px;
+        }
+        .level7.branch{
+          background: lightyellow;
+          color: black;
+          font-size: 11px;
+        }
+
+        .table-collapse .toggle {
+          width: 0;
+          height: 0;
+          border-left: 0.25rem solid transparent;
+          border-right: 0.25rem solid transparent;
+          border-top: 0.5rem solid var(--dark-blue);
+          content: "\\229F";
+
+          }
+          .disable-select {
+            user-select: none; /* supported by Chrome and Opera */
+          -webkit-user-select: none; /* Safari */
+          -khtml-user-select: none; /* Konqueror HTML */
+          -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+        }
 
 
-.table-expand .toggle {
-  width: 0;
-  height: 0;
-  border-top: 0.25rem solid transparent;
-  border-left: 0.5rem solid var(--dark-blue);
-  border-bottom: 0.25rem solid transparent;
-}
+        .table-expand .toggle {
+          width: 0;
+          height: 0;
+          border-top: 0.25rem solid transparent;
+          border-left: 0.5rem solid var(--dark-blue);
+          border-bottom: 0.25rem solid transparent;
+        }
 
-.toggle {
-  height: 9px;
-  width: 9px;
-  display: inline-block;
-  margin: 0.2rem;
-  margin-right:1rem;
+        .toggle {
+          height: 9px;
+          width: 9px;
+          display: inline-block;
+          margin: 0.2rem;
+          margin-right:1rem;
 
-}
+        }
 
-.toggle:before{
-  content: "\\229F";
-  color:"black";
-  display:inline-block;
-  margin-right:1rem;
-}
-.expanded {
-  height: 9px;
-  width: 9px;
-  display: inline-block;
-  margin: 0.2rem;
-  margin-right:1rem;
-}
+        .toggle:before{
+          content: "\\229F";
+          color:"black";
+          display:inline-block;
+          margin-right:1rem;
+        }
+        .expanded {
+          height: 9px;
+          width: 9px;
+          display: inline-block;
+          margin: 0.2rem;
+          margin-right:1rem;
+        }
 
-.expanded:before{
-  content:"\\229E";
-  color:"black";
-  display:inline-block;
-  margin: 0.2rem;
-  margin-right:1rem;
-}
+        .expanded:before{
+          content:"\\229E";
+          color:"black";
+          display:inline-block;
+          margin: 0.2rem;
+          margin-right:1rem;
+        }
 
-tr:hover {
-  background-color: #d6eeee;
-}
+        tr:hover {
+          background-color: #d6eeee;
+        }
         `
       )
     );
@@ -269,13 +311,12 @@ tr:hover {
     this.timelineDiv = document.createElement("div");
     this.timelineDiv.id = "gantt__canvas__chart__timeline";
     this.timelineDiv.style.height = this.options.timeLineHeight + "px";
-    this.timelineDiv.style.width = this.chartDiv.style.width;
+    this.timelineDiv.style.width =
+      (this.options.timeLineColumnWidth * this.duration).toString() + "px";
+    console.log("Width", this.options.timeLineColumnWidth, this.duration);
     this.timelineDiv.style.position = "sticky";
     this.timelineDiv.style.top = "0";
-    this.timelineCanvas = document.createElement("canvas");
-    this.timelineCanvas.height = this.options.timeLineHeight;
-    this.timelineDiv.appendChild(this.timelineCanvas);
-    this.timelineCtx = this.timelineCanvas.getContext("2d");
+
     this.barsDiv = document.createElement("div");
     this.barsDiv.id = "gantt__canvas__chart__bars";
     this.barsDiv.appendChild(this.svg);
@@ -408,12 +449,7 @@ tr:hover {
   }
 
   drawTimeLine() {
-    this.timeLine = new TimeLine(
-      this.timelineCtx,
-      this.svg,
-      this.options,
-      this
-    );
+    this.timeLine = new TimeLine(this.timelineDiv, this.options, this);
     this.timeLine.draw();
   }
 
@@ -462,7 +498,6 @@ tr:hover {
       "width",
       (this.options.timeLineColumnWidth * duration).toString()
     );
-    this.timelineCanvas.width = this.options.timeLineColumnWidth * duration;
     // this.ctx.clearRect(0, 0, this.svg.clientWidth, this.svg.clientHeight);
     this.svg.innerHTML = "";
 
@@ -508,7 +543,6 @@ tr:hover {
         this.options.timeLineColumnWidth
       ).toString()
     );
-    this.timelineCanvas.width = this.svg.clientWidth;
     // this.drawGridLines();
     this.drawDateLine();
     this.drawTimeLine();
