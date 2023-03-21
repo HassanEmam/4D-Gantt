@@ -48,6 +48,32 @@ export class TimeLine {
     // let month = new Date(this.minDate);
     this.yearEl.style.gridTemplateColumns = `repeat(${noOfYears}, 1fr)`;
     this.grid.style.gridTemplateColumns = `repeat(${noOfMonths}, 1fr)`;
+    this.createYear(month, noOfYears);
+    month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
+    this.createMonth(month, noOfMonths);
+    month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
+    for (let m = 0; m < noOfMonths; m++) {
+      let monthEl = document.createElement("div");
+      monthEl.className = "gantt__chart__timeline_container_month";
+
+      this.grid.append(monthEl);
+      let numDays = getDaysInMonth(month.getFullYear(), month.getMonth() + 1);
+
+      for (let i = 0; i < numDays; i++) {
+        let day = document.createElement("span");
+        let dayoftheMonth;
+
+        dayoftheMonth = addDays(month, i);
+        let dayVal = dayoftheMonth.getDate();
+        day.className = "gantt__chart__timeline_container_day";
+        day.innerHTML = dayVal.toString();
+        monthEl.append(day);
+      }
+      month.setMonth(month.getMonth() + 1);
+    }
+  }
+
+  createYear(month: Date, noOfYears: number) {
     for (let y = 0; y < noOfYears; y++) {
       let yearEl = document.createElement("div");
       yearEl.className = "gantt__chart__timeline_container_year";
@@ -62,7 +88,9 @@ export class TimeLine {
       this.yearEl.append(yearEl);
       month.setFullYear(month.getFullYear() + 1);
     }
-    month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
+  }
+
+  createMonth(month: Date, noOfMonths: number) {
     for (let m = 0; m < noOfMonths; m++) {
       let monthEl = document.createElement("div");
       monthEl.className = "gantt__chart__timeline_container_month";
@@ -76,28 +104,6 @@ export class TimeLine {
       monthSpan.innerHTML = months[month.getMonth()];
       monthEl.append(monthSpan);
       this.grid.append(monthEl);
-      month.setMonth(month.getMonth() + 1);
-    }
-    month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
-    for (let m = 0; m < noOfMonths; m++) {
-      let monthEl = document.createElement("div");
-      monthEl.className = "gantt__chart__timeline_container_month";
-
-      this.grid.append(monthEl);
-      let numDays = getDaysInMonth(month.getFullYear(), month.getMonth() + 1);
-      console.log("no of Month", month, "days in month", numDays);
-
-      for (let i = 0; i < numDays; i++) {
-        let day = document.createElement("span");
-        let dayoftheMonth;
-
-        dayoftheMonth = addDays(month, i);
-        let dayVal = dayoftheMonth.getDate();
-        day.className = "gantt__chart__timeline_container_day";
-        console.log("day", dayVal, dayoftheMonth);
-        day.innerHTML = dayVal.toString();
-        monthEl.append(day);
-      }
       month.setMonth(month.getMonth() + 1);
     }
   }

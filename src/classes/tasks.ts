@@ -12,6 +12,7 @@ export class Tasks {
     this.calculateWBSDates();
     this.nestedData = this.list_to_tree(this.data);
     this.createTree(false);
+    console.log(this.nestedData);
   }
 
   calculateWBSDates() {
@@ -138,6 +139,7 @@ export class Tasks {
       nestedObj.children = this.getChildren(parent, data);
       tree.push(nestedObj);
     }
+    console.log(tree);
     return tree;
   }
 

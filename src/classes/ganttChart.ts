@@ -11,6 +11,10 @@ import {
   dayDiff,
   addDays,
   recursive_offset,
+  monthDiff,
+  getDaysInMonth,
+  getDayOfWeek,
+  createFormattedDateFromStr,
 } from "../utils/helper";
 import { TimeLine } from "./timeline";
 import { TableRow } from "./tableRow";
@@ -54,6 +58,7 @@ export class GanttChart extends EventEmitter {
   svgns: string;
   bars: Bar[] = [];
   duration: number;
+  gridDiv: HTMLElement;
 
   constructor(options: options) {
     super();
@@ -78,12 +83,7 @@ export class GanttChart extends EventEmitter {
     this.init();
     this.colors = options.colors;
     this.titleOptions = options.titleOptions;
-    console.log(
-      "duration",
-      this.minDate,
-      this.maxDate,
-      dayDiff(this.minDate, this.maxDate)
-    );
+
     if (this.options.timeLineHeight) {
       this.timeLineHeight = this.options.timeLineHeight;
     } else {
@@ -115,14 +115,16 @@ export class GanttChart extends EventEmitter {
          #gantt_canvas__chart__table::-webkit-scrollbar-track{box-shadow:inset 0 0 5px grey; border-radius:10px;}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
-         
+         #gantt__canvas__chart__timeline{
+          z-index: 999;
+         }
          .gantt__chart__timeline_container_year_container
           {
             display:grid;
           }
         .gantt__chart__timeline_container_year{
           display:grid;
-          background-color: #2196F3;
+          background-color: ${this.options.timeLineBackgroundColor};
           grid-auto-flow: column;
           grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
           height: ${this.options.timeLineHeight / 3}px;
@@ -130,7 +132,7 @@ export class GanttChart extends EventEmitter {
         }
         .gantt__chart__timeline_container_month{
           display:grid;
-          background-color: #2196F3;
+          background-color: ${this.options.timeLineBackgroundColor};
           grid-auto-flow: column;
           grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
           height: ${this.options.timeLineHeight / 3}px;
@@ -143,7 +145,9 @@ export class GanttChart extends EventEmitter {
           }
 
         .gantt__chart__timeline_container_day{
-          display:grid;
+          display:flex;
+          width:100%;
+          height:100%;
           border: 1px solid black;
           grid-auto-flow: column;
           grid-template-columns: minmax(${
@@ -152,6 +156,50 @@ export class GanttChart extends EventEmitter {
           justify-content:center;
           align-items:center;
         }
+
+        .gantt-time-period {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
+        text-align: center;
+        height: ${this.options.rowHeight}px;
+        }
+
+        .gantt-time-period span {
+          margin: auto;
+        }
+
+        .gantt-time-period-cell-container {
+          grid-column: 1/-1;
+          display: grid;
+        }
+
+        .gantt-time-period-cell {
+          position: relative;
+          outline: 0.5px solid "lightgray";
+        }
+
+        .taskDuration{
+          position: absolute;
+          height: ${this.options.rowHeight / 2}px;
+          margin-top: ${this.options.rowHeight / 4}px;
+          z-index: 1;
+          background: ${this.options.barColor};
+          border-radius: 5px;
+          box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.05);
+          cursor: move;
+
+        }
+
+        .taskDuration:focus {
+          outline: 1px solid black;
+        }
+
+        .taskDuration:hover {
+          background: ${this.options.barColorHover};
+        }
+
+
         .resizer {
             /* Displayed at the right side of column */
             position: absolute;
@@ -307,21 +355,28 @@ export class GanttChart extends EventEmitter {
     this.splitter.style.position = "relative";
     this.splitter.style.top = "0px";
     this.splitter.style.zIndex = "100";
-    this.splitter.style.backgroundColor = "transparent";
+    this.splitter.style.backgroundColor = "darkgray";
     this.timelineDiv = document.createElement("div");
     this.timelineDiv.id = "gantt__canvas__chart__timeline";
     this.timelineDiv.style.height = this.options.timeLineHeight + "px";
     this.timelineDiv.style.width =
       (this.options.timeLineColumnWidth * this.duration).toString() + "px";
-    console.log("Width", this.options.timeLineColumnWidth, this.duration);
     this.timelineDiv.style.position = "sticky";
     this.timelineDiv.style.top = "0";
 
+    this.gridDiv = document.createElement("div");
+    this.gridDiv.id = "gantt__canvas__chart__grid";
+    // this.gridDiv.style.height =
+    //   (this.options.rowHeight * this.options.data.length).toString() + "px";
+    this.gridDiv.style.width =
+      (this.options.timeLineColumnWidth * this.duration).toString() + "px";
+
     this.barsDiv = document.createElement("div");
     this.barsDiv.id = "gantt__canvas__chart__bars";
-    this.barsDiv.appendChild(this.svg);
+    // this.barsDiv.appendChild(this.svg);
     this.chartDiv.setAttribute("id", "gantt_canvas__chart__");
     this.chartDiv.appendChild(this.timelineDiv);
+    this.chartDiv.appendChild(this.gridDiv);
     // this.chartDiv.style.flex = "1 1 auto";
 
     this.chartDiv.appendChild(this.barsDiv);
@@ -410,38 +465,7 @@ export class GanttChart extends EventEmitter {
     });
   }
 
-  drawGridLines() {
-    var canvasActualWidth = this.svg.clientWidth;
-
-    var gridValue = 0;
-
-    drawLine(this.ctx, 0, 0, canvasActualWidth, 0, "black");
-
-    // horizontal grids between tasks
-    let rowHeight = this.options.rowHeight;
-    for (let i in this.visibleTasks) {
-      drawLine(
-        this.ctx,
-        0,
-        rowHeight * (parseInt(i) + 1),
-        canvasActualWidth + this.options.timeLineColumnWidth,
-        rowHeight * (parseInt(i) + 1),
-        "lightgray"
-      );
-
-      drawLine(
-        this.tableCtx,
-        0,
-        rowHeight * (parseInt(i) + 1),
-        this.options.table.width,
-        rowHeight * (parseInt(i) + 1),
-        "black"
-      );
-    }
-
-    gridValue += this.options.gridScale;
-    // }
-  }
+  drawGridLines() {}
 
   drawDateLine() {
     this.dateLine = new DateLine(this.svg, this.options, this.dataDate, this);
@@ -469,7 +493,7 @@ export class GanttChart extends EventEmitter {
   }
 
   draw() {
-    // this.drawGridLines();
+    this.drawGridLines();
     this.drawTable();
     this.drawTimeLine();
     this.drawDateLine();
@@ -508,46 +532,45 @@ export class GanttChart extends EventEmitter {
   }
 
   updateGantt() {
-    const current_scroll = this.tablediv.scrollTop;
-    this.svg.innerHTML = "";
-    const contWidth =
-      this.container.clientWidth -
-      this.tablediv.clientWidth -
-      this.splitter.clientWidth -
-      50;
-    this.chartDiv.style.overflow = "auto";
-    this.chartDiv.style.width = `${contWidth}px`;
-    this.chartDiv.style.margin = "0px";
-
-    this.visibleTasks = [];
-    for (let task of this.options.data) {
-      if (task.visible !== false) {
-        this.visibleTasks.push(task);
-      }
-    }
-    this.svg.setAttribute(
-      "height",
-      (this.options.rowHeight * this.visibleTasks.length).toString()
-    );
-    let maxmin = minmax(this.visibleTasks);
-    this.maxValue = maxmin[1].getTime();
-    this.minValue = maxmin[0].getTime();
-    this.minDate = addDays(maxmin[0], -7);
-    this.maxDate = addDays(maxmin[1], 31);
-    this.tasks = [];
-    this.dateLine = null;
-    this.svg.setAttribute(
-      "width",
-      (
-        (dayDiff(this.minDate, this.maxDate) + 1) *
-        this.options.timeLineColumnWidth
-      ).toString()
-    );
-    // this.drawGridLines();
-    this.drawDateLine();
-    this.drawTimeLine();
-    this.tasksData = new Tasks(this.options.data, this);
-    this.tablediv.scrollTop = current_scroll;
-    this.chartDiv.scrollTop = current_scroll;
+    //   const current_scroll = this.tablediv.scrollTop;
+    //   this.svg.innerHTML = "";
+    //   const contWidth =
+    //     this.container.clientWidth -
+    //     this.tablediv.clientWidth -
+    //     this.splitter.clientWidth -
+    //     50;
+    //   this.chartDiv.style.overflow = "auto";
+    //   this.chartDiv.style.width = `${contWidth}px`;
+    //   this.chartDiv.style.margin = "0px";
+    //   this.visibleTasks = [];
+    //   for (let task of this.options.data) {
+    //     if (task.visible !== false) {
+    //       this.visibleTasks.push(task);
+    //     }
+    //   }
+    //   this.svg.setAttribute(
+    //     "height",
+    //     (this.options.rowHeight * this.visibleTasks.length).toString()
+    //   );
+    //   let maxmin = minmax(this.visibleTasks);
+    //   this.maxValue = maxmin[1].getTime();
+    //   this.minValue = maxmin[0].getTime();
+    //   this.minDate = addDays(maxmin[0], -7);
+    //   this.maxDate = addDays(maxmin[1], 31);
+    //   this.tasks = [];
+    //   this.dateLine = null;
+    //   this.svg.setAttribute(
+    //     "width",
+    //     (
+    //       (dayDiff(this.minDate, this.maxDate) + 1) *
+    //       this.options.timeLineColumnWidth
+    //     ).toString()
+    //   );
+    //   // this.drawGridLines();
+    //   this.drawDateLine();
+    //   this.drawTimeLine();
+    //   this.tasksData = new Tasks(this.options.data, this);
+    //   this.tablediv.scrollTop = current_scroll;
+    //   this.chartDiv.scrollTop = current_scroll;
   }
 }

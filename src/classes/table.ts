@@ -136,9 +136,7 @@ export class Table extends EventEmitter {
         this.createBranch(child, update);
       });
     }
-    // else {
-    //   this.createLeaf(data, update);
-    // }
+
     this.initEvents();
   }
 
@@ -176,13 +174,14 @@ export class Table extends EventEmitter {
     }
     if (data.visible && data.visible === true) {
       const row = document.createElement("tr");
+      row.id = data.id;
       row.style.height = `${this.options.rowHeight}px`;
       row.style.maxHeight = `${this.options.rowHeight}px`;
       row.classList.add(`level${data.level}`);
 
       row.classList.add("table-collapse");
       row.setAttribute("data-depth", data.level.toString());
-      row.id = `ganttTable__${data.id.toString()}`;
+      row.id = `${data.id.toString()}`;
       // row.setAttribute("data", data);
       let toggle: HTMLElement;
       for (let colidx = 0; colidx < this.columns.length; colidx++) {
@@ -291,7 +290,7 @@ export class Table extends EventEmitter {
 
   addEvents(toggle: HTMLElement) {
     const tr = toggle.closest("tr");
-    const parent_id = tr.id.split("__")[1];
+    const parent_id = tr.id;
     const childs = this.findChildren(tr);
     // if element has class toggle then remove it and collapse
     if (toggle.classList.contains("toggle")) {
@@ -309,31 +308,43 @@ export class Table extends EventEmitter {
       toggle.classList.add("toggle");
       let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
       const childss = this.getAllChilds(current);
-      childss.forEach((child) => {
-        child.visible = true;
-        let childChildren = this.gantt.options.data.filter(
-          (d) => d.parent == child.id
-        );
-        if (childChildren.length > 0) {
-          child.hasChildren = true;
-        } else {
-          child.hasChildren = false;
-        }
-      });
+      this.setVisible(childs);
+      // childss.forEach((child) => {
+      //   child.visible = true;
+      //   let childChildren = this.gantt.options.data.filter(
+      //     (d) => d.parent == child.id
+      //   );
+      //   if (childChildren.length > 0) {
+      //     child.hasChildren = true;
+      //   } else {
+      //     child.hasChildren = false;
+      //   }
+      // });
 
-      this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
-        true;
-      this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
-        true;
+      // this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
+      //   true;
+      // this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
+      //   true;
       this.gantt.updateGantt();
     }
   }
 
   setInvisible(childs: HTMLElement[]) {
     for (let child of childs) {
-      let child_id = child.id.toString().split("__")[1];
-      this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
-        false;
+      let child_id = child.id;
+      // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
+      //   false;
+      let ganttGrid = this.gantt.gridDiv.querySelector(
+        `div[data-task="${child_id}"]`
+      ).parentElement.parentElement;
+      let taskDuration = this.gantt.gridDiv.querySelector(
+        `div[data-task="${child_id}"]`
+      );
+      console.log("ganttGrid", ganttGrid);
+      child.style.display = "none";
+      ganttGrid.style.display = "none";
+      // taskDuration.parentElement.style.display = "none";
+
       let children = this.findChildren(child);
 
       if (children && Array.isArray(children) && children.length > 0)
@@ -343,8 +354,18 @@ export class Table extends EventEmitter {
 
   setVisible(childs: HTMLElement[]) {
     for (let child of childs) {
-      let child_id = child.id.toString().split("__")[1];
-      this.gantt.options.data.filter((d) => d.id == child_id)[0].visible = true;
+      let child_id = child.id;
+      let ganttGrid = this.gantt.gridDiv.querySelector(
+        `div[data-task="${child_id}"]`
+      ).parentElement.parentElement;
+      let taskDuration = this.gantt.gridDiv.querySelector(
+        `div[data-task="${child_id}"]`
+      );
+      // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible = true;
+      child.style.display = "table-row";
+      ganttGrid.style.display = "grid";
+
+      // taskDuration.parentElement.style.display = "table-row";
       let children = this.findChildren(child);
       if (children && Array.isArray(children) && children.length > 0)
         this.setVisible(children);
@@ -360,6 +381,7 @@ export class Table extends EventEmitter {
         children = children.concat(this.getAllChilds(child));
       });
     }
+
     return children;
   }
 

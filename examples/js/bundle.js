@@ -245,6 +245,7 @@ class Tasks {
         this.calculateWBSDates();
         this.nestedData = this.list_to_tree(this.data);
         this.createTree(false);
+        console.log(this.nestedData);
     }
     calculateWBSDates() {
         let tasks = this.data.filter((act) => {
@@ -366,6 +367,7 @@ class Tasks {
             nestedObj.children = this.getChildren(parent, data);
             tree.push(nestedObj);
         }
+        console.log(tree);
         return tree;
     }
     getChildren(parent, data) {
@@ -440,91 +442,6 @@ class DateLine {
     }
 }
 
-class RowCell {
-    constructor(row, cell, data) {
-        this.row = row;
-        this.data = data;
-        this.index = cell;
-        this.expanded = this.data.expanded || true;
-        this.color = "rgba(255,255,255,1)";
-        this.x = (this.index * this.row.width) / this.row.columns.length;
-        this.y = this.row.y;
-        this.width = this.row.width / this.row.columns.length;
-        this.height = this.row.height;
-        this.text = data[this.row.columns[this.index]];
-        this.draw();
-        // this.row.gantt.cells.push(this);
-    }
-    draw() {
-        let x;
-        if (!this.row.width) {
-            this.row.width = 400;
-        }
-        let hasChilds = false;
-        if (this.data.children.length > 0) {
-            hasChilds = true;
-        }
-        x = this.x;
-        this.row.context.fillStyle = "white";
-        this.row.context.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
-        this.row.context.fillStyle =
-            this.row.options.table.header?.fontColor || "black";
-        this.row.context.textBaseline = "middle";
-        this.row.context.font = `14px Arial`;
-        let text;
-        if (this.data[this.row.columns[this.index]] instanceof Date) {
-            text = this.data[this.row.columns[this.index]]
-                .toLocaleString("en-GB")
-                .split(",")[0];
-        }
-        else {
-            text = this.data[this.row.columns[this.index]].toString();
-        }
-        if (this.index === 0) {
-            x = (this.data.level || 0) * 30 + this.index * this.width;
-            if (hasChilds) {
-                let addChar;
-                if (this.expanded === false) {
-                    addChar = "\u{229E}";
-                }
-                else {
-                    addChar = "\u{229F}";
-                }
-                text = addChar + "\t\t" + text;
-            }
-            this.row.context.textAlign = "left";
-        }
-        else {
-            this.row.context.textAlign = "center";
-            x = x + this.width / 2;
-        }
-        this.row.context.fillText(text, x, this.y + this.height / 2);
-        this.row.context.strokeStyle = "black";
-    }
-    update() { }
-    collision(x, y) {
-        if (x >= this.x &&
-            x <= this.x + this.width &&
-            y >= this.y &&
-            y <= this.y + this.height) {
-            this.color = "rgba(173,216,230,0.1)";
-            if (this.index === 0) {
-                this.row.heilighted = false;
-                this.expanded = !this.expanded;
-                this.data.expanded = !this.data.expanded;
-                // this.draw();
-            }
-            this.draw();
-            return true;
-        }
-        else {
-            this.color = "rgba(255,255,255,1)";
-            //   this.draw();
-            return false;
-        }
-    }
-}
-
 /**
  * This function draws a line given its coordinates and colour
  * @param {CanvasRenderingContext2D} ctx the canvas context
@@ -534,32 +451,6 @@ class RowCell {
  * @param {number} endY the ending point of the line on the y axis
  * @param {string} color the color of the line
  */
-function drawLine(ctx, startX, startY, endX, endY, color) {
-    // ctx.globalCompositeOperation = "destination-over";
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(startX, startY);
-    ctx.lineTo(endX, endY);
-    ctx.stroke();
-    ctx.restore();
-}
-function drawBar(ctx, upperLeftCornerX, upperLeftCornerY, width, height, color, text) {
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.fillRect(upperLeftCornerX, upperLeftCornerY, width, height);
-    if (text) {
-        // ctx.globalCompositeOperation = "source-over";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        let fontSize = Math.min(12);
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillStyle = "black";
-        ctx.fillText(text, upperLeftCornerX + width / 2, upperLeftCornerY + height / 2, width);
-    }
-    ctx.restore();
-}
 /**
  *
  * @param {data} data the data to be processes
@@ -614,6 +505,52 @@ function getDaysInMonth(year, month) {
     return new Date(year, month, 0).getDate();
 }
 /**
+ * This function the symbol of a day of the week given the year, month and day
+ * @param year the year number
+ * @param month the month number
+ * @param day day number
+ * @returns {string} day symbol as single character
+ */
+function getDayOfWeek(year, month, day) {
+    const daysOfTheWeekArr = ["M", "T", "W", "T", "F", "S", "S"];
+    const dayOfTheWeekIndex = new Date(year, month, day).getDay();
+    return daysOfTheWeekArr[dayOfTheWeekIndex];
+}
+/**
+ * Create a formatted date string
+ * @param {number} year
+ * @param {number} month
+ * @param {number} day
+ * @returns {string} a formatted date string
+ */
+function createFormattedDateFromStr(year, month, day) {
+    let monthStr = month.toString();
+    let dayStr = day.toString();
+    if (monthStr.length === 1) {
+        monthStr = `0${monthStr}`;
+    }
+    if (dayStr.length === 1) {
+        dayStr = `0${dayStr}`;
+    }
+    return `${year}-${monthStr}-${dayStr}`;
+}
+/**
+ * Formats a date object to a string
+ * @param {Date}date the date to be formatted
+ * @returns {string} a formatted date string
+ */
+function createFormattedDateFromDate(date) {
+    let monthStr = (date.getMonth() + 1).toString();
+    let dayStr = date.getDate().toString();
+    if (monthStr.length === 1) {
+        monthStr = `0${monthStr}`;
+    }
+    if (dayStr.length === 1) {
+        dayStr = `0${dayStr}`;
+    }
+    return `${date.getFullYear()}-${monthStr}-${dayStr}`;
+}
+/**
  * Adds number of days to a date and return new date
  * @param date the original date
  * @param days number of days to be added
@@ -638,6 +575,133 @@ const months = [
     "Nov",
     "Dec",
 ];
+
+class TableRow {
+    constructor(ctx, gantt, data, options, rowIndex, columns) {
+        this.columns = [];
+        this.context = ctx;
+        // this.nestedData = data;
+        this.x = 0;
+        this.cells = [];
+        this.options = options;
+        this.width = options.table.width;
+        this.height = this.options.rowHeight;
+        this.rowCounter = rowIndex;
+        this.heilighted = false;
+        this.y = this.options.rowHeight * this.rowCounter;
+        this.gantt = gantt;
+        this.data = data;
+        this.columns = columns;
+        this.color = "rgba(255,255,255,0)";
+        this.drawgrid();
+        this.drawBar();
+    }
+    createTaskDurationEl(taskDuration, startCell) {
+        this.gantt.gridDiv.querySelector(".gantt-time-period-cell-container");
+        const taskDurationEl = document.createElement("div");
+        taskDurationEl.classList.add("taskDuration");
+        taskDurationEl.id = this.data.id;
+        const days = dayDiff(this.data.start, this.data.end);
+        taskDurationEl.style.width = `calc(${days} * 100%)`;
+        // append at start pos
+        startCell.appendChild(taskDurationEl);
+        return days;
+    }
+    drawBar() {
+        const dateStr = createFormattedDateFromDate(this.data.start);
+        // find gantt-time-period-cell start position
+        const startCell = this.gantt.gridDiv.querySelector(`div[data-task="${this.data.id}"][data-date="${dateStr}"]`);
+        console.log("Drawing bar", this.data, startCell);
+        if (startCell) {
+            let duration = dayDiff(this.data.start, this.data.end);
+            // taskDuration bar is a child of start date position of specific task
+            this.createTaskDurationEl(duration, startCell);
+        }
+    }
+    draw() {
+        // this.drawBar();
+        // this.cells = [];
+        // drawBar(this.context, this.x, this.y, this.width, this.height, this.color);
+        // if (!this.options.timeLineHeight) {
+        //   this.options.timeLineHeight = 120;
+        // }
+        // if (!this.options.rowHeight) {
+        //   this.options.rowHeight = 120;
+        // }
+        // let y = this.options.rowHeight * this.rowCounter;
+        // let hasChilds: boolean = false;
+        // if ((this.data.children as nestedData[]).length > 0) {
+        //   hasChilds = true;
+        // }
+        // for (let colidx = 0; colidx < this.columns.length; colidx++) {
+        //   let cell = new RowCell(this, colidx, this.data);
+        //   this.cells.push(cell);
+        // }
+        // drawLine(
+        //   this.context,
+        //   this.x,
+        //   this.y,
+        //   this.x + this.width,
+        //   this.y,
+        //   "black"
+        // );
+    }
+    drawgrid() {
+        let startMonth = new Date(this.gantt.minDate);
+        let numMonths = monthDiff(this.gantt.minDate, this.gantt.maxDate);
+        const dayElContainer = document.createElement("div");
+        dayElContainer.className = "gantt-time-period-cell-container";
+        dayElContainer.style.gridTemplateColumns = `repeat(${numMonths}, 1fr)`;
+        this.gantt.gridDiv.appendChild(dayElContainer);
+        console.log("Data in TableRow", this.data);
+        let task = this.data;
+        let month = new Date(startMonth);
+        for (let i = 0; i < numMonths; i++) {
+            const timePeriodEl = document.createElement("div");
+            timePeriodEl.className = "gantt-time-period";
+            dayElContainer.appendChild(timePeriodEl);
+            const currYear = month.getFullYear();
+            const currMonth = month.getMonth() + 1;
+            const numDays = getDaysInMonth(currYear, currMonth);
+            for (let i = 1; i <= numDays; i++) {
+                let dayEl = document.createElement("div");
+                dayEl.className = "gantt-time-period-cell";
+                // color weekend cells differently
+                const dayOfTheWeek = getDayOfWeek(currYear, currMonth - 1, i - 1);
+                if (dayOfTheWeek === "S") {
+                    dayEl.style.backgroundColor = "#f7f7f7";
+                }
+                // add task and date data attributes
+                const formattedDate = createFormattedDateFromStr(currYear, currMonth, i);
+                dayEl.dataset.task = task.id;
+                dayEl.dataset.date = formattedDate;
+                timePeriodEl.appendChild(dayEl);
+            }
+            month.setMonth(month.getMonth() + 1);
+        }
+    }
+    collision(x, y) {
+        // if (
+        //   x >= this.x &&
+        //   x <= this.x + this.width &&
+        //   y >= this.y &&
+        //   y <= this.y + this.height
+        // ) {
+        //   if (!this.heilighted) {
+        //     this.color = "rgba(173,216,230,0.1)";
+        //     this.draw();
+        //     this.heilighted = true;
+        //   }
+        //   return true;
+        // } else {
+        //   this.color = "rgba(255,255,255,1)";
+        //   this.draw();
+        //   this.heilighted = false;
+        //   return false;
+        // }
+    }
+    update() { }
+}
 
 class EventEmitter {
     constructor() {
@@ -773,169 +837,6 @@ class EventEmitter {
     }
 }
 
-class Bar extends EventEmitter {
-    constructor(x, y, width, height, context, color, fontColor, name, options, gantt, taskData) {
-        super();
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
-        this.color = color;
-        this.fontColor = fontColor;
-        this.name = name;
-        this.context = context;
-        this.options = options;
-        this.color = this.options.barColor;
-        this.hoverColor = this.options.barColorHover;
-        this.gantt = gantt;
-        this.taskData = taskData;
-    }
-    draw(color, fontColor, name) {
-        const sepLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        sepLine.setAttribute("x1", "0");
-        sepLine.setAttribute("x2", this.gantt.svg.clientWidth.toString());
-        sepLine.setAttribute("y1", (this.y + this.options.rowHeight * 0.8).toString());
-        sepLine.setAttribute("y2", (this.y + this.options.rowHeight * 0.8).toString());
-        sepLine.setAttribute("stroke", "lightgray");
-        this.gantt.svg.appendChild(sepLine);
-        // drawLine(
-        //   this.context,
-        //   0,
-        //   this.y + this.options.rowHeight * 0.8,
-        //   this.gantt.svg.clientWidth,
-        //   this.y + this.options.rowHeight * 0.8,
-        //   "lightgray"
-        // );
-        color
-            ? (this.color = color)
-            : this.color
-                ? this.color
-                : (this.color = "lightgreen");
-        fontColor
-            ? (this.fontColor = fontColor)
-            : this.fontColor
-                ? this.fontColor
-                : (this.fontColor = "white");
-        name ? (this.name = name) : this.name ? this.name : (this.name = "Task");
-        if (this.name) {
-            this.bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            this.bar.setAttribute("x", this.x.toString());
-            this.bar.setAttribute("y", this.y.toString());
-            this.bar.setAttribute("width", this.width.toString());
-            this.bar.setAttribute("height", this.height.toString());
-            this.bar.setAttribute("fill", this.color);
-            this.gantt.svg.appendChild(this.bar);
-            this.bar.addEventListener("mouseover", () => {
-                this.bar.setAttribute("fill", "red");
-            });
-            this.bar.addEventListener("mouseout", () => {
-                this.bar.setAttribute("fill", this.color);
-            });
-            this.bar.addEventListener("click", () => {
-                console.log("event triggered");
-                this.trigger("taskClicked", [this.taskData]);
-            });
-            this.gantt.bars.push(this);
-        }
-    }
-    update(x, y) {
-        this.draw();
-        this.x = x;
-        this.y = y;
-    }
-}
-
-class TableRow {
-    constructor(ctx, gantt, data, options, rowIndex, columns) {
-        this.columns = [];
-        this.context = ctx;
-        // this.nestedData = data;
-        this.x = 0;
-        this.cells = [];
-        this.options = options;
-        this.width = options.table.width;
-        this.height = this.options.rowHeight;
-        this.rowCounter = rowIndex;
-        this.heilighted = false;
-        this.y = this.options.rowHeight * this.rowCounter;
-        this.gantt = gantt;
-        this.data = data;
-        this.columns = columns;
-        this.color = "rgba(255,255,255,0)";
-        this.drawBar();
-    }
-    drawBar() {
-        var canvasActualWidth = this.gantt.svg.clientWidth;
-        Object.values(this.data);
-        let taskData = this.data;
-        if (!this.options.rowHeight) {
-            this.options.rowHeight = 40;
-        }
-        let yOffset = this.options.rowHeight * this.rowCounter + this.options.rowHeight * 0.2;
-        let xStart = scaleX(taskData.start, this.gantt.minDate, this.gantt.maxDate, canvasActualWidth);
-        let xEnd = scaleX(addDays(taskData.end, 1), this.gantt.minDate, this.gantt.maxDate, canvasActualWidth);
-        let barWidth = xEnd - xStart;
-        if (!this.options.timeLineHeight) {
-            this.options.timeLineHeight = 120;
-        }
-        if (this.options.showBaseline && this.options.showBaseline === true) {
-            let bar = new Bar(xStart, yOffset, barWidth, this.options.rowHeight * 0.4, this.gantt.ctx, this.options.barColor, "white", taskData.name, this.options, this.gantt, taskData);
-            this.gantt.tasks.push(bar);
-            bar.draw();
-            let blYOffset = this.options.rowHeight * this.rowCounter + this.options.rowHeight * 0.6;
-            let blStart = scaleX(taskData.baselineStart, this.gantt.minDate, this.gantt.maxDate, canvasActualWidth);
-            let blEnd = scaleX(addDays(taskData.baselineEnd, 1), this.gantt.minDate, this.gantt.maxDate, canvasActualWidth);
-            let blWidth = blEnd - blStart;
-            let blBar = new Bar(blStart, blYOffset, blWidth, this.options.rowHeight * 0.2, this.gantt.ctx, "yellow", "white", taskData.name, this.options, this.gantt, taskData);
-            blBar.draw("yellow");
-        }
-        else {
-            let bar = new Bar(xStart >= 0 ? xStart : 0, yOffset, barWidth, this.options.rowHeight * 0.6, this.gantt.ctx, this.options.barColor, "white", taskData.name, this.options, this.gantt, taskData);
-            this.gantt.tasks.push(bar);
-            bar.draw();
-        }
-        // this.gantt.ctx.restore();
-    }
-    draw() {
-        // this.drawBar();
-        this.cells = [];
-        drawBar(this.context, this.x, this.y, this.width, this.height, this.color);
-        if (!this.options.timeLineHeight) {
-            this.options.timeLineHeight = 120;
-        }
-        if (!this.options.rowHeight) {
-            this.options.rowHeight = 120;
-        }
-        this.options.rowHeight * this.rowCounter;
-        if (this.data.children.length > 0) ;
-        for (let colidx = 0; colidx < this.columns.length; colidx++) {
-            let cell = new RowCell(this, colidx, this.data);
-            this.cells.push(cell);
-        }
-        drawLine(this.context, this.x, this.y, this.x + this.width, this.y, "black");
-    }
-    collision(x, y) {
-        if (x >= this.x &&
-            x <= this.x + this.width &&
-            y >= this.y &&
-            y <= this.y + this.height) {
-            if (!this.heilighted) {
-                this.color = "rgba(173,216,230,0.1)";
-                this.draw();
-                this.heilighted = true;
-            }
-            return true;
-        }
-        else {
-            this.color = "rgba(255,255,255,1)";
-            this.draw();
-            this.heilighted = false;
-            return false;
-        }
-    }
-    update() { }
-}
-
 class Table extends EventEmitter {
     constructor(context, color, hoverColor, fontColor, columns, options, gantt) {
         super();
@@ -1049,9 +950,6 @@ class Table extends EventEmitter {
                 this.createBranch(child, update);
             });
         }
-        // else {
-        //   this.createLeaf(data, update);
-        // }
         this.initEvents();
     }
     createBranch(data, update = false) {
@@ -1080,12 +978,13 @@ class Table extends EventEmitter {
         }
         if (data.visible && data.visible === true) {
             const row = document.createElement("tr");
+            row.id = data.id;
             row.style.height = `${this.options.rowHeight}px`;
             row.style.maxHeight = `${this.options.rowHeight}px`;
             row.classList.add(`level${data.level}`);
             row.classList.add("table-collapse");
             row.setAttribute("data-depth", data.level.toString());
-            row.id = `ganttTable__${data.id.toString()}`;
+            row.id = `${data.id.toString()}`;
             // row.setAttribute("data", data);
             let toggle;
             for (let colidx = 0; colidx < this.columns.length; colidx++) {
@@ -1187,7 +1086,7 @@ class Table extends EventEmitter {
     }
     addEvents(toggle) {
         const tr = toggle.closest("tr");
-        const parent_id = tr.id.split("__")[1];
+        const parent_id = tr.id;
         const childs = this.findChildren(tr);
         // if element has class toggle then remove it and collapse
         if (toggle.classList.contains("toggle")) {
@@ -1204,29 +1103,37 @@ class Table extends EventEmitter {
             toggle.classList.remove("expanded");
             toggle.classList.add("toggle");
             let current = this.gantt.options.data.filter((d) => d.id == parent_id)[0];
-            const childss = this.getAllChilds(current);
-            childss.forEach((child) => {
-                child.visible = true;
-                let childChildren = this.gantt.options.data.filter((d) => d.parent == child.id);
-                if (childChildren.length > 0) {
-                    child.hasChildren = true;
-                }
-                else {
-                    child.hasChildren = false;
-                }
-            });
-            this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
-                true;
-            this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
-                true;
+            this.getAllChilds(current);
+            this.setVisible(childs);
+            // childss.forEach((child) => {
+            //   child.visible = true;
+            //   let childChildren = this.gantt.options.data.filter(
+            //     (d) => d.parent == child.id
+            //   );
+            //   if (childChildren.length > 0) {
+            //     child.hasChildren = true;
+            //   } else {
+            //     child.hasChildren = false;
+            //   }
+            // });
+            // this.gantt.options.data.filter((d) => d.id == parent_id)[0].expanded =
+            //   true;
+            // this.gantt.options.data.filter((d) => d.id == parent_id)[0].hasChildren =
+            //   true;
             this.gantt.updateGantt();
         }
     }
     setInvisible(childs) {
         for (let child of childs) {
-            let child_id = child.id.toString().split("__")[1];
-            this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
-                false;
+            let child_id = child.id;
+            // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible =
+            //   false;
+            let ganttGrid = this.gantt.gridDiv.querySelector(`div[data-task="${child_id}"]`).parentElement.parentElement;
+            this.gantt.gridDiv.querySelector(`div[data-task="${child_id}"]`);
+            console.log("ganttGrid", ganttGrid);
+            child.style.display = "none";
+            ganttGrid.style.display = "none";
+            // taskDuration.parentElement.style.display = "none";
             let children = this.findChildren(child);
             if (children && Array.isArray(children) && children.length > 0)
                 this.setInvisible(children);
@@ -1234,8 +1141,13 @@ class Table extends EventEmitter {
     }
     setVisible(childs) {
         for (let child of childs) {
-            let child_id = child.id.toString().split("__")[1];
-            this.gantt.options.data.filter((d) => d.id == child_id)[0].visible = true;
+            let child_id = child.id;
+            let ganttGrid = this.gantt.gridDiv.querySelector(`div[data-task="${child_id}"]`).parentElement.parentElement;
+            this.gantt.gridDiv.querySelector(`div[data-task="${child_id}"]`);
+            // this.gantt.options.data.filter((d) => d.id == child_id)[0].visible = true;
+            child.style.display = "table-row";
+            ganttGrid.style.display = "grid";
+            // taskDuration.parentElement.style.display = "table-row";
             let children = this.findChildren(child);
             if (children && Array.isArray(children) && children.length > 0)
                 this.setVisible(children);
@@ -1328,6 +1240,28 @@ class TimeLine {
         // let month = new Date(this.minDate);
         this.yearEl.style.gridTemplateColumns = `repeat(${noOfYears}, 1fr)`;
         this.grid.style.gridTemplateColumns = `repeat(${noOfMonths}, 1fr)`;
+        this.createYear(month, noOfYears);
+        month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
+        this.createMonth(month, noOfMonths);
+        month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
+        for (let m = 0; m < noOfMonths; m++) {
+            let monthEl = document.createElement("div");
+            monthEl.className = "gantt__chart__timeline_container_month";
+            this.grid.append(monthEl);
+            let numDays = getDaysInMonth(month.getFullYear(), month.getMonth() + 1);
+            for (let i = 0; i < numDays; i++) {
+                let day = document.createElement("span");
+                let dayoftheMonth;
+                dayoftheMonth = addDays(month, i);
+                let dayVal = dayoftheMonth.getDate();
+                day.className = "gantt__chart__timeline_container_day";
+                day.innerHTML = dayVal.toString();
+                monthEl.append(day);
+            }
+            month.setMonth(month.getMonth() + 1);
+        }
+    }
+    createYear(month, noOfYears) {
         for (let y = 0; y < noOfYears; y++) {
             let yearEl = document.createElement("div");
             yearEl.className = "gantt__chart__timeline_container_year";
@@ -1342,7 +1276,8 @@ class TimeLine {
             this.yearEl.append(yearEl);
             month.setFullYear(month.getFullYear() + 1);
         }
-        month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
+    }
+    createMonth(month, noOfMonths) {
         for (let m = 0; m < noOfMonths; m++) {
             let monthEl = document.createElement("div");
             monthEl.className = "gantt__chart__timeline_container_month";
@@ -1355,25 +1290,6 @@ class TimeLine {
             monthSpan.innerHTML = months[month.getMonth()];
             monthEl.append(monthSpan);
             this.grid.append(monthEl);
-            month.setMonth(month.getMonth() + 1);
-        }
-        month = new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1);
-        for (let m = 0; m < noOfMonths; m++) {
-            let monthEl = document.createElement("div");
-            monthEl.className = "gantt__chart__timeline_container_month";
-            this.grid.append(monthEl);
-            let numDays = getDaysInMonth(month.getFullYear(), month.getMonth() + 1);
-            console.log("no of Month", month, "days in month", numDays);
-            for (let i = 0; i < numDays; i++) {
-                let day = document.createElement("span");
-                let dayoftheMonth;
-                dayoftheMonth = addDays(month, i);
-                let dayVal = dayoftheMonth.getDate();
-                day.className = "gantt__chart__timeline_container_day";
-                console.log("day", dayVal, dayoftheMonth);
-                day.innerHTML = dayVal.toString();
-                monthEl.append(day);
-            }
             month.setMonth(month.getMonth() + 1);
         }
     }
@@ -1433,7 +1349,6 @@ class GanttChart extends EventEmitter {
         this.init();
         this.colors = options.colors;
         this.titleOptions = options.titleOptions;
-        console.log("duration", this.minDate, this.maxDate, dayDiff(this.minDate, this.maxDate));
         if (this.options.timeLineHeight) {
             this.timeLineHeight = this.options.timeLineHeight;
         }
@@ -1458,14 +1373,16 @@ class GanttChart extends EventEmitter {
          #gantt_canvas__chart__table::-webkit-scrollbar-track{box-shadow:inset 0 0 5px grey; border-radius:10px;}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
-         
+         #gantt__canvas__chart__timeline{
+          z-index: 999;
+         }
          .gantt__chart__timeline_container_year_container
           {
             display:grid;
           }
         .gantt__chart__timeline_container_year{
           display:grid;
-          background-color: #2196F3;
+          background-color: ${this.options.timeLineBackgroundColor};
           grid-auto-flow: column;
           grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
           height: ${this.options.timeLineHeight / 3}px;
@@ -1473,7 +1390,7 @@ class GanttChart extends EventEmitter {
         }
         .gantt__chart__timeline_container_month{
           display:grid;
-          background-color: #2196F3;
+          background-color: ${this.options.timeLineBackgroundColor};
           grid-auto-flow: column;
           grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
           height: ${this.options.timeLineHeight / 3}px;
@@ -1486,13 +1403,59 @@ class GanttChart extends EventEmitter {
           }
 
         .gantt__chart__timeline_container_day{
-          display:grid;
+          display:flex;
+          width:100%;
+          height:100%;
           border: 1px solid black;
           grid-auto-flow: column;
           grid-template-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
           justify-content:center;
           align-items:center;
         }
+
+        .gantt-time-period {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(${this.options.timeLineColumnWidth}px, 1fr);
+        text-align: center;
+        height: ${this.options.rowHeight}px;
+        }
+
+        .gantt-time-period span {
+          margin: auto;
+        }
+
+        .gantt-time-period-cell-container {
+          grid-column: 1/-1;
+          display: grid;
+        }
+
+        .gantt-time-period-cell {
+          position: relative;
+          outline: 0.5px solid "lightgray";
+        }
+
+        .taskDuration{
+          position: absolute;
+          height: ${this.options.rowHeight / 2}px;
+          margin-top: ${this.options.rowHeight / 4}px;
+          z-index: 1;
+          background: ${this.options.barColor};
+          border-radius: 5px;
+          box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.05);
+          cursor: move;
+
+        }
+
+        .taskDuration:focus {
+          outline: 1px solid black;
+        }
+
+        .taskDuration:hover {
+          background: ${this.options.barColorHover};
+        }
+
+
         .resizer {
             /* Displayed at the right side of column */
             position: absolute;
@@ -1644,20 +1607,26 @@ class GanttChart extends EventEmitter {
         this.splitter.style.position = "relative";
         this.splitter.style.top = "0px";
         this.splitter.style.zIndex = "100";
-        this.splitter.style.backgroundColor = "transparent";
+        this.splitter.style.backgroundColor = "darkgray";
         this.timelineDiv = document.createElement("div");
         this.timelineDiv.id = "gantt__canvas__chart__timeline";
         this.timelineDiv.style.height = this.options.timeLineHeight + "px";
         this.timelineDiv.style.width =
             (this.options.timeLineColumnWidth * this.duration).toString() + "px";
-        console.log("Width", this.options.timeLineColumnWidth, this.duration);
         this.timelineDiv.style.position = "sticky";
         this.timelineDiv.style.top = "0";
+        this.gridDiv = document.createElement("div");
+        this.gridDiv.id = "gantt__canvas__chart__grid";
+        // this.gridDiv.style.height =
+        //   (this.options.rowHeight * this.options.data.length).toString() + "px";
+        this.gridDiv.style.width =
+            (this.options.timeLineColumnWidth * this.duration).toString() + "px";
         this.barsDiv = document.createElement("div");
         this.barsDiv.id = "gantt__canvas__chart__bars";
-        this.barsDiv.appendChild(this.svg);
+        // this.barsDiv.appendChild(this.svg);
         this.chartDiv.setAttribute("id", "gantt_canvas__chart__");
         this.chartDiv.appendChild(this.timelineDiv);
+        this.chartDiv.appendChild(this.gridDiv);
         // this.chartDiv.style.flex = "1 1 auto";
         this.chartDiv.appendChild(this.barsDiv);
         this.chartDiv.style.display = "inline-block";
@@ -1703,19 +1672,7 @@ class GanttChart extends EventEmitter {
             this.tablediv.scrollTop = event.target.scrollTop;
         });
     }
-    drawGridLines() {
-        var canvasActualWidth = this.svg.clientWidth;
-        var gridValue = 0;
-        drawLine(this.ctx, 0, 0, canvasActualWidth, 0, "black");
-        // horizontal grids between tasks
-        let rowHeight = this.options.rowHeight;
-        for (let i in this.visibleTasks) {
-            drawLine(this.ctx, 0, rowHeight * (parseInt(i) + 1), canvasActualWidth + this.options.timeLineColumnWidth, rowHeight * (parseInt(i) + 1), "lightgray");
-            drawLine(this.tableCtx, 0, rowHeight * (parseInt(i) + 1), this.options.table.width, rowHeight * (parseInt(i) + 1), "black");
-        }
-        gridValue += this.options.gridScale;
-        // }
-    }
+    drawGridLines() { }
     drawDateLine() {
         this.dateLine = new DateLine(this.svg, this.options, this.dataDate, this);
         this.dateLine.draw();
@@ -1731,7 +1688,7 @@ class GanttChart extends EventEmitter {
         this.table.draw(update);
     }
     draw() {
-        // this.drawGridLines();
+        this.drawGridLines();
         this.drawTable();
         this.drawTimeLine();
         this.drawDateLine();
@@ -1763,37 +1720,46 @@ class GanttChart extends EventEmitter {
         this.draw();
     }
     updateGantt() {
-        const current_scroll = this.tablediv.scrollTop;
-        this.svg.innerHTML = "";
-        const contWidth = this.container.clientWidth -
-            this.tablediv.clientWidth -
-            this.splitter.clientWidth -
-            50;
-        this.chartDiv.style.overflow = "auto";
-        this.chartDiv.style.width = `${contWidth}px`;
-        this.chartDiv.style.margin = "0px";
-        this.visibleTasks = [];
-        for (let task of this.options.data) {
-            if (task.visible !== false) {
-                this.visibleTasks.push(task);
-            }
-        }
-        this.svg.setAttribute("height", (this.options.rowHeight * this.visibleTasks.length).toString());
-        let maxmin = minmax(this.visibleTasks);
-        this.maxValue = maxmin[1].getTime();
-        this.minValue = maxmin[0].getTime();
-        this.minDate = addDays(maxmin[0], -7);
-        this.maxDate = addDays(maxmin[1], 31);
-        this.tasks = [];
-        this.dateLine = null;
-        this.svg.setAttribute("width", ((dayDiff(this.minDate, this.maxDate) + 1) *
-            this.options.timeLineColumnWidth).toString());
-        // this.drawGridLines();
-        this.drawDateLine();
-        this.drawTimeLine();
-        this.tasksData = new Tasks(this.options.data, this);
-        this.tablediv.scrollTop = current_scroll;
-        this.chartDiv.scrollTop = current_scroll;
+        //   const current_scroll = this.tablediv.scrollTop;
+        //   this.svg.innerHTML = "";
+        //   const contWidth =
+        //     this.container.clientWidth -
+        //     this.tablediv.clientWidth -
+        //     this.splitter.clientWidth -
+        //     50;
+        //   this.chartDiv.style.overflow = "auto";
+        //   this.chartDiv.style.width = `${contWidth}px`;
+        //   this.chartDiv.style.margin = "0px";
+        //   this.visibleTasks = [];
+        //   for (let task of this.options.data) {
+        //     if (task.visible !== false) {
+        //       this.visibleTasks.push(task);
+        //     }
+        //   }
+        //   this.svg.setAttribute(
+        //     "height",
+        //     (this.options.rowHeight * this.visibleTasks.length).toString()
+        //   );
+        //   let maxmin = minmax(this.visibleTasks);
+        //   this.maxValue = maxmin[1].getTime();
+        //   this.minValue = maxmin[0].getTime();
+        //   this.minDate = addDays(maxmin[0], -7);
+        //   this.maxDate = addDays(maxmin[1], 31);
+        //   this.tasks = [];
+        //   this.dateLine = null;
+        //   this.svg.setAttribute(
+        //     "width",
+        //     (
+        //       (dayDiff(this.minDate, this.maxDate) + 1) *
+        //       this.options.timeLineColumnWidth
+        //     ).toString()
+        //   );
+        //   // this.drawGridLines();
+        //   this.drawDateLine();
+        //   this.drawTimeLine();
+        //   this.tasksData = new Tasks(this.options.data, this);
+        //   this.tablediv.scrollTop = current_scroll;
+        //   this.chartDiv.scrollTop = current_scroll;
     }
 }
 
