@@ -77,7 +77,14 @@ export class GanttChart extends EventEmitter {
     this.minValue = maxmin[0].getTime();
     this.minDate = addDays(maxmin[0], -7);
     this.maxDate = addDays(maxmin[1], 31);
-    this.duration = dayDiff(this.minDate, this.maxDate);
+    this.duration = dayDiff(
+      new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1),
+      new Date(
+        this.maxDate.getFullYear(),
+        this.maxDate.getMonth(),
+        getDaysInMonth(this.maxDate.getFullYear(), this.maxDate.getMonth())
+      )
+    );
     this.initStyle();
 
     this.init();
@@ -116,6 +123,7 @@ export class GanttChart extends EventEmitter {
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb{background:lightgray; border-radius:10px}
          #gantt_canvas__chart__table::-webkit-scrollbar-thumb:hover{background:gray;}
          #gantt__canvas__chart__timeline{
+          overflow:hidden;
           z-index: 999;
          }
          .gantt__chart__timeline_container_year_container
@@ -346,7 +354,14 @@ export class GanttChart extends EventEmitter {
     this.internalTableDiv.style.maxHeight = "100%";
     this.internalTableDiv.id = "gantt_canvas__chart__table__internal";
     this.tablediv.appendChild(this.internalTableDiv);
-
+    let dur = dayDiff(
+      new Date(this.minDate.getFullYear(), this.minDate.getMonth(), 1),
+      new Date(
+        this.maxDate.getFullYear(),
+        this.maxDate.getMonth(),
+        getDaysInMonth(this.maxDate.getFullYear(), this.maxDate.getMonth())
+      )
+    );
     this.splitter.classList.add("splitter");
     this.splitter.style.width = "10px";
     this.splitter.style.height = "100%";
@@ -360,7 +375,7 @@ export class GanttChart extends EventEmitter {
     this.timelineDiv.id = "gantt__canvas__chart__timeline";
     this.timelineDiv.style.height = this.options.timeLineHeight + "px";
     this.timelineDiv.style.width =
-      (this.options.timeLineColumnWidth * this.duration).toString() + "px";
+      (this.options.timeLineColumnWidth * dur).toString() + "px";
     this.timelineDiv.style.position = "sticky";
     this.timelineDiv.style.top = "0";
 
