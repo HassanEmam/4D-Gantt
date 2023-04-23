@@ -242,44 +242,63 @@ class Tasks {
     constructor(data, gantt) {
         this.data = data;
         this.gantt = gantt;
-        this.calculateWBSDates();
+        this.calculateWBSDates(this.data);
         this.nestedData = this.list_to_tree(this.data);
         this.createTree(false);
         console.log(this.nestedData);
     }
-    calculateWBSDates() {
-        let tasks = this.data.filter((act) => {
-            return this.data.filter((d) => d.parent === act.id).length === 0;
-        });
-        let wbss = this.data.filter((act) => {
-            return this.data.filter((d) => d.parent === act.id).length !== 0;
-        });
-        for (let wbs of wbss) {
-            const tmpTasks = tasks.filter((t) => t.parent === wbs.id);
-            if (tmpTasks.length > 0) {
-                let min = tmpTasks.reduce((prev, current) => {
-                    return prev.start < current.start ? prev : current;
-                });
-                let max = tmpTasks.reduce((prev, current) => {
-                    return prev.start > current.start ? prev : current;
-                });
-                wbs.start = min.start;
-                wbs.end = max.end;
+    calculateWBSDates(data) {
+        const startDates = {};
+        const finishDates = {};
+        function dfs(nodeId) {
+            const node = data.find((n) => n.id === nodeId);
+            if (!node) {
+                return null;
             }
-        }
-        for (let wbs of wbss) {
-            const tmpChildWbss = wbss.filter((t) => t.parent === wbs.id);
-            if (tmpChildWbss.length > 0) {
-                let min = tmpChildWbss.reduce((prev, current) => {
-                    return prev.start < current.start ? prev : current;
-                });
-                let max = tmpChildWbss.reduce((prev, current) => {
-                    return prev.start > current.start ? prev : current;
-                });
-                wbs.start = min.start;
-                wbs.end = max.end;
+            const childIds = data
+                .filter((n) => n.parent === nodeId)
+                .map((n) => n.id);
+            const childStartDates = childIds.map((childId) => dfs(childId));
+            let minStartDate = Infinity;
+            let maxFinishDate = null;
+            for (let i = 0; i < childIds.length; i++) {
+                const childId = childIds[i];
+                const childStartDate = childStartDates[i];
+                if (childStartDate !== null && childStartDate < minStartDate) {
+                    minStartDate = childStartDate;
+                }
+                const childFinishDate = finishDates[childId];
+                if (childFinishDate !== null &&
+                    childFinishDate !== undefined &&
+                    (maxFinishDate === null || childFinishDate > maxFinishDate)) {
+                    maxFinishDate = childFinishDate;
+                }
             }
+            const startDate = minStartDate === Infinity ? node.start : minStartDate;
+            startDates[nodeId] = startDate;
+            const finishDate = maxFinishDate === null ? node.end : maxFinishDate;
+            finishDates[nodeId] = finishDate;
+            return startDate;
         }
+        data.forEach((node) => {
+            if (!node.parent) {
+                dfs(node.id);
+            }
+        });
+        console.log("FINISH DATE", finishDates);
+        let res = [];
+        data.map((node) => {
+            res.push({
+                id: node.id,
+                name: node.name,
+                start: startDates[node.id],
+                end: finishDates[node.id],
+                parent: node.parent,
+            });
+        });
+        this.data = res;
+        console.log("RES", res);
+        return res;
     }
     createTree(update = false) {
         this.gantt.table.rowCounter = 0;
